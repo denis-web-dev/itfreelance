@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/normalize.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <title>iTFreelance</title>
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="header__nav">
+        <a class="logo" href="#!">
+          <img class="logo-img" src="./img/logo.svg" alt="iTFreelance">
+        </a>
+        <!-- col-left -->
+        <ul class="header__col-l--list">
+          <li class="header__col-l--item">
+            <a class="header__col-l--link links" href="#!">
+              Заказы
+            </a>
+          </li>
+          <li class="header__col-l--item">
+            <a class="header__col-l--link links" href="#!">
+              Исполнители
+            </a>
+          </li>
+          <li class="header__col-l--item">
+            <a class="header__col-l--link links" href="#!">
+              Вакансии
+            </a>
+          </li>
+        </ul>
+        <!-- col-left -->
+        <!-- col-right -->
+        <ul class="header__col-r--list">
+          <li class="header__col-r--item">
+            <a class="header__col-r--link links search" href="#!">
+              Поиск
+            </a>
+          </li>
+          <li class="header__col-r--item">
+            <button class="header__col-r--btn btn section__button1">
+              Регистрация
+            </button>
+          </li>
+          <button class="header__in btn section__button2">
+            Вход
+          </button>
+        </ul>
+        <!-- col-right -->
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <section class="hero">
+        <h1 class="header__title title">Заказы</h1>
+      </section>
+      <!-- hero -->
+      <section class="card">
+        <div class="wrapper-card">
+          <div class="card-left">
+            <h4 class="card__title">Разрабортка сайтов на шаблоне,CMS=WP</h4>
+            <p class="card__description">Lorem ipsum dolar sit amet, lorem ipsum dolar sit amet,lorem ipsum dolar
+              sitamet, lorem ipsum dolar sit amet.</p>
+          </div>
+          <!-- card-left -->
+          <!--card-budget  -->
+          <div class="card__budget">
+            <p class="card__budget-money">5 000 — 10 000 ₽</p>
+            <p class="card__budget-title">Бюджет —</p>
+          </div>
+          <!--card-budget  -->
+          <!-- data -->
+          <div class="card__data">
+            <p class="card__data-1">до 01/07/2023</p>
+            <p class="card__data-2">Срок —</p>
+          </div>
+          <!-- data -->
+          <!-- user -->
+          <div class="user">
+            <div class="card-img">
+              <a class="card-user-img" href="#!">
+                <img class="user-img" src="./img/user-img.png" alt="customer">
+              </a>
+              <img class="user-rating" src="./img/rating.png" alt="rating">
+            </div>
+            <p class="card__user">Заказчик —</p>
+          </div>
+          <!-- user -->
+        </div>
+        <!-- wrapper-card -->
+      </section>
+      <!-- card -->
+      <div class="next">
+        <img class="next__img none" src="./img/next.png" alt="next card">
+      </div>
+      <!-- next -->
+    </div>
+
+
+    <!-- Registration -->
+    <div class="modal modal1">
+      <div class="form modal-form">
+        <div class="form__col-1">
+          <div class="form__title title">Регистрация</div>
+          <p class="form__text">Фамилия Имя —</p>
+          <input class="form__name" type="text" placeholder="Иванов Иван">
+          <p class="form__text">Телефон —</p>
+          <input class="form__number form__name" type="text" placeholder="+7(***) ****—***">
+          <p class="form__text">Email —</p>
+          <input class="form__mail form__name" type="text" placeholder="ivanov_i@gmail.com">
+          <p class="form__text">Пароль —</p>
+          <input class="form__pass form__name" type="text" placeholder="********************">
+          <button class="form__btn">
+            <span>Зарегистрироваться</span>
+          </button>
+        </div>
+        <!-- col-1 -->
+        <div class="form__col-2">
+          <p class="form__text ">Есть аккаунт?</p>
+          <button class="form__btn-in">
+            <p class="in section__button2">Войти</p>
+          </button>
+        </div>
+        <!-- col-2 -->
+        <div class="form__col-3">
+          <div class="form__exit modal__close">
+            <svg class="form__img" id="close-btn" width="60" height="60" viewBox="0 0 60 60" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <circle cx="30" cy="30" r="29" stroke="#7B7B7B" stroke-width="2" />
+              <path
+                d="M23 38.75L21.25 37L28.25 30L21.25 23L23 21.25L30 28.25L37 21.25L38.75 23L31.75 30L38.75 37L37 38.75L30 31.75L23 38.75Z"
+                fill="black" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- modal -->
+
+    <!-- modal-in -->
+    <div class="modal modal2">
+      <div class="form modal-form">
+        <div class="form__col-1">
+          <div class="form__title title">Авторизация</div>
+          <p class="form__text">Email —</p>
+          <input class="form__mail form__name" type="text" placeholder="ivanov_i@gmail.com">
+          <p class="form__text">Пароль —</p>
+          <input class="form__pass form__name" type="text" placeholder="********************">
+          <button class="form__btn">
+            <span>Войти</span>
+          </button>
+        </div>
+        <!-- col-1 -->
+        <div class="form__col-2">
+          <p class="form__text ">Нет аккаунта?</p>
+          <button class="form__btn-in section__button1">
+            <p class="in section__button1">Зарегистрироваться</p>
+          </button>
+        </div>
+        <!-- col-2 -->
+        <div class="form__col-3">
+          <div class="form__exit modal__close">
+            <svg class="form__img" id="close-btn" width="60" height="60" viewBox="0 0 60 60" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <circle cx="30" cy="30" r="29" stroke="#7B7B7B" stroke-width="2" />
+              <path
+                d="M23 38.75L21.25 37L28.25 30L21.25 23L23 21.25L30 28.25L37 21.25L38.75 23L31.75 30L38.75 37L37 38.75L30 31.75L23 38.75Z"
+                fill="black" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- modal -->
+
+
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <section class="footer__nav">
+        <div class="footer__nav--logo">
+          <a class="logo" href="#!">
+            <img class="logo-img" src="./img/logo.svg" alt="iTFreelance">
+          </a>
+        </div>
+        <ul class="footer__col-l--list">
+          <li class="footer__col-l--item">
+            <a class="footer__col-l--link links" href="#!">
+              Покупателю
+            </a>
+          </li>
+          <li class="footer__col-l--item">
+            <a class="footer__col-l--link links" href="#!">
+              Фрилансеру
+            </a>
+          </li>
+        </ul>
+        <!-- left -->
+        <ul class="footer__col-r--list">
+          <li class="footer__col-r--item">
+            <a class="footer__col-r--link links" href="#!">
+              О проекте
+            </a>
+          </li>
+          <li class="footer__col-r--item">
+            <a class="footer__col-r--link links" href="#!">
+              Карьера
+            </a>
+          </li>
+          <li class="footer__col-r--item">
+            <a class="footer__col-r--link links" href="#!">
+              Политика конфиденциальности
+            </a>
+          </li>
+        </ul>
+        <!-- right -->
+      </section>
+    </div>
+  </footer>
+
+
+  <script>
+    let closeBtn = document.querySelector('#close-btn');
+
+    closeBtn.addEventListener('click', function (event) {
+      modal.classList.remove("is-open");
+    });
+  </script>
+  <script src="./js/main.js" defer></script>
+</body>
+
+</html>
