@@ -1,0 +1,447 @@
+@import '../../styles/vars.css';
+
+.wrapper {
+  padding: 15px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper-create {
+  align-content: center;
+  padding: 15px;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.block-bg {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.bg-mobile-svg {
+  display: none;
+}
+
+.block-bg-close-btn {
+  position: absolute;
+  right: 561px;
+  top: 33px;
+  padding-top: 5px;
+  width: 48px;
+  height: 48px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+
+.block-bg-close-svg {
+  width: 18px;
+  height: 18px;
+  rotate: 45deg;
+  fill: var(--color-grey);
+}
+
+.main-title {
+  position: absolute;
+  font-family: 'Unbounded';
+  left: 583px;
+  top: 7px;
+  font-size: 80px;
+  line-height: 99px;
+  letter-spacing: -0.02em;
+  text-align: left;
+  color: #fff;
+  z-index: 1;
+}
+
+.account {
+  position: absolute;
+  width: 733px;
+  margin-top: 172px;
+}
+
+.account-close-btn {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--color-grey);
+  width: 52px;
+  height: 52px;
+  padding-top: 5px;
+  left: 246px;
+  transform: rotate(17deg);
+}
+
+.close-btn-svg {
+  width: 19px;
+  height: 18px;
+}
+
+.account-name {
+  position: absolute;
+  font-family: 'Unbounded';
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 31px;
+  top: 292px;
+  left: 30px;
+  color: #1a1a1a;
+}
+
+.customer {
+  width: 353px;
+}
+
+.customer-close-btn {
+  left: 231px;
+  top: -12px;
+  transform: rotate(348deg);
+}
+
+.customer-block-svg {
+  cursor:
+    url(../../img/icons/cursors.cur), auto;
+}
+
+.customer-account-name {
+  transform: rotate(-15deg);
+  left: 90px;
+}
+
+.freelancer {
+  position: absolute;
+  top: 90px;
+  left: 345px;
+}
+
+.freelancer-close-btn {
+  left: 313px;
+  top: 67px;
+}
+
+.freelancer-block-svg {
+  cursor: url(../../img/icons/cursors.cur), auto;
+}
+
+.freelancer-account-name {
+  transform: rotate(15deg);
+  top: 312px;
+}
+
+.account-entrance {
+  font-family: Arial;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 18px;
+  margin-right: 8px;
+  text-align: left;
+  color: #000;
+}
+
+.account-link {
+  position: absolute;
+  bottom: 27px;
+}
+
+.account-link-enter {
+  position: relative;
+  font-family: 'Unbounded';
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 17px;
+  text-decoration-line: underline !important;
+  color: #1a1a1a;
+}
+
+/* Media Queries из нового кода */
+@media (max-width: 1440px) {
+  .main-title {
+    left: 25px;
+  }
+  .block-bg-close-btn {
+  right: 0;
+}
+}
+
+@media (max-width: 1024px) {
+  .main-title-create {
+    font-size: 60px;
+    margin-top: 0;
+  }
+  .block-bg-close-btn {
+    right: -2px;
+    top: 19px;
+    padding-top: 3px;
+    width: 37px;
+    height: 37px;
+  }
+  .block-bg-close-svg {
+    width: 14px;
+    height: 14px;
+  }
+  .account {
+    width: 490px;
+    margin-top: 120px;
+  }
+  .customer {
+    width: 250px;
+  }
+  .account-close-btn {
+    width: 34px;
+    height: 34px;
+    padding-top: 2px;
+    top: -4px;
+    left: 162px;
+    transform: rotate(-14deg);
+  }
+  .close-btn-svg {
+    width: 13px;
+    height: 13px;
+  }
+  .freelancer {
+    width: 250px;
+    top: 64px;
+    left: 240px;
+  }
+  .freelancer-close-btn {
+    top: 50px;
+    left: 221px;
+    transform: rotate(12deg);
+  }
+  .customer-account-name {
+    font-size: 20px;
+    top: 208px;
+    left: 60px;
+    transform: rotate(-16deg);
+  }
+  .freelancer-account-name {
+    font-size: 20px;
+    top: 222px;
+    left: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 48px;
+    margin-top: 10px;
+    line-height: 1;
+  }
+  .block-bg-close-btn {
+    right: 0px;
+    top: 15px;
+    padding-top: 0px;
+    width: 26px;
+    height: 26px;
+  }
+  .block-bg-close-svg {
+    width: 12px;
+    height: 12px;
+  }
+  .account {
+    width: 390px;
+    margin-top: 75px;
+  }
+  .customer {
+    width: 200px;
+  }
+  .account-close-btn {
+    width: 27px;
+    height: 27px;
+    padding-top: 1px;
+    top: -4px;
+    left: 130px;
+  }
+  .close-btn-svg {
+    width: 13px;
+    height: 13px;
+  }
+  .freelancer {
+    width: 200px;
+    top: 29px;
+    left: 200px;
+  }
+  .freelancer-close-btn {
+    top: 40px;
+    left: 176px;
+    transform: rotate(12deg);
+  }
+  .customer-account-name {
+    font-size: 17px;
+    top: 160px;
+    left: 50px;
+    transform: rotate(-16deg);
+  }
+  .freelancer-account-name {
+    font-size: 17px;
+    top: 174px;
+    left: 7px;
+  }
+  .account-link {
+    bottom: 10px;
+  }
+}
+
+@media (max-width: 425px) {
+  .container {
+    padding: 10px;
+  }
+  .wrapper-create {
+    padding: 0;
+  }
+  .main-title-create {
+    font-size: 42px;
+    margin-top: 10px;
+    line-height: 1;
+  }
+  .block-bg {
+    height: 100vh;
+    background-color: #0cb761;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  .block-bg-close-btn-create {
+    right: 10px;
+    top: 10px;
+    padding-top: 0px;
+    width: 33px;
+    height: 33px;
+  }
+  .block-bg-svg {
+    display: none;
+  }
+  .account {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    margin-top: 116px;
+    height: 100vh;
+  }
+  .customer,
+  .freelancer {
+    position: relative;
+    width: 200px;
+  }
+  .account-close-btn {
+    width: 27px;
+    height: 27px;
+    padding-top: 1px;
+    top: -4px;
+    left: 130px;
+  }
+  .close-btn-svg {
+    width: 13px;
+    height: 13px;
+  }
+  .freelancer {
+    top: -120px;
+    left: 135px;
+  }
+  .freelancer-close-btn {
+    top: 40px;
+    left: 176px;
+    transform: rotate(12deg);
+  }
+  .customer-account-name {
+    font-size: 15px;
+    top: 163px;
+  }
+  .freelancer-account-name {
+    font-size: 15px;
+    top: 174px;
+    left: 7px;
+  }
+  .account-link {
+    bottom: 24px;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 10px;
+  }
+  .wrapper-create {
+    padding: 0;
+  }
+  .main-title {
+    display: block;
+    max-width: 170px;
+    font-size: 27px;
+    padding-top: 0px;
+    padding-left: 10px;
+  }
+  .block-bg-close-btn-create {
+    right: 10px;
+    top: 10px;
+    padding-top: 4px;
+    width: 33px;
+    height: 33px;
+  }
+  .block-bg-close-svg {
+    width: 18px;
+    height: 18px;
+  }
+  .block-bg-svg {
+    display: none;
+  }
+  .bg-mobile-svg {
+    display: block;
+  }
+  .account {
+    width: 280px;
+  }
+  .customer,
+  .freelancer {
+    position: relative;
+    transform: rotate(15deg);
+    width: 200px;
+    right: 20px;
+  }
+  .account-close-btn {
+    width: 27px;
+    height: 27px;
+    padding-top: 1px;
+    top: -4px;
+    left: 130px;
+  }
+  .svg-block {
+    width: 200px;
+    height: 200px;
+  }
+  .close-btn-svg {
+    width: 13px;
+    height: 13px;
+  }
+  .freelancer {
+    top: -26px;
+    left: 92px;
+    transform: rotate(-15deg);
+  }
+  .freelancer-close-btn {
+    top: 40px;
+    left: 176px;
+    transform: rotate(12deg);
+  }
+  .customer-account-name {
+    font-size: 15px;
+    top: 163px;
+  }
+  .freelancer-account-name {
+    font-size: 15px;
+    top: 174px;
+    left: 7px;
+  }
+  .account-link {
+    top: 70px;
+    left: 10px;
+  }
+  .account-entrance {
+    font-family: var(--font-secondary);
+    font-size: 13px;
+  }
+  .account-link-enter {
+    font-size: 13px;
+  }
+}

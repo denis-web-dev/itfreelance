@@ -1,3 +1,4 @@
+import react from 'eslint-plugin-react';
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -24,9 +25,11 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       prettier: pluginPrettier,
-      'unused-imports': unusedImports, // ✅ плагин подключен
+      'unused-imports': unusedImports,
+      react,
     },
     rules: {
+      'import/no-unresolved': 'off',
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
@@ -37,17 +40,20 @@ export default [
       'no-unused-vars': [
         'error',
         {
+          varsIgnorePattern: '^React$',
+          argsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
           vars: 'all',
           args: 'after-used',
-          ignoreRestSiblings: true,
-          argsIgnorePattern: '^_',
         },
-      ], // ✅ Включаем обратно с автофиксом для переменных
-      'unused-imports/no-unused-imports': 'error', // автоудаление импортов
-      'unused-imports/no-unused-vars': 'off', // ❌ Отключаем, т.к. мешает
+      ],
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': 'off',
       'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
       'prettier/prettier': 'error',
+      'react/jsx-uses-vars': 'error',
+      'import/no-unused-modules': 'off',
     },
   },
   prettier,

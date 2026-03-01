@@ -9,7 +9,7 @@ const modalController = ({ modal, btnOpen, btnClose, time = 300 }) => {
     transition: opacity ${time}ms ease-in-out;
   `;
 
-  const closeModal = event => {
+  const closeModal = (event) => {
     const target = event.target;
 
     if (
@@ -17,7 +17,6 @@ const modalController = ({ modal, btnOpen, btnClose, time = 300 }) => {
       (btnClose && target.closest(btnClose)) ||
       event.code === 'Escape'
     ) {
-
       modalElem.style.opacity = 0;
 
       setTimeout(() => {
@@ -26,15 +25,15 @@ const modalController = ({ modal, btnOpen, btnClose, time = 300 }) => {
 
       window.removeEventListener('keydown', closeModal);
     }
-  }
+  };
 
   const openModal = () => {
     modalElem.style.visibility = 'visible';
     modalElem.style.opacity = 1;
-    window.addEventListener('keydown', closeModal)
+    window.addEventListener('keydown', closeModal);
   };
 
-  buttonElems.forEach(btn => {
+  buttonElems.forEach((btn) => {
     btn.addEventListener('click', openModal);
   });
 

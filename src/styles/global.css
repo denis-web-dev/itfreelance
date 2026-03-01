@@ -2,3 +2,5 @@
 @import './vars.css';
 @import './fonts.css';
 @import './base.css';
+@import './normalize.css';
+@import './style.css';
