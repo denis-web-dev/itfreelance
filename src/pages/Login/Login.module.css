@@ -111,7 +111,16 @@ input:not(:placeholder-shown) + label + .form__star {
 }
 
 .form-group input::placeholder {
-  color: #7b7b7b;
+  color: var(--text-color-secondary);
+  font-family: var(--font-secondery);
+  font-size: 18px;
+}
+.form-group input {
+  font-size: 18px;
+}
+
+input[type="password"] {
+    padding-right: 40px !important;
 }
 
 .form-group label {
@@ -134,6 +143,10 @@ input:not(:placeholder-shown) + label + .form__star {
   align-items: center;
 }
 
+.form__checkbox {
+  display: none;
+}
+
 .form__checkbox-label {
   display: flex;
   align-items: flex-end;
@@ -141,12 +154,6 @@ input:not(:placeholder-shown) + label + .form__star {
   font-family: var(--font-primary);
   color: var(--text-color-primary);
   font-size: 18px;
-}
-
-.form__checkbox {
-  position: relative;
-  width: 20px;
-  height: 20px;
 }
 
 .form__checkbox:checked {
@@ -162,6 +169,36 @@ input:not(:placeholder-shown) + label + .form__star {
   width: 16px;
   height: 16px;
   border: none;
+}
+
+/* Стили для галочки (скрыта по умолчанию) */
+.checkbox-checkmark {
+  fill: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Состояние: чекбокс отмечен */
+.checkbox-checked .checkbox-rect {
+  fill: #1a1a1a;
+}
+
+.checkbox-checked .checkbox-checkmark {
+  opacity: 1;
+}
+
+.checkbox-unchecked .checkbox-checkmark {
+  opacity: 0;
+}
+
+.form__checkbox-custom {
+  display: block;
+  border-radius: 5px;
+  stroke: #1a1a1a;
+}
+
+.form__checkbox-text {
+  font-size: 18px;
 }
 
 .form-group input:focus + label,
@@ -249,14 +286,6 @@ input:not(:placeholder-shown) + label + .form__star {
   fill: #7b7b7b;
 }
 
-.form__checkbox {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #7b7b7b;
-  border-radius: 3px;
-}
-
 .account__link-entrance {
   position: absolute;
   display: flex;
@@ -279,6 +308,23 @@ input:not(:placeholder-shown) + label + .form__star {
   font-family: var(--font-primary);
   font-size: 18px;
   text-decoration: underline !important;
+}
+
+.error {
+  position: absolute;
+  font-family: var(--font-secondery);
+  font-size: 14px;
+  width: 100%;
+  top: 19px;
+  left: 446px;
+  color: var(--color-error);
+}
+.error__svg {
+  margin-right: 6px;
+}
+
+.form__input-error {
+  border: 1px solid #cc4422 !important;
 }
 
 /* Media */
@@ -576,10 +622,6 @@ input:not(:placeholder-shown) + label + .form__star {
       padding: 12px 24px;
       margin-top: 24px;
       font-size: 16px;
-    }
-
-    .form__checkbox {
-      border: 2px solid #b7b7b7;
     }
 
     .form__checkbox-label {

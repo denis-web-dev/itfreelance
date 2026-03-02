@@ -1,6 +1,7 @@
 :root {
   /* Color */
   --color-grey: #dedede;
+  --color-error: #cc4422;
   /*  Text */
   --text-color-primary: #1a1a1a;
   --text-color-active: #1a1a1a;

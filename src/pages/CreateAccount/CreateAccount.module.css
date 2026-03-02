@@ -100,8 +100,7 @@
 }
 
 .customer-block-svg {
-  cursor:
-    url(../../img/icons/cursors.cur), auto;
+  cursor: url(../../img/icons/cursors.cur), auto;
 }
 
 .customer-account-name {
@@ -161,8 +160,8 @@
     left: 25px;
   }
   .block-bg-close-btn {
-  right: 0;
-}
+    right: 0;
+  }
 }
 
 @media (max-width: 1024px) {
