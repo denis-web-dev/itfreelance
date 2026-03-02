@@ -74,30 +74,18 @@
   transform: translateX(-50%);
 }
 
-.form-group {
-  position: relative;
-
-  font-family: var(--font-secondery);
-  font-size: 16px;
-  line-height: 18px;
-
-  color: #7b7b7b;
-}
-
-.form-group input {
-  width: 430px;
-  height: 56px;
-  padding: 16px 24px;
-
-  background: #ffffff;
-
-  border: 1.5px solid #b7b7b7;
-  border-radius: 100px;
-  margin-bottom: 16px;
-}
-
 .form-group input:focus {
   border-color: #37f737;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+  transform: translateY(-50%) translateX(300px);
+}
+
+.form-group__password input:focus + label,
+.form-group__password input:not(:placeholder-shown) + label {
+  transform: translateY(-38%) translateX(196px);
 }
 
 .form__star {
@@ -114,13 +102,6 @@ input:not(:placeholder-shown) + label + .form__star {
   color: var(--text-color-secondary);
   font-family: var(--font-secondery);
   font-size: 18px;
-}
-.form-group input {
-  font-size: 18px;
-}
-
-input[type="password"] {
-    padding-right: 40px !important;
 }
 
 .form-group label {
@@ -201,29 +182,6 @@ input[type="password"] {
   font-size: 18px;
 }
 
-.form-group input:focus + label,
-.form-group input:valid + label,
-.form-group input:not(:placeholder-shown) + label {
-  transform: translateY(-50%) translateX(347px);
-}
-
-.form-group__password input:focus + label,
-.form-group__password input:valid + label,
-.form-group__password input:not(:placeholder-shown) + label {
-  transform: translateY(-58%) translateX(240px);
-}
-
-.form-group__confirm-password input:focus + label,
-.form-group__confirm-password input:valid + label,
-.form-group__confirm-password input:not(:placeholder-shown) + label {
-  transform: translateY(-58%) translateX(225px);
-}
-
-.form-group input:focus {
-  caret-color: #37f737;
-  border-color: #37f737;
-}
-
 .form__star {
   position: absolute;
   display: flex;
@@ -275,17 +233,6 @@ input[type="password"] {
     transition: ease-in 0.2s;
   }
 }
-
-.toggle-password {
-  position: absolute;
-  right: 20px;
-  top: 18px;
-}
-
-.toggle__password-svg {
-  fill: #7b7b7b;
-}
-
 .account__link-entrance {
   position: absolute;
   display: flex;
@@ -294,7 +241,6 @@ input[type="password"] {
   text-align: center;
   top: 95%;
 }
-
 .account__entrance-reg {
   font-family: Arial;
   font-style: normal;
@@ -303,28 +249,10 @@ input[type="password"] {
   line-height: 18px;
   color: #7b7b7b;
 }
-
 .account__link-enter {
   font-family: var(--font-primary);
   font-size: 18px;
   text-decoration: underline !important;
-}
-
-.error {
-  position: absolute;
-  font-family: var(--font-secondery);
-  font-size: 14px;
-  width: 100%;
-  top: 19px;
-  left: 446px;
-  color: var(--color-error);
-}
-.error__svg {
-  margin-right: 6px;
-}
-
-.form__input-error {
-  border: 1px solid #cc4422 !important;
 }
 
 /* Media */
