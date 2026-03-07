@@ -24,12 +24,10 @@
   outline: none;
 }
 
-/* Прячем нативный placeholder */
 .form-input::placeholder {
   color: transparent;
 }
 
-/* Кастомный плейсхолдер (будет двигаться) */
 .form-placeholder {
   position: absolute;
   left: 24px;
@@ -46,7 +44,6 @@
   z-index: 1;
 }
 
-/* Анимация при фокусе - плейсхолдер уезжает вправо */
 .form-input:focus ~ .form-placeholder,
 .form-input:not(:placeholder-shown) ~ .form-placeholder {
   transform: translateY(-50%) translateX(300px);
@@ -55,10 +52,9 @@
 }
 
 .form-input:focus ~ .form-placeholder--password {
-  transform: translateY(-50%) translateX(260px);
+  transform: translateY(-50%) translateX(250px);
 }
 
-/* Кнопка показа пароля */
 .toggle-password {
   position: absolute;
   right: 20px;
@@ -92,6 +88,10 @@
 
 .form-input-error {
   border-color: #cc4422 !important;
+}
+
+.form-input[type='password'] {
+  padding-right: 40px !important; /* Увеличиваем отступ, чтобы освободить место для обоих иконок */
 }
 
 /* Медиа-запросы */
