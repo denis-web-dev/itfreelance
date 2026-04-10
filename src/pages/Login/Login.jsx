@@ -28,11 +28,13 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   // Отслеживаем состояние чекбокса
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rememberMe = watch('rememberMe');
 
   const onSubmit = (data) => {
-    console.log('Вход:', data);
-    // Здесь позже будет вызов API: services/auth.login(data)
+    // TODO: Здесь будет вызов API
+    // eslint-disable-next-line no-console
+    console.log(data); // можно оставить временно для отладки
   };
 
   //Функция для переключения видимости пароля

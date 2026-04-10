@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types';
 
 function CloseIcon({ size = 18, color = 'var(--color-grey)', className }) {
