@@ -1,5 +1,5 @@
 import * as authService from './auth.service.js';
-import ApiError from '../../utils/ApiError.js';
+import ApiError from '../../../utils/ApiError.js';
 
 export const register = async (req, res, next) => {
 	try {
