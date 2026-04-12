@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
-import ApiError from '../../utils/ApiError.js';
-import { jwtConfig } from '../../config/jwt.config.js';
+import ApiError from '../../../utils/ApiError.js';
+import { jwtConfig } from '../../../config/jwt.config.js';
 
 const prisma = new PrismaClient();
 
