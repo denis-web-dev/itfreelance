@@ -6,15 +6,12 @@ class ApiError extends Error {
 		Error.captureStackTrace(this, this.constructor);
 	}
 
-	// Удобные статические методы
 	static badRequest(msg) {
 		return new ApiError(400, msg);
 	}
-
 	static unauthorized(msg = 'Неверный email или пароль') {
 		return new ApiError(401, msg);
 	}
-
 	static conflict(msg) {
 		return new ApiError(409, msg);
 	}

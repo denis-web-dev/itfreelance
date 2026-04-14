@@ -1,0 +1,23 @@
+html,
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+
+  aspect-ratio: 1440;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+
+  cursor: url('../assets/icons/cursors.cur'), auto;
+}
+
+a {
+  color: var(--color-text-active);
+}
+
+.container {
+  max-width: 1410px;
+  padding: 0 30px;
+  margin: 0 auto;
+}
