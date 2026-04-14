@@ -1,0 +1,151 @@
+@import '../../styles/vars.css';
+
+.wrapper {
+  padding: 15px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper-registration {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding: 15px;
+  background: var(--color-bg-pink);
+}
+
+.block-bg {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  border-radius: 30px;
+}
+.bg-mobile-svg {
+  display: none;
+}
+
+.block-bg__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  z-index: -1;
+}
+
+.block-bg-close-btn {
+  position: absolute;
+  right: 0;
+  top: 33px;
+  padding-top: 5px;
+  width: 48px;
+  height: 48px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+
+.block-bg-close-svg {
+  width: 18px;
+  height: 18px;
+  rotate: 45deg;
+  fill: var(--color-grey);
+}
+
+.main-title-registration {
+  position: absolute;
+  font-family: 'Unbounded';
+  left: 595px;
+  top: 285px;
+  font-size: 80px;
+  line-height: 99px;
+  letter-spacing: -0.02em;
+  text-align: left;
+  color: #000;
+  z-index: 1;
+}
+
+.form__container-registration {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  transform: translateX(-50%);
+}
+.form__btn-reg {
+  width: 430px;
+  height: 56px;
+  padding: 12px 16px;
+  background: #37f737;
+  border-radius: 100px;
+
+  font-family: Unbounded;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 22px;
+  letter-spacing: -0.02em;
+
+  color: var(--color-text-primary);
+  margin-top: 8px;
+  margin-bottom: 16px;
+
+  &.form__btn-reg:active {
+    background: #1a1a1a;
+    color: #fff;
+    transition: ease-in 0.2s;
+  }
+
+  &.form__btn-reg:hover {
+    background: #1a1a1a;
+    color: #fff;
+    transition: ease-in 0.2s;
+  }
+}
+
+.form__text-reg {
+  width: 430px;
+  font-family: Arial;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: center;
+
+  color: var(--color-text-secondary);
+}
+
+.account__link-registration {
+  position: absolute;
+  bottom: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.account__entrance-reg {
+  font-family: Arial;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.15;
+
+  margin-right: 8px;
+
+  color: var(--color-text-secondary);
+}
+
+.account__link-enter {
+  font-family: Unbounded;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  text-decoration-line: underline !important;
+
+  color: var(--color-text-primary);
+}
+
+/* Media queries */
+@media (max-width: 1024px) {
+  .main-title-registration {
+    font-size: 60px;
+  }
+}
