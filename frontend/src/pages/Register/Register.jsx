@@ -8,7 +8,6 @@ import InputForm from '../../components/InputForm/InputForm';
 import clsx from 'clsx';
 import styles from './Register.module.css';
 
-// Схема валидации (точно такая же, как на бэкенде)
 const schema = z
   .object({
     name: z.string().min(2, 'Имя должно содержать минимум 2 символа'),
@@ -53,7 +52,6 @@ function Register() {
             name: data.name,
             email: data.email,
             password: data.password,
-            // confirmPassword не отправляем — он только для валидации
           }),
         }
       );
@@ -61,7 +59,6 @@ function Register() {
       const result = await response.json();
 
       if (!response.ok) {
-        // Ошибки от бэкенда (Zod или бизнес-логика)
         throw new Error(result.message || 'Ошибка регистрации');
       }
 
@@ -70,16 +67,13 @@ function Register() {
         'Регистрация прошла успешно! Сейчас вы будете перенаправлены...'
       );
 
-      // Сохраняем токены в localStorage (для будущей авторизации)
       localStorage.setItem('accessToken', result.data.tokens.accessToken);
       localStorage.setItem('refreshToken', result.data.tokens.refreshToken);
 
-      // Очищаем форму
       reset();
 
-      // Перенаправляем через 1.5 секунды (можно изменить)
       setTimeout(() => {
-        navigate('/login'); // или на главную страницу
+        navigate('/login');
       }, 1500);
     } catch (error) {
       console.error('Ошибка регистрации:', error);
@@ -102,7 +96,7 @@ function Register() {
         </h1>
 
         <div className={styles['block-bg']}>
-          {/* Кнопка закрытия (пока просто заглушка) */}
+          {/* Кнопка закрытия */}
           <button className={styles['block-bg-close-btn']}>
             <CloseIcon className={styles['block-bg-close-svg']} />
           </button>
