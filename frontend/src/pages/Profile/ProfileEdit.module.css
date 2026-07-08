@@ -1,0 +1,179 @@
+.wrapper {
+  background-color: #0cb660;
+  min-height: 100vh;
+  padding: 20px 0 60px;
+  font-family: var(--font-primary);
+}
+
+.container {
+  max-width: 1890px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 40px;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 80px;
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 50px 40px;
+}
+
+.avatarBlock {
+  text-align: center;
+}
+
+.avatarWrapper {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 8px solid #f0f0f0;
+  overflow: hidden;
+  margin: 0 auto 20px;
+  background: #f8f8f8;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 18px;
+}
+
+.uploadButton {
+  display: inline-block;
+  padding: 14px 40px;
+  background: #dddddd;
+  border: 1px solid #d9d9d9;
+  border-radius: 100px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.uploadButton:hover {
+  background: transparent;
+  border-color: #37f737;
+}
+
+/* Форма */
+.form {
+  width: 100%;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.textareaLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 220px;
+  padding: 20px 24px;
+  border: 1.5px solid #b7b7b7;
+  border-radius: 16px;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #37f737;
+}
+
+/* Портфолио */
+.portfolioSection {
+  margin-top: 60px;
+}
+
+.portfolioTitle {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.portfolioGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.portfolioItem {
+  height: 240px;
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #999;
+  background: #f9f9f9;
+}
+
+.portfolioAdd {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+
+/* Кнопка */
+.saveButton {
+  margin-top: 50px;
+  width: 100%;
+  max-width: 420px;
+  padding: 18px;
+  font-size: 18px;
+  border-radius: 100px;
+}
+
+/* Адаптив */
+@media (max-width: 1440px) {
+  .content { gap: 50px; padding: 40px; }
+  .avatarWrapper { width: 260px; height: 260px; }
+}
+
+@media (max-width: 1200px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content { padding: 30px 20px; }
+  .title { font-size: 32px; }
+}

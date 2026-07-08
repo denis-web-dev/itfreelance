@@ -1,0 +1,13 @@
+.button {
+  cursor: pointer;
+  border: none;
+}
+.close {
+  background: #1a1a1a;
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+}
+.role {
+  background: transparent;
+}
