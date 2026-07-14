@@ -53,6 +53,7 @@ export default function ProfileAbout({ register, watch, errors }) {
               placeholder="JavaScript, React, CSS..."
               field={register('skills')}
               error={errors?.skills?.message}
+              className={styles.inputSkills}
             />
             <p className={styles.hint}>Вводите через запятую</p>
           </div>
@@ -63,8 +64,9 @@ export default function ProfileAbout({ register, watch, errors }) {
               placeholder="Figma, VS Code, Git..."
               field={register('tools')}
               error={errors?.tools?.message}
+              className={styles.inputTools}
             />
-            <p className={styles.hint}>Вводите через запятую</p>
+            <p className={styles.hint}>Введите через запятую</p>
           </div>
         </div>
       </div>
