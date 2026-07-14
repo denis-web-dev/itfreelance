@@ -1,6 +1,7 @@
 :root {
   /*  Color BG */
   --color-bg-forgot: #0CB761;
+  --color-bg: #ffffff;
   /* Color */
   --color-grey: #dedede;
   --color-error: #cc4422;

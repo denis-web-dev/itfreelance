@@ -1,0 +1,113 @@
+.headerProfile {
+  padding-top: 16px;
+}
+
+.bgHero {
+  position: absolute;
+}
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  position: relative;
+}
+
+.nav {
+  position: absolute;
+  display: flex;
+  gap: 15px;
+  left: 290px;
+}
+
+.navLink {
+  font-size: 16px;
+  color: var(--text-color-primary);
+  text-decoration: none;
+  background: #dedede;
+  border: 1px solid #dedede;
+  border-radius: 100px;
+  padding: 17px 16px;
+  transition: all 0.2s;
+}
+
+.navLink:hover {
+  border: solid 1px #38f838;
+  background: none;
+  transition: all 0.2s;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profileHeaderBtnNotification {
+  background: none;
+  border: 1px solid #d9d9d9;
+  width: 56px;
+  height: 56px;
+  background: #d9d9d9;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.profileHeaderBtnNotification:hover {
+  background: none;
+  border: 1px solid #37f737;
+}
+
+.profileHeaderUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 56px;
+  height: 56px;
+  background: #d9d9d9;
+  border-color: #000;
+  border-radius: 50%;
+}
+
+.profileHeaderEmail {
+  position: relative;
+  border-radius: 60px;
+  border: 1px solid #d9d9d9;
+  width: 56px;
+  height: 56px;
+  background: #d9d9d9;
+  transition: all 0.2s;
+}
+
+.profileHeaderEmailLink {
+ position: absolute;
+    top: 16px;
+    left: 15px;
+}
+
+.profileHeaderEmail:hover {
+  border: solid 1px #38f838;
+  background: none;
+  transition: all 0.2s;
+}
+
+/* Адаптив */
+@media (max-width: 1200px) {
+  .nav {
+    margin-left: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerInner {
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 15px;
+  }
+  .nav {
+    margin-left: 0;
+  }
+}

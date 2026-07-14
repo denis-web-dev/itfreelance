@@ -9,10 +9,14 @@ const InputForm = forwardRef(
       placeholder,
       label,
       name,
+      field,
       error,
       icon,
       showPasswordToggle,
+      isTextarea = false,
       className,
+      placeholderClassName,
+      maxLength,
       ...props
     },
     ref
@@ -27,6 +31,7 @@ const InputForm = forwardRef(
     const handleTogglePassword = () => {
       setShowPassword(!showPassword);
     };
+    const errorMessage = typeof error === 'string' ? error : error?.message;
 
     return (
       <div
@@ -36,32 +41,52 @@ const InputForm = forwardRef(
           className
         )}
       >
-        <input
-          type={inputType}
-          placeholder={placeholder}
-          name={name}
-          id={name}
-          ref={ref}
-          className={clsx(
-            styles['form-input'],
-            error && styles['form-input-error']
-          )}
-          {...props}
-        />
+        {isTextarea ? (
+          <textarea
+            id={name}
+            name={name}
+            ref={ref}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            className={clsx(
+              styles['form-input'],
+              styles['form-textarea'],
+              error && styles['form-input-error']
+            )}
+            {...field}
+            {...props}
+          />
+        ) : (
+          <input
+            type={inputType}
+            placeholder={placeholder}
+            name={name}
+            id={name}
+            ref={ref}
+            maxLength={maxLength}
+            className={clsx(
+              styles['form-input'],
+              error && styles['form-input-error']
+            )}
+            {...field}
+            {...props}
+          />
+        )}
 
         {/* Плейсхолдер как отдельный элемент (будет двигаться) */}
         {placeholder && (
           <span
             className={clsx(
               styles['form-placeholder'],
-              type === 'password' && styles['form-placeholder--password']
+              type === 'password' && styles['form-placeholder--password'],
+              placeholderClassName
             )}
           >
             {placeholder}
           </span>
         )}
 
-        {error && (
+        {errorMessage && (
           <p className={styles.error}>
             <svg
               className={styles['error__svg']}
@@ -76,7 +101,7 @@ const InputForm = forwardRef(
                 fill="#CC4422"
               />
             </svg>
-            {error}
+            {errorMessage}
           </p>
         )}
 

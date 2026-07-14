@@ -7,6 +7,11 @@ import styles from './ProfileEdit.module.css';
 import Button from '../../components/Button/Button';
 import InputForm from '../../components/InputForm/InputForm';
 import PortfolioBlock from '../../components/PortfolioBlock/PortfolioBlock';
+import CardBg from '../../components/CardBg/CardBg';
+import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader';
+import ProfileInfo from '../../components/Profile/ProfileInfo/ProfileInfo';
+import defaultAvatar from '../../assets/img-header/avatarBG.png';
+import ProfileAbout from '../../components/Profile/ProfileAbout/ProfileAbout';
 
 const baseSchema = z.object({
   fullName: z.string().min(2, 'Введите имя и фамилию'),
@@ -14,7 +19,12 @@ const baseSchema = z.object({
   phone: z.string().min(10, 'Введите корректный телефон'),
   email: z.string().email('Некорректный email'),
   sphere: z.string().min(1, 'Укажите сферу деятельности'),
-  about: z.string().max(1000, 'Максимум 1000 символов').optional(),
+  about: z.string().max(500, 'Максимум 500 символов').optional(),
+  site: z.string().url('Введите корректный URL').optional().or(z.literal('')),
+  telegram: z.string().optional(),
+  vk: z.string().optional(),
+  skills: z.string().optional(),
+  tools: z.string().optional(),
 });
 
 const freelancerSchema = baseSchema.extend({
@@ -32,9 +42,11 @@ const getSchema = (isFreelancer) =>
 
 export default function ProfileEdit() {
   const { user, updateUser } = useAuth();
-  const isFreelancer = user?.role === 'freelancer';
-
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
+  // const isFreelancer = user?.role === 'freelancer';
+  const isFreelancer = true;
+  const [avatarPreview, setAvatarPreview] = useState(
+    user?.avatar || defaultAvatar
+  );
 
   const schema = getSchema(isFreelancer);
 
@@ -42,6 +54,7 @@ export default function ProfileEdit() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: user || {},
@@ -53,128 +66,44 @@ export default function ProfileEdit() {
     alert('Профиль успешно обновлён!');
   };
 
+  // ← Обработчик загрузки нового аватара
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
+      // 1. Показываем превью на клиенте
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Информация</h1>
-
-        <div className={styles.content}>
-          {/* Блок аватара */}
-          <div className={styles.avatarBlock}>
-            <div className={styles.avatarWrapper}>
-              {avatarPreview ? (
-                <img
-                  src={avatarPreview}
-                  alt="Аватар"
-                  className={styles.avatarImg}
-                />
-              ) : (
-                <div className={styles.avatarPlaceholder}>Фото профиля</div>
-              )}
-            </div>
-            <label className={styles.uploadButton}>
-              Загрузить
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                hidden
-              />
-            </label>
-          </div>
-
-          {/* Форма */}
-          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            <div className={styles.formGrid}>
-              <InputForm
-                label="Имя Фамилия *"
-                register={register('fullName')}
-                error={errors.fullName}
-              />
-              <InputForm
-                label="Регион *"
-                register={register('region')}
-                error={errors.region}
-              />
-
-              {isFreelancer ? (
-                <>
-                  <InputForm
-                    label="Опыт работы *"
-                    register={register('experience')}
-                    error={errors.experience}
-                  />
-                  <InputForm
-                    label="Ставка руб/час *"
-                    register={register('rate')}
-                    error={errors.rate}
-                  />
-                </>
-              ) : (
-                <>
-                  <InputForm
-                    label="Название компании *"
-                    register={register('companyName')}
-                    error={errors.companyName}
-                  />
-                  <InputForm
-                    label="Лет на рынке *"
-                    register={register('marketYears')}
-                    error={errors.marketYears}
-                  />
-                </>
-              )}
-
-              <InputForm
-                label="Телефон"
-                register={register('phone')}
-                error={errors.phone}
-              />
-              <InputForm
-                label="E-mail *"
-                register={register('email')}
-                error={errors.email}
-              />
-
-              <div className={styles.fullWidth}>
-                <InputForm
-                  label="Сфера деятельности *"
-                  register={register('sphere')}
-                  error={errors.sphere}
-                />
-              </div>
-
-              <div className={styles.fullWidth}>
-                <label className={styles.textareaLabel}>
-                  О себе{isFreelancer ? '' : ' / О компании'}
-                </label>
-                <textarea
-                  className={styles.textarea}
-                  {...register('about')}
-                  placeholder="Расскажите о себе..."
-                />
-              </div>
-            </div>
-
-            {/* Портфолио */}
-            {isFreelancer && <PortfolioBlock />}
-
-            <Button
-              type="submit"
-              variant="primary"
-              className={styles.saveButton}
-            >
-              Сохранить изменения
-            </Button>
-          </form>
-        </div>
+      <div className="container">
+        <CardBg
+          imageSrc="src/assets/img-header/bg.png"
+          className="fullWidthBlock"
+        >
+          <ProfileHeader />
+          <ProfileInfo
+            avatarPreview={avatarPreview}
+            handleAvatarChange={handleAvatarChange}
+            register={register}
+            errors={errors}
+            isFreelancer={isFreelancer}
+            onSubmit={onSubmit}
+            handleSubmit={handleSubmit}
+          />
+        </CardBg>
+        <main className={styles.profileMain}>
+          <ProfileAbout
+          register={register}
+          watch={watch}
+          errors={errors}
+          />
+        </main>
       </div>
     </div>
   );

@@ -1,23 +1,11 @@
-html,
-body {
-  font-family: var(--font-primary);
-  color: var(--text-color-primary);
-
-  aspect-ratio: 1440;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  background-size: cover;
-
-  cursor: url('../img/icons/cursors.cur'), auto;
-}
-
-a {
-  color: var(--text-color-active);
-}
-
 .container {
-  max-width: 1410px;
-  padding: 0 30px;
+  max-width: 1840px;
+  width: 100%;
   margin: 0 auto;
+}
+.fullWidthBlock {
+  width: 100%;
+  max-width: 1890px;
+  margin: 0 auto;
+  padding: 0 25px;
 }

@@ -16,7 +16,7 @@ input:-webkit-autofill:active {
 }
 
 .form-input {
-  width: 430px;
+  width: 606px;
   height: 56px;
   padding: 16px 24px;
   background: #ffffff;
@@ -39,6 +39,41 @@ input:-webkit-autofill:active {
   color: transparent;
 }
 
+.form-textarea {
+  width: 915px;
+  height: 445px;
+  padding: 16px 24px;
+  border: 1px solid #b7b7b7;
+  border-radius: 16px;
+  font-family: var(--font-secondery);
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--text-color-primary);
+  background: #fff;
+  resize: vertical;
+  min-height: 150px;
+  transition: border-color 0.2s;
+}
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--bg-btn-normal);
+}
+.form-textarea__counter {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  text-align: right;
+  font-size: 14px;
+  color: var(--text-color-secondary);
+}
+
+
+.error-text {
+  color: #e74c3c;
+  font-size: 14px;
+  font-family: var(--font-secondery);
+}
+
 .form-placeholder {
   position: absolute;
   left: 24px;
@@ -54,6 +89,7 @@ input:-webkit-autofill:active {
   white-space: nowrap;
   z-index: 1;
 }
+
 
 .form-input:focus ~ .form-placeholder,
 .form-input:not(:placeholder-shown) ~ .form-placeholder {
