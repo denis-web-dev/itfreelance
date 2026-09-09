@@ -1,0 +1,216 @@
+.profilePortfolio {
+  width: 100%;
+  background: var(--color-bg);
+  border-radius: 30px;
+  padding: 25px;
+  margin-top: 15px;
+}
+
+.profileTitle {
+  font-family: var(--font-primary);
+  font-size: 35px;
+  font-weight: 400;
+  line-height: 43px;
+  margin-bottom: 40px;
+  color: var(--text-color-primary);
+}
+
+/* ===== СЕТКА ===== */
+.profileGrid {
+display: flex;
+  gap: 20px;
+}
+
+.portfolio-item {
+  position: relative;
+  width: 447px;
+  height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.portfolio-item__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.portfolio-item__bg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* .portfolio-item__image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+} */
+
+.portfolio-item__delete {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.portfolio-item:hover .portfolio-item__delete {
+  opacity: 1;
+}
+
+.portfolio-item__delete:hover {
+  transform: scale(1.1);
+}
+.portfolio-item__actions {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.portfolio-item:hover .portfolio-item__actions {
+  opacity: 1;
+}
+
+.portfolio-item-add {
+  position: relative;
+  width: 447px;
+  height: 320px;
+  overflow: hidden;
+}
+
+.portfolio-item-add__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.portfolio-item-add__bg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* .portfolio-item-add__label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  gap: 12px;
+} */
+
+.portfolio-item-add__plus {
+  position: absolute;
+  bottom: 14px;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  background: #1a1a1a;
+  border: 2px dashed #1a1a1a;
+  border-radius: 50%;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.portfolio-item-add__plus:hover {
+  background: #fff;
+  border-color: #1a1a1a;
+}
+
+.portfolio-item-add__plus:hover svg path {
+  fill: #1a1a1a;
+}
+
+.portfolio-item-add__text {
+  font-family: var(--font-secondery);
+  font-size: 18px;
+  color: var(--text-color-secondary);
+}
+
+.portfolio-item-add__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 1200px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .profileTitle {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .portfolio-item__delete {
+    top: 10px;
+    right: 10px;
+  }
+
+  .portfolio-item-add__plus {
+    width: 38px;
+    height: 38px;
+  }
+
+  .portfolio-item-add__text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .profileTitle {
+    font-size: 24px;
+  }
+
+  .portfolio-item-add__plus {
+    width: 32px;
+    height: 32px;
+  }
+
+  .portfolio-item-add__text {
+    font-size: 12px;
+  }
+}

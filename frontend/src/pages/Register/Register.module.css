@@ -36,8 +36,8 @@
 
 .block-bg-close-btn {
   position: absolute;
-  right: 0;
-  top: 33px;
+ right: 216px;
+  top: 34px;
   padding-top: 5px;
   width: 48px;
   height: 48px;
@@ -55,12 +55,11 @@
 .main-title-registration {
   position: absolute;
   font-family: 'Unbounded';
-  left: 595px;
-  top: 285px;
+  left: 273px;
+    top: 137px;
   font-size: 80px;
   line-height: 99px;
   letter-spacing: -0.02em;
-  text-align: left;
   color: #000;
   z-index: 1;
 }

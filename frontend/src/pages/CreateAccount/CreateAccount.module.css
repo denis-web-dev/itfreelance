@@ -19,35 +19,26 @@
   position: relative;
   display: grid;
   justify-items: center;
+  max-width: 1890px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .bg-mobile-svg {
   display: none;
 }
 
-.block-bg-close-btn {
+.block-bg-close-btn-create {
   position: absolute;
-  right: 561px;
-  top: 33px;
-  padding-top: 5px;
-  width: 48px;
-  height: 48px;
-  background: #1a1a1a;
-  border-radius: 50%;
-}
-
-.block-bg-close-svg {
-  width: 18px;
-  height: 18px;
-  rotate: 45deg;
-  fill: var(--color-grey);
+  right: 0;
+  top: 56px;
 }
 
 .main-title {
   position: absolute;
   font-family: 'Unbounded';
-  left: 583px;
-  top: 7px;
+  left: 25px;
+  top: 0;
   font-size: 80px;
   line-height: 99px;
   letter-spacing: -0.02em;
@@ -69,20 +60,9 @@
   background-color: var(--color-grey);
   width: 52px;
   height: 52px;
-  padding-top: 5px;
   left: 246px;
-  transform: rotate(17deg);
+  rotate: 20deg;
   transition: ease-in-out 0.2s;
-}
-
-/* .account-close-btn:hover {
-  background: none;
-  border: 2px dashed #d9d9d9;
-} */
-
-.close-btn-svg {
-  width: 19px;
-  height: 18px;
 }
 
 .account-name {
@@ -93,7 +73,7 @@
   line-height: 31px;
   top: 292px;
   left: 30px;
-  color: #1a1a1a;
+  color: var(--bg-btn-active);
 }
 
 .customer {
@@ -108,7 +88,7 @@
 .customer-close-btn {
   left: 231px;
   top: -12px;
-  transform: rotate(348deg);
+  rotate: 73deg;
 }
 
 .customer-block-svg {
@@ -167,6 +147,16 @@
 }
 
 /* Media Queries из нового кода */
+@media (min-width: 1921px) {
+  .block-bg {
+    max-width: 1890px;
+    margin: 0 auto;
+  }
+
+  .block-bg-close-btn-create {
+    right: 0px;
+  }
+}
 @media (max-width: 1440px) {
   .main-title {
     left: 25px;

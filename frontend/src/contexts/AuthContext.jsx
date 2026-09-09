@@ -15,26 +15,57 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: в будущем заменим на запрос к бэкенду
-    try {
-      const savedUser = JSON.parse(localStorage.getItem('user'));
-      if (savedUser) {
-        setUser(savedUser);
+    const loadUser = async () => {
+      try {
+        // ========== СЕЙЧАС (localStorage) ==========
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+        }
+
+        // ========== ПОТОМ (запрос к бэкенду) ==========
+        // Раскомментируешь и удалишь кусок выше:
+        //
+        // const response = await fetch('/api/auth/me', {
+        //   credentials: 'include', // если используешь cookie
+        // });
+        //
+        // if (response.ok) {
+        //   const data = await response.json();
+        //   setUser(data.user);
+        // } else {
+        //   setUser(null);
+        //   localStorage.removeItem('user');
+        // }
+      } catch (e) {
+        console.error('Ошибка загрузки пользователя:', e);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.error('Ошибка чтения пользователя из localStorage', e);
-    }
-    setLoading(false);
-  }, []); // пустой массив — правильно
+    };
+
+    loadUser();
+  }, []);
 
   const updateUser = (newData) => {
-    const updated = { ...user, ...newData };
-    setUser(updated);
-    localStorage.setItem('user', JSON.stringify(updated));
+    setUser((prev) => {
+      const updated = { ...prev, ...newData };
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    // потом здесь же можно вызывать POST /api/auth/logout
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, updateUser, loading }}>
+    <AuthContext.Provider
+      value={{ user, setUser, updateUser, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

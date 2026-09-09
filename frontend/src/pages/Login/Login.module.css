@@ -18,6 +18,9 @@
   position: relative;
   display: grid;
   justify-items: center;
+   max-width: 1890px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .block-bg__svg {
@@ -37,15 +40,14 @@
 
 .block-bg-close-svg {
   fill: var(--color-grey);
-  rotate: 45deg;
   width: 18px;
   height: 18px;
-  rotate: 45deg;
+
 }
 
 .block-bg-close-btn {
   position: absolute;
-  right: 22%;
+  right: 240px;
   top: 33px;
   padding-top: 5px;
   width: 48px;
@@ -57,8 +59,8 @@
 .main-title-entrance {
   position: absolute;
   font-family: 'Unbounded';
-  left: 595px;
-  top: 290px;
+  left: 280px;
+  top: 137px;
   font-size: 80px;
   line-height: 99px;
   letter-spacing: -0.02em;
@@ -72,6 +74,10 @@
   left: 50%;
   top: 33%;
   transform: translateX(-50%);
+}
+
+.InputFormlogin{
+  width: 430px;
 }
 
 .form-group input:focus {

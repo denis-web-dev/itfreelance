@@ -78,9 +78,11 @@ function Login() {
           >
             {/* Поле Email */}
             <InputForm
+              className={styles.InputFormlogin}
               type="email"
               placeholder="E-mail"
               error={errors.email?.message}
+              inputSize="small"
               {...register('email')}
             />
 
@@ -92,6 +94,7 @@ function Login() {
               showPasswordToggle={true}
               onTogglePassword={togglePasswordVisibility}
               showPassword={showPassword}
+              inputSize="small"
               {...register('password')}
             />
 
@@ -125,7 +128,7 @@ function Login() {
                     width="23"
                     height="23"
                     rx="5"
-                    stroke-width="2"
+                    strokeWidth="2"
                     className={styles['checkbox-rect']}
                   />
 

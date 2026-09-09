@@ -140,8 +140,56 @@ input:-webkit-autofill:active {
   padding-right: 40px !important;
 }
 
+/* По умолчанию (606px) */
+.form-input--default {
+  width: 606px;
+}
+
+/* Маленький (430px) - для форм входа */
+.form-input--small {
+  width: 430px;
+}
+
+/* Большой (915px) - для textarea */
+.form-input--large {
+  width: 915px;
+}
+
+/* На всю ширину родителя */
+.form-input--full {
+  width: 100%;
+}
+
+/* ===== ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ ===== */
+
+/* Для форм входа */
+.form-input--login {
+  width: 430px;
+}
+
+/* Для форм профиля */
+.form-input--profile {
+  width: 606px;
+}
+
+/* Для textarea */
+.form-input--textarea {
+  width: 915px;
+}
+
 /* Медиа-запросы */
 @media (max-width: 1024px) {
+  .form-input--default {
+    width: 380px;
+  }
+
+  .form-input--small {
+    width: 320px;
+  }
+
+  .form-input--large {
+    width: 600px;
+  }
   .form-input {
     width: 380px;
     height: 48px;
@@ -159,6 +207,21 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 768px) {
+   .form-input--default {
+    width: 330px;
+  }
+
+  .form-input--small {
+    width: 280px;
+  }
+
+  .form-input--large {
+    width: 400px;
+  }
+
+  .form-input--full {
+    width: 100%;
+  }
   .form-input {
     width: 330px;
     height: 40px;
@@ -182,6 +245,17 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 425px) {
+  .form-input--default {
+    width: 330px;
+  }
+
+  .form-input--small {
+    width: 280px;
+  }
+
+  .form-input--large {
+    width: 280px;
+  }
   .form-input {
     width: 330px;
     height: 48px;

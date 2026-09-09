@@ -4,14 +4,13 @@ import * as z from 'zod';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './ProfileEdit.module.css';
-import Button from '../../components/Button/Button';
-import InputForm from '../../components/InputForm/InputForm';
-import PortfolioBlock from '../../components/PortfolioBlock/PortfolioBlock';
+import SaveButton from '../../components/ui/SaveButton/SaveButton';
 import CardBg from '../../components/CardBg/CardBg';
 import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader';
 import ProfileInfo from '../../components/Profile/ProfileInfo/ProfileInfo';
 import defaultAvatar from '../../assets/img-header/avatarBG.png';
 import ProfileAbout from '../../components/Profile/ProfileAbout/ProfileAbout';
+import ProfilePortfolio from '../../components/Profile/ProfilePortfolio/ProfilePortfolio';
 
 const baseSchema = z.object({
   fullName: z.string().min(2, 'Введите имя и фамилию'),
@@ -48,6 +47,8 @@ export default function ProfileEdit() {
     user?.avatar || defaultAvatar
   );
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const schema = getSchema(isFreelancer);
 
   const {
@@ -60,10 +61,18 @@ export default function ProfileEdit() {
     defaultValues: user || {},
   });
 
-  const onSubmit = (data) => {
-    console.log('Профиль сохранён:', data);
-    updateUser(data);
-    alert('Профиль успешно обновлён!');
+  const onSubmit = async (data) => {
+    setIsSaving(true); // ← Включаем загрузку
+    try {
+      console.log('Профиль сохранён:', data);
+      updateUser(data);
+      alert('Профиль успешно обновлён!');
+    } catch (error) {
+      console.error('Ошибка сохранения:', error);
+      alert('Произошла ошибка при сохранении');
+    } finally {
+      setIsSaving(false); // ← Выключаем загрузку
+    }
   };
 
   // ← Обработчик загрузки нового аватара
@@ -98,11 +107,17 @@ export default function ProfileEdit() {
           />
         </CardBg>
         <main className={styles.profileMain}>
-          <ProfileAbout
-          register={register}
-          watch={watch}
-          errors={errors}
-          />
+          <ProfileAbout register={register} watch={watch} errors={errors} />
+          <ProfilePortfolio />
+          <div className={styles.saveWrapper}>
+            <SaveButton
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+              isLoading={isSaving}
+            >
+              Сохранить
+            </SaveButton>
+          </div>
         </main>
       </div>
     </div>

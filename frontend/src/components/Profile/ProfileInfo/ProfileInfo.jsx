@@ -1,5 +1,4 @@
 import InputForm from '../../../components/InputForm/InputForm';
-import Button from '../../../components/Button/Button';
 import styles from './ProfileInfo.module.css';
 
 export default function ProfileInfo({
@@ -47,6 +46,7 @@ export default function ProfileInfo({
                 placeholder="Имя Фамилия *"
                 register={register('fullName')}
                 error={errors.fullName}
+                inputSize="default"
               />
               <InputForm
                 className={styles.regionInput}
@@ -54,6 +54,7 @@ export default function ProfileInfo({
                 placeholder="Регион *"
                 register={register('region')}
                 error={errors.region}
+                inputSize="default"
               />
 
               {isFreelancer ? (
@@ -63,12 +64,14 @@ export default function ProfileInfo({
                     placeholder="Опыт работы"
                     register={register('experience')}
                     error={errors.experience}
+                    inputSize="default"
                   />
                   <InputForm
                     label="Ставка руб/час"
                     placeholder="Ставка руб/час"
                     register={register('rate')}
                     error={errors.rate}
+                    inputSize="default"
                   />
                 </>
               ) : null}
@@ -78,6 +81,7 @@ export default function ProfileInfo({
                   placeholder="Сфера деятельности *"
                   register={register('sphere')}
                   error={errors.sphere}
+                  inputSize="default"
                 />
                 <div className={styles.exampleText}>
                   Например:{' '}
@@ -102,6 +106,7 @@ export default function ProfileInfo({
                 placeholder="Телефон"
                 register={register('phone')}
                 error={errors.phone}
+                inputSize="default"
               />
               <InputForm
                 className={styles.emailInput}
@@ -109,24 +114,28 @@ export default function ProfileInfo({
                 placeholder="E-mail *"
                 register={register('email')}
                 error={errors.email}
+                inputSize="default"
               />
               <InputForm
                 label="Site"
                 placeholder="Site"
                 register={register('site')}
                 error={errors.site}
+                inputSize="default"
               />
               <InputForm
                 label="Telegram"
                 placeholder="Telegram"
                 register={register('telegram')}
                 error={errors.telegram}
+                inputSize="default"
               />
               <InputForm
                 label="Vk"
                 placeholder="Vk"
                 register={register('vk')}
                 error={errors.vk}
+                inputSize="default"
               />
             </div>
           </div>

@@ -90,6 +90,7 @@ function Register() {
               placeholder="Имя"
               label="Имя"
               name="name"
+              inputSize="small"
               error={errors.name?.message}
               {...register('name')}
             />
@@ -99,6 +100,7 @@ function Register() {
               placeholder="E-mail"
               label="E-mail"
               name="email"
+              inputSize="small"
               error={errors.email?.message}
               {...register('email')}
             />
@@ -108,6 +110,7 @@ function Register() {
               placeholder="Пароль"
               label="Пароль"
               name="password"
+              inputSize="small"
               error={errors.password?.message}
               showPasswordToggle={true}
               {...register('password')}
@@ -118,16 +121,13 @@ function Register() {
               placeholder="Повторите пароль"
               label="Повторите пароль"
               name="confirmPassword"
+              inputSize="small"
               error={errors.confirmPassword?.message}
               showPasswordToggle={true}
               {...register('confirmPassword')}
             />
 
-            <button
-              type="submit"
-              variant="primary"
-              className={styles['form__btn-reg']}
-            >
+            <button type="submit" className={styles['form__btn-reg']}>
               Зарегистрироваться
             </button>
 

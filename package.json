@@ -284,15 +284,19 @@
   },
   "lint-staged": {
     "frontend/**/*.{js,jsx,ts,tsx}": [
-      "cd frontend && npx eslint --fix",
-      "cd frontend && npx prettier --write"
+      "eslint --fix --config frontend/eslint.config.js"
     ],
     "backend/**/*.{js,jsx,ts,tsx}": [
-      "cd backend && npx eslint --fix",
-      "cd backend && npx prettier --write"
+      "eslint --fix"
+    ],
+    "frontend/**/*.{css,scss,json,md}": [
+      "prettier --write"
+    ],
+    "backend/**/*.{css,scss,json,md}": [
+      "prettier --write"
     ],
     "*.{json,md}": [
-      "npx prettier --write"
+      "prettier --write"
     ]
   },
   "repository": {

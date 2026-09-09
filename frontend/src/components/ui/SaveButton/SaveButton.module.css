@@ -1,0 +1,88 @@
+.save-btn {
+  padding: 14px 48px;
+  border-radius: 100px;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 18px;
+  line-height: 20px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.save-btn--primary {
+  width: 100%;
+  margin-top: 15px;
+  background: #38F838;
+  color: var(--text-color-primary);
+}
+
+.save-btn--primary:hover:not(:disabled) {
+  background: var(--bg-btn-active);
+  color: #ffffff;
+}
+
+.save-btn--secondary {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #e0e0e0;
+}
+
+.save-btn--secondary:hover:not(:disabled) {
+  background: #f5f6fa;
+  border-color: #1a1a1a;
+}
+
+.save-btn--outline {
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+
+.save-btn--outline:hover:not(:disabled) {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.save-btn--loading {
+  opacity: 0.8;
+}
+
+.save-btn__loader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.save-btn__loader svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .save-btn {
+    padding: 12px 32px;
+    font-size: 16px;
+    min-width: 150px;
+    width: 100%;
+  }
+}

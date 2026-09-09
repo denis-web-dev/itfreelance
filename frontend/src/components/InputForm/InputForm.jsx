@@ -17,6 +17,9 @@ const InputForm = forwardRef(
       className,
       placeholderClassName,
       maxLength,
+      width,
+      height,
+      inputSize = 'default',
       ...props
     },
     ref
@@ -33,6 +36,8 @@ const InputForm = forwardRef(
     };
     const errorMessage = typeof error === 'string' ? error : error?.message;
 
+    const sizeClass = styles[`form-input--${inputSize}`] || '';
+
     return (
       <div
         className={clsx(
@@ -40,6 +45,7 @@ const InputForm = forwardRef(
           type === 'password' && styles['form-group__password'],
           className
         )}
+        style={width ? { width } : undefined}
       >
         {isTextarea ? (
           <textarea
@@ -51,8 +57,13 @@ const InputForm = forwardRef(
             className={clsx(
               styles['form-input'],
               styles['form-textarea'],
+              sizeClass,
               error && styles['form-input-error']
             )}
+            style={{
+              ...(width ? { width } : {}),
+              ...(height ? { height } : {}),
+            }}
             {...field}
             {...props}
           />
@@ -66,14 +77,18 @@ const InputForm = forwardRef(
             maxLength={maxLength}
             className={clsx(
               styles['form-input'],
+              sizeClass,
               error && styles['form-input-error']
             )}
+            style={{
+              ...(width ? { width } : {}),
+              ...(height ? { height } : {}),
+            }}
             {...field}
             {...props}
           />
         )}
 
-        {/* Плейсхолдер как отдельный элемент (будет двигаться) */}
         {placeholder && (
           <span
             className={clsx(
