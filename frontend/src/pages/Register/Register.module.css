@@ -13,13 +13,14 @@
   align-items: center;
   min-height: 100vh;
   padding: 15px;
-  background: #eba4d6;
+  background: var(--color-bg-pink);
 }
 
 .block-bg {
   position: relative;
   display: grid;
   justify-items: center;
+  border-radius: 30px;
 }
 .bg-mobile-svg {
   display: none;
@@ -31,6 +32,7 @@
   left: 0;
   width: 100%;
   height: 100%;
+  border-radius: 30px;
   z-index: -1;
 }
 
@@ -83,7 +85,7 @@
   line-height: 22px;
   letter-spacing: -0.02em;
 
-  color: var(--text-color-primary);
+  color: var(--color-text-primary);
   margin-top: 8px;
   margin-bottom: 16px;
 
@@ -108,7 +110,7 @@
   line-height: 1.2;
   text-align: center;
 
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .account__link-registration {
@@ -126,7 +128,7 @@
 
   margin-right: 8px;
 
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .account__link-enter {
@@ -137,7 +139,7 @@
   letter-spacing: -0.02em;
   text-decoration-line: underline !important;
 
-  color: var(--text-color-primary);
+  color: var(--color-text-primary);
 }
 
 /* Media queries */
