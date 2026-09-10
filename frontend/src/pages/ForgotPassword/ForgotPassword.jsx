@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
 import CloseIcon from '../../components/Icons/CloseIcon';
-import Button from '../../components/Button/Button';
 import InputForm from '../../components/InputForm/InputForm';
 import clsx from 'clsx';
 import styles from './ForgotPassword.module.css';
@@ -78,14 +77,19 @@ function ForgotPassword() {
               {...register('email')}
             />
 
-            <Button type="submit" variant="primary">
+            <button
+              type="submit"
+              variant="primary"
+              className={styles['form__btn-forgot']}
+            >
               Отправить
-            </Button>
+            </button>
           </form>
 
           <div className={styles['account__link-forgot']}>
+            <span className={styles['account__forgot']}>Вспомнили пароль?</span>
             <Link to="/login" className={styles['account__link-enter']}>
-              ← Вернуться ко входу
+              Войти
             </Link>
           </div>
         </div>
