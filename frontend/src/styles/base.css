@@ -1,0 +1,11 @@
+.container {
+  max-width: 1840px;
+  width: 100%;
+  margin: 0 auto;
+}
+.fullWidthBlock {
+  width: 100%;
+  max-width: 1890px;
+  margin: 0 auto;
+  padding: 0 25px;
+}

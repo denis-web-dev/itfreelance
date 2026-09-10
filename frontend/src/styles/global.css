@@ -1,0 +1,23 @@
+@import './reset.css';
+@import './vars.css';
+@import './fonts.css';
+@import './base.css';
+@import './style.css';
+
+html,
+body {
+  font-family: var(--font-primary);
+  color: var(--text-color-primary);
+
+  /* aspect-ratio: 1440; */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+
+  cursor: url('../assets/icons/cursors.cur'), auto;
+}
+
+a {
+  color: var(--text-color-active);
+}

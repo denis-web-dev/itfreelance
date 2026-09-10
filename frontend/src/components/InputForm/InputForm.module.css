@@ -1,0 +1,286 @@
+@import '../../styles/vars.css';
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px white inset !important;
+  background-color: white !important;
+  background: white !important;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 17px;
+}
+
+.form-input {
+  width: 606px;
+  height: 56px;
+  padding: 16px 24px;
+  background: #ffffff;
+  border: 1.5px solid #b7b7b7;
+  border-radius: 100px;
+  font-size: 18px;
+  font-family: var(--font-secondery);
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border-color: #37f737;
+  caret-color: #37f737;
+  outline: none;
+  padding-right: 40px;
+}
+
+.form-input::placeholder {
+  color: transparent;
+}
+
+.form-textarea {
+  width: 915px;
+  height: 445px;
+  padding: 16px 24px;
+  border: 1px solid #b7b7b7;
+  border-radius: 16px;
+  font-family: var(--font-secondery);
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--text-color-primary);
+  background: #fff;
+  resize: vertical;
+  min-height: 150px;
+  transition: border-color 0.2s;
+}
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--bg-btn-normal);
+}
+.form-textarea__counter {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  text-align: right;
+  font-size: 14px;
+  color: var(--text-color-secondary);
+}
+
+
+.error-text {
+  color: #e74c3c;
+  font-size: 14px;
+  font-family: var(--font-secondery);
+}
+
+.form-placeholder {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7b7b7b;
+  font-size: 18px;
+  font-family: var(--font-secondery);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: none;
+  padding: 0 4px;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+
+.form-input:focus ~ .form-placeholder,
+.form-input:not(:placeholder-shown) ~ .form-placeholder {
+  transform: translateY(-50%) translateX(300px);
+  opacity: 0;
+  font-size: 16px;
+}
+
+.form-input:focus ~ .form-placeholder--password {
+  transform: translateY(-50%) translateX(250px);
+}
+
+.toggle-password {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+}
+
+/* Ошибка */
+.error {
+  position: absolute;
+  font-family: var(--font-secondery);
+  font-size: 14px;
+  left: 12px;
+  color: #cc4422;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-input-error {
+  border-color: #cc4422 !important;
+}
+
+.form-input[type='password'] {
+  padding-right: 40px !important;
+}
+
+/* По умолчанию (606px) */
+.form-input--default {
+  width: 606px;
+}
+
+/* Маленький (430px) - для форм входа */
+.form-input--small {
+  width: 430px;
+}
+
+/* Большой (915px) - для textarea */
+.form-input--large {
+  width: 915px;
+}
+
+/* На всю ширину родителя */
+.form-input--full {
+  width: 100%;
+}
+
+/* ===== ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ ===== */
+
+/* Для форм входа */
+.form-input--login {
+  width: 430px;
+}
+
+/* Для форм профиля */
+.form-input--profile {
+  width: 606px;
+}
+
+/* Для textarea */
+.form-input--textarea {
+  width: 915px;
+}
+
+/* Медиа-запросы */
+@media (max-width: 1024px) {
+  .form-input--default {
+    width: 380px;
+  }
+
+  .form-input--small {
+    width: 320px;
+  }
+
+  .form-input--large {
+    width: 600px;
+  }
+  .form-input {
+    width: 380px;
+    height: 48px;
+    padding: 12px 20px;
+  }
+
+  .form-input:focus ~ .form-placeholder,
+  .form-input:not(:placeholder-shown) ~ .form-placeholder {
+    transform: translateY(-50%) translateX(250px);
+  }
+
+  .toggle-password {
+    right: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+   .form-input--default {
+    width: 330px;
+  }
+
+  .form-input--small {
+    width: 280px;
+  }
+
+  .form-input--large {
+    width: 400px;
+  }
+
+  .form-input--full {
+    width: 100%;
+  }
+  .form-input {
+    width: 330px;
+    height: 40px;
+    padding: 12px 20px;
+  }
+
+  .form-placeholder {
+    font-size: 16px;
+  }
+
+  .form-input:focus ~ .form-placeholder,
+  .form-input:not(:placeholder-shown) ~ .form-placeholder {
+    transform: translateY(-50%) translateX(200px);
+    font-size: 14px;
+  }
+
+  .error {
+    font-size: 12px;
+    bottom: -18px;
+  }
+}
+
+@media (max-width: 425px) {
+  .form-input--default {
+    width: 330px;
+  }
+
+  .form-input--small {
+    width: 280px;
+  }
+
+  .form-input--large {
+    width: 280px;
+  }
+  .form-input {
+    width: 330px;
+    height: 48px;
+    padding: 12px 24px;
+  }
+
+  .form-input:focus ~ .form-placeholder,
+  .form-input:not(:placeholder-shown) ~ .form-placeholder {
+    transform: translateY(-50%) translateX(180px);
+  }
+}
+
+@media (max-width: 320px) {
+  .form-input {
+    width: 280px;
+    height: 48px;
+    padding: 12px 24px;
+  }
+
+  .form-input:focus ~ .form-placeholder,
+  .form-input:not(:placeholder-shown) ~ .form-placeholder {
+    transform: translateY(-50%) translateX(150px);
+  }
+
+  .toggle-password {
+    right: 10px;
+  }
+}

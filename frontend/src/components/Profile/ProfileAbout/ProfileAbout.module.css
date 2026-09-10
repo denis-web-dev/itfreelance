@@ -1,0 +1,127 @@
+/* ProfileAbout.module.css */
+
+.profileAbout {
+  width: 100%;
+  background: var(--color-bg);
+  border-radius: 30px;
+  padding: 25px;
+  margin-top: 49px;
+}
+
+.aboutTitle {
+  font-family: var(--font-primary);
+  font-size: 35px;
+  font-weight: 400;
+  line-height: 43px;
+  margin-bottom: 40px;
+  color: var(--text-color-primary);
+}
+
+.aboutContent {
+  display: flex;
+  gap: 163px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.aboutLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.aboutTextarea{
+  margin-bottom: 0;
+}
+
+.aboutTextarea textarea {
+  width: 100%;
+  min-height: 150px;
+  border: 1px solid #b7b7b7;
+  border-radius: 16px;
+  font-family: var(--font-secondery);
+  font-size: 18px;
+  line-height: 24px;
+  background: #fff;
+  resize: vertical;
+  overflow-y: auto;
+  transition: border-color 0.3s ease;
+}
+
+.aboutTextarea textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.aboutTextarea textarea::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.aboutTextarea textarea::-webkit-scrollbar-thumb {
+  background: #b7b7b7;
+  border-radius: 10px;
+}
+
+.aboutTextarea textarea::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.aboutTextarea.warningBorder textarea {
+  border-color: #ffa500;
+}
+
+.aboutTextarea.dangerBorder textarea {
+  border-color: #ff4444;
+}
+.aboutPlaceholder {
+  font-size: 18px;
+  top: 23px;
+  left: 24px;
+  padding: 0;
+}
+.textareaWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.aboutRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 162px;
+  align-items: flex-end;
+}
+
+.skillsBlock,
+.toolsBlock {
+  display: flex;
+  flex-direction: column;
+}
+.inputSkills,
+.inputTools {
+  margin-bottom: 10px;
+}
+
+.hint {
+  font-family: var(--font-secondery);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--text-color-secondary);
+}
+
+.charCount {
+  position: absolute;
+  font-family: var(--font-secondery);
+  font-size: 14px;
+  color: var(--text-color-secondary);
+  bottom: 16px;
+  left: 24px;
+}
+.charCount.warning {
+  color: #f37d39;
+}
+
+.charCount.danger {
+  color: #fd4040;
+}
