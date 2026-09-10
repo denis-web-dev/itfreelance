@@ -9,7 +9,7 @@ import unusedImports from 'eslint-plugin-unused-imports';
 
 export default [
   {
-    ignores: ['dist', 'node_modules', 'build', 'coverage'],
+    ignores: ['dist', 'node_modules', 'build', 'coverage', 'eslint.config.js'],
   },
   {
     files: ['**/*.{js,jsx}'],

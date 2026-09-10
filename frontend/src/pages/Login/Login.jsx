@@ -8,7 +8,7 @@ import styles from './Login.module.css';
 import { useState } from 'react';
 import InputForm from '../../components/InputForm/InputForm';
 
-// Схема валидации (Zod) — точно как в вашей верстке
+// Схема валидации (Zod) — точно как в вашей в моей верстке
 const schema = z.object({
   email: z.string().email('Некорректно введен email'),
   password: z.string().min(6, 'Пароль минимум 6 символов'),

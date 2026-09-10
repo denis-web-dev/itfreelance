@@ -283,17 +283,14 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "frontend/**/*.{js,jsx,ts,tsx}": [
+    "frontend/src/**/*.{js,jsx}": [
       "eslint --fix --config frontend/eslint.config.js"
-    ],
-    "backend/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
     ],
     "frontend/**/*.{css,scss,json,md}": [
       "prettier --write"
     ],
-    "backend/**/*.{css,scss,json,md}": [
-      "prettier --write"
+    "backend/src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
     ],
     "*.{json,md}": [
       "prettier --write"

@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx",
-    "format": "prettier --write \"**/*.{js,jsx,css,md,json}\"",
-    "preview": "vite preview",
-    "prepare": "husky"
+    "lint": "eslint src --config eslint.config.js",
+    "lint:fix": "eslint src --fix --config eslint.config.js",
+    "format": "prettier --write \"src/**/*.{js,jsx,css,md,json}\"",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
