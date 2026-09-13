@@ -1,5 +1,47 @@
+# Dependencies
 node_modules/
 **/node_modules/
+
+# Environment variables (секреты)
 .env
+.env.*
 **/.env
+**/.env.*
 backend/.env
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Vite / Frontend
+frontend/dist/
+
+# Backend
+backend/build/
+backend/dist/
+
+# Prisma
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# Misc
+*.local
+.cache/
+coverage/
