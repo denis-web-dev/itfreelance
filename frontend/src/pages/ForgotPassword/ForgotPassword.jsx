@@ -77,11 +77,7 @@ function ForgotPassword() {
               {...register('email')}
             />
 
-            <button
-              type="submit"
-              variant="primary"
-              className={styles['form__btn-forgot']}
-            >
+            <button type="submit" className={styles['form__btn-forgot']}>
               Отправить
             </button>
           </form>
