@@ -48,7 +48,7 @@ input:-webkit-autofill:active {
   font-family: var(--font-secondery);
   font-size: 18px;
   line-height: 24px;
-  color: var(--text-color-primary);
+  color: var(--color-text-primary);
   background: #fff;
   resize: vertical;
   min-height: 150px;
@@ -64,9 +64,8 @@ input:-webkit-autofill:active {
   left: 24px;
   text-align: right;
   font-size: 14px;
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
-
 
 .error-text {
   color: #e74c3c;
@@ -89,7 +88,6 @@ input:-webkit-autofill:active {
   white-space: nowrap;
   z-index: 1;
 }
-
 
 .form-input:focus ~ .form-placeholder,
 .form-input:not(:placeholder-shown) ~ .form-placeholder {
@@ -207,7 +205,7 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 768px) {
-   .form-input--default {
+  .form-input--default {
     width: 330px;
   }
 

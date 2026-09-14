@@ -73,7 +73,7 @@
   line-height: 31px;
   top: 292px;
   left: 30px;
-  color: var(--bg-btn-active);
+  color: var(--colorCloseBtn-primary-active);
 }
 
 .customer {
