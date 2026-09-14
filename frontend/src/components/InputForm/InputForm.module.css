@@ -16,7 +16,7 @@ input:-webkit-autofill:active {
 }
 
 .form-input {
-  width: 606px;
+  width: 430px;
   height: 56px;
   padding: 16px 24px;
   background: #ffffff;
@@ -48,7 +48,7 @@ input:-webkit-autofill:active {
   font-family: var(--font-secondery);
   font-size: 18px;
   line-height: 24px;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   background: #fff;
   resize: vertical;
   min-height: 150px;
@@ -64,7 +64,7 @@ input:-webkit-autofill:active {
   left: 24px;
   text-align: right;
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--colorText-secondary);
 }
 
 .error-text {
@@ -139,9 +139,9 @@ input:-webkit-autofill:active {
 }
 
 /* По умолчанию (606px) */
-.form-input--default {
+/* .form-input--default {
   width: 606px;
-}
+} */
 
 /* Маленький (430px) - для форм входа */
 .form-input--small {

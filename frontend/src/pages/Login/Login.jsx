@@ -107,7 +107,6 @@ function Login() {
                   className={styles['form__checkbox']}
                 />
 
-                {/* ЕДИНСТВЕННЫЙ SVG, который меняет стили через clsx */}
                 <svg
                   width="24"
                   height="24"
@@ -153,7 +152,6 @@ function Login() {
               </Link>
             </div>
 
-            {/* Кнопка Войти */}
             <button type="submit" className={styles['form__btn']}>
               Войти
             </button>
