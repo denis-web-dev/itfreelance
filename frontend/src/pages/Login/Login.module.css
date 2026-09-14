@@ -262,6 +262,30 @@ input:not(:placeholder-shown) + label + .form__star {
 
 /* Media */
 
+/* для экранов от 1921px до 2560px */
+@media (min-width: 1921px) {
+  .main-title-entrance {
+    left: 592px;
+    top: 276px;
+  }
+}
+
+/* для экранов от 2561px до 3200px */
+@media (min-width: 2561px) {
+  .main-title-entrance {
+    left: 895px;
+    top: 133px;
+  }
+}
+
+/* для 4K */
+@media (min-width: 3201px) {
+  .main-title-entrance {
+    left: 1295px;
+    top: 133px;
+  }
+}
+
 @media (max-width: 1440px) {
   .main-title-entrance {
     position: absolute;
