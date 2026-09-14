@@ -24,7 +24,7 @@
 
 .navLink {
   font-size: 16px;
-  color: var(--text-color-primary);
+  color: var(--color-text-primary);
   text-decoration: none;
   background: #dedede;
   border: 1px solid #dedede;
@@ -83,9 +83,9 @@
 }
 
 .profileHeaderEmailLink {
- position: absolute;
-    top: 16px;
-    left: 15px;
+  position: absolute;
+  top: 16px;
+  left: 15px;
 }
 
 .profileHeaderEmail:hover {

@@ -12,12 +12,12 @@
   font-weight: 400;
   line-height: 43px;
   margin-bottom: 40px;
-  color: var(--text-color-primary);
+  color: var(--color-text-primary);
 }
 
 /* ===== СЕТКА ===== */
 .profileGrid {
-display: flex;
+  display: flex;
   gap: 20px;
 }
 
@@ -148,7 +148,7 @@ display: flex;
 .portfolio-item-add__text {
   font-family: var(--font-secondery);
   font-size: 18px;
-  color: var(--text-color-secondary);
+  color: var(--color-text-secondary);
 }
 
 .portfolio-item-add__input {

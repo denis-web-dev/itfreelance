@@ -1,18 +1,57 @@
 :root {
   /*  Color BG */
-  --color-bg-forgot: #0CB761;
+  --color-bg-forgot: #0cb761;
   --color-bg: #ffffff;
+  --color-bg-pink: #eca4d7;
   /* Color */
   --color-grey: #dedede;
   --color-error: #cc4422;
   /*  Text */
-  --text-color-primary: #1a1a1a;
-  --text-color-active: #1a1a1a;
-  --text-color-secondary: #7b7b7b;
-  --text-hover: #b7b7b7;
-  --text-disabled: #b7b7b7;
-  /*  Buttons */
-  --bg-btn-active: #1a1a1a;
+  --color-text-primary: #1a1a1a;
+  --color-text-active: #1a1a1a;
+  --color-text-secondary: #7b7b7b;
+  --color-text-hover: #b7b7b7;
+  --color-text-disabled: #b7b7b7;
+  /*  Buttons Primary*/
+  --colorBtn-primary-default: #38f838;
+  --colorBtn-primary-hover: #1a1a1a;
+  --colorBtn-primary-active: #29e429;
+  --colorBtn-primary-disabled: #38f838;
+  /*  Buttons Secondary*/
+  --colorBtn-secondary-default: #dedede;
+  --colorBtn-secondary-hover: #d9d9d9;
+  --colorBtn-secondary-active: #d9d9d9;
+  --colorBtn-secondary-disabled: #dedede;
+  /*  Buttons Tertiary*/
+  --colorBtn-tertiary-default: #1a1a1a;
+  --colorBtn-tertiary-hover: #38f838;
+  --colorBtn-tertiary-active: #000000;
+  --colorBtn-tertiary-disabled: #1a1a1a;
+  /*  Buttons Outline*/
+  --colorBtn-outline-default: #38f838;
+  --colorBtn-outline-hover: #38f838;
+  --colorBtn-outline-active: #29e429;
+  --colorBtn-outline-disabled: #38f838;
+  /*  Buttons Close Primary */
+  --colorCloseBtn-primary-active: #1a1a1a;
+  --colorCloseBtn-primary-default: #1a1a1a;
+  --colorCloseBtn-primary-hover: #1a1a1a;
+  --colorCloseBtn-primary-disabled: #1a1a1a;
+  /*  Buttons Close Secondary*/
+  --colorCloseBtn-secondary-default: #dedede;
+  --colorCloseBtn-secondary-hover: #d9d9d9;
+  --colorCloseBtn-secondary-active: #d9d9d9;
+  --colorCloseBtn-secondary-disabled: #EBEBEB;
+  /*  Buttons Close Tertiary*/
+  --colorCloseBtn-tertiary-default: #1a1a1a;
+  --colorCloseBtn-tertiary-hover: #38f838;
+  --colorCloseBtn-tertiary-active: #000000;
+  --colorCloseBtn-tertiary-disabled: #1a1a1a;
+  /*  Buttons Close Outline*/
+  --colorCloseBtn-outline-default: #38f838;
+  --colorCloseBtn-outline-hover: #38f838;
+  --colorCloseBtn-outline-active: #29e429;
+  --colorCloseBtn-outline-disabled: #38f838;
   --bg-btn-normal: #51d62c;
   --bg-btn-diabled: hsl(107, 67%, 51%, 64%);
   /*  Bg Wrapper cards */
