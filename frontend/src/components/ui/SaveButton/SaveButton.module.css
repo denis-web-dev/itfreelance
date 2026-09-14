@@ -25,7 +25,7 @@
   width: 100%;
   margin-top: 15px;
   background: #38f838;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
 }
 
 .save-btn--primary:hover:not(:disabled) {

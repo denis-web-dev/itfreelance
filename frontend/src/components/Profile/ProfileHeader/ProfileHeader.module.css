@@ -24,7 +24,7 @@
 
 .navLink {
   font-size: 16px;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   text-decoration: none;
   background: #dedede;
   border: 1px solid #dedede;
