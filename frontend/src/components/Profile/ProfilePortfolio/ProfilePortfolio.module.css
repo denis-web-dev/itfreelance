@@ -1,6 +1,6 @@
 .profilePortfolio {
   width: 100%;
-  background: var(--color-bg);
+  background: var(--colorBg-white);
   border-radius: 30px;
   padding: 25px;
   margin-top: 15px;
@@ -12,7 +12,7 @@
   font-weight: 400;
   line-height: 43px;
   margin-bottom: 40px;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
 }
 
 /* ===== СЕТКА ===== */
@@ -148,7 +148,7 @@
 .portfolio-item-add__text {
   font-family: var(--font-secondery);
   font-size: 18px;
-  color: var(--color-text-secondary);
+  color: var(--colorText-secondary);
 }
 
 .portfolio-item-add__input {

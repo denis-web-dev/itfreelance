@@ -1,17 +1,17 @@
 :root {
   /*  Color BG */
-  --color-bg-forgot: #0cb761;
-  --color-bg: #ffffff;
-  --color-bg-pink: #eca4d7;
+  --colorBg-forgot: #0cb761;
+  --colorBg-white: #ffffff;
+  --colorBg-pink: #eca4d7;
   /* Color */
   --color-grey: #dedede;
   --color-error: #cc4422;
   /*  Text */
-  --color-text-primary: #1a1a1a;
-  --color-text-active: #1a1a1a;
-  --color-text-secondary: #7b7b7b;
-  --color-text-hover: #b7b7b7;
-  --color-text-disabled: #b7b7b7;
+  --colorText-primary: #1a1a1a;
+  --colorText-active: #1a1a1a;
+  --colorText-secondary: #7b7b7b;
+  --colorText-hover: #b7b7b7;
+  --colorText-disabled: #b7b7b7;
   /*  Buttons Primary*/
   --colorBtn-primary-default: #38f838;
   --colorBtn-primary-hover: #1a1a1a;
@@ -41,7 +41,7 @@
   --colorCloseBtn-secondary-default: #dedede;
   --colorCloseBtn-secondary-hover: #d9d9d9;
   --colorCloseBtn-secondary-active: #d9d9d9;
-  --colorCloseBtn-secondary-disabled: #EBEBEB;
+  --colorCloseBtn-secondary-disabled: #ebebeb;
   /*  Buttons Close Tertiary*/
   --colorCloseBtn-tertiary-default: #1a1a1a;
   --colorCloseBtn-tertiary-hover: #38f838;

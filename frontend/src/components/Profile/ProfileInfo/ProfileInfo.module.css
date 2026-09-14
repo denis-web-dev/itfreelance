@@ -109,7 +109,7 @@
   font-family: var(--font-primary);
   font-size: 14px;
   line-height: 1.2;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   text-decoration: underline;
 }
 .exampleText {
@@ -118,7 +118,7 @@
   font-family: var(--font-secondery);
   font-size: 16px;
   line-height: 1.2;
-  color: var(--color-text-secondary);
+  color: var(--colorText-secondary);
 }
 
 .profileBtn {
@@ -129,7 +129,7 @@
   font-size: 18px;
   line-height: 20px;
   background: #37f737;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   text-decoration: none;
   text-align: center;
   cursor: pointer;
