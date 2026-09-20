@@ -1,11 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { authRateLimiter } from './middleware/rateLimiter.js';
 import errorHandler from './middleware/errorHandler.js';
 import authRoutes from './api/v1/auth/auth.routes.js';
 import { swaggerUi, specs } from './config/swagger.js';
 
 const app = express();
+
+app.use(helmet());
 
 app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], credentials: true }));
 app.use(express.json());
