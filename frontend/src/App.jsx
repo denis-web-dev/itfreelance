@@ -7,20 +7,20 @@ import ResetPassword from './pages/ResetPassword/ResetPassword.jsx';
 import ProfileEdit from './pages/Profile/ProfileEdit.jsx';
 
 function App() {
-  return (
-    <div className="app-container">
-      {' '}
-      <Routes>
-        <Route path="/" element={<Navigate to="/create-account" replace />} />
-        <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/profile-edit" element={<ProfileEdit />} />
-      </Routes>
-    </div>
-  );
+	return (
+		<div className="app-container">
+			{' '}
+			<Routes>
+				<Route path="/" element={<Navigate to="/create-account" replace />} />
+				<Route path="/create-account" element={<CreateAccount />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/register" element={<Register />} />
+				<Route path="/forgot-password" element={<ForgotPassword />} />
+				<Route path="/reset-password" element={<ResetPassword />} />
+				<Route path="/profile-edit" element={<ProfileEdit />} />
+			</Routes>
+		</div>
+	);
 }
 
 export default App;
