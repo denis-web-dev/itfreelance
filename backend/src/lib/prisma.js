@@ -1,4 +1,3 @@
-// backend/src/lib/prisma.js
 // Подключение к базе данных через Prisma
 
 import { PrismaClient } from '@prisma/client';
