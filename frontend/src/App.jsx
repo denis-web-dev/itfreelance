@@ -5,6 +5,7 @@ import Register from './pages/Register/Register.jsx';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword/ResetPassword.jsx';
 import ProfileEdit from './pages/Profile/ProfileEdit.jsx';
+import Orders from './pages/Orders/Orders.jsx';
 
 function App() {
 	return (
@@ -18,6 +19,7 @@ function App() {
 				<Route path="/forgot-password" element={<ForgotPassword />} />
 				<Route path="/reset-password" element={<ResetPassword />} />
 				<Route path="/profile-edit" element={<ProfileEdit />} />
+				<Route path="/orders" element={<Orders />} />
 			</Routes>
 		</div>
 	);
