@@ -2,6 +2,29 @@
 node_modules/
 **/node_modules/
 
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/
+build/
+
 # Environment variables (секреты)
 .env
 .env.*
@@ -45,3 +68,4 @@ backend/prisma/*.db-journal
 *.local
 .cache/
 coverage/
+
