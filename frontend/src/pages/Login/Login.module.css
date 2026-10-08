@@ -18,6 +18,9 @@
   position: relative;
   display: grid;
   justify-items: center;
+  max-width: 1890px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .block-bg__svg {
@@ -37,15 +40,13 @@
 
 .block-bg-close-svg {
   fill: var(--color-grey);
-  rotate: 45deg;
   width: 18px;
   height: 18px;
-  rotate: 45deg;
 }
 
 .block-bg-close-btn {
   position: absolute;
-  right: 22%;
+  right: 240px;
   top: 33px;
   padding-top: 5px;
   width: 48px;
@@ -57,8 +58,8 @@
 .main-title-entrance {
   position: absolute;
   font-family: 'Unbounded';
-  left: 595px;
-  top: 290px;
+  left: 280px;
+  top: 137px;
   font-size: 80px;
   line-height: 99px;
   letter-spacing: -0.02em;
@@ -72,6 +73,10 @@
   left: 50%;
   top: 33%;
   transform: translateX(-50%);
+}
+
+.InputFormlogin {
+  width: 430px;
 }
 
 .form-group input:focus {
@@ -99,7 +104,7 @@ input:not(:placeholder-shown) + label + .form__star {
 }
 
 .form-group input::placeholder {
-  color: var(--color-text-secondary);
+  color: var(--colorText-secondary);
   font-family: var(--font-secondery);
   font-size: 18px;
 }
@@ -133,7 +138,7 @@ input:not(:placeholder-shown) + label + .form__star {
 
   gap: 12px;
   font-family: var(--font-primary);
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   font-size: 18px;
 }
 
@@ -201,7 +206,7 @@ input:not(:placeholder-shown) + label + .form__star {
   font-size: 16px;
   line-height: 17px;
   text-decoration: underline !important;
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
 }
 
 .form__btn {
@@ -218,7 +223,7 @@ input:not(:placeholder-shown) + label + .form__star {
   line-height: 20px;
   letter-spacing: -0.02em;
 
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   margin-top: 30px;
 
   &.form__btn:active {
@@ -256,6 +261,30 @@ input:not(:placeholder-shown) + label + .form__star {
 }
 
 /* Media */
+
+/* для экранов от 1921px до 2560px */
+@media (min-width: 1921px) {
+  .main-title-entrance {
+    left: 592px;
+    top: 276px;
+  }
+}
+
+/* для экранов от 2561px до 3200px */
+@media (min-width: 2561px) {
+  .main-title-entrance {
+    left: 895px;
+    top: 133px;
+  }
+}
+
+/* для 4K */
+@media (min-width: 3201px) {
+  .main-title-entrance {
+    left: 1295px;
+    top: 133px;
+  }
+}
 
 @media (max-width: 1440px) {
   .main-title-entrance {

@@ -12,7 +12,7 @@ input:-webkit-autofill:active {
 
 .form-group {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 17px;
 }
 
 .form-input {
@@ -39,6 +39,40 @@ input:-webkit-autofill:active {
   color: transparent;
 }
 
+.form-textarea {
+  width: 915px;
+  height: 445px;
+  padding: 16px 24px;
+  border: 1px solid #b7b7b7;
+  border-radius: 16px;
+  font-family: var(--font-secondery);
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--colorText-primary);
+  background: #fff;
+  resize: vertical;
+  min-height: 150px;
+  transition: border-color 0.2s;
+}
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--bg-btn-normal);
+}
+.form-textarea__counter {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  text-align: right;
+  font-size: 14px;
+  color: var(--colorText-secondary);
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 14px;
+  font-family: var(--font-secondery);
+}
+
 .form-placeholder {
   position: absolute;
   left: 24px;
@@ -58,7 +92,7 @@ input:-webkit-autofill:active {
 .form-input:focus ~ .form-placeholder,
 .form-input:not(:placeholder-shown) ~ .form-placeholder {
   transform: translateY(-50%) translateX(300px);
-  opacity: 0.8;
+  opacity: 0;
   font-size: 16px;
 }
 
@@ -88,17 +122,12 @@ input:-webkit-autofill:active {
   position: absolute;
   font-family: var(--font-secondery);
   font-size: 14px;
-  bottom: 20px;
-  left: 456px;
+  left: 12px;
   color: #cc4422;
   white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 6px;
-}
-.error__svg {
-  position: absolute;
-  left: -15px;
 }
 
 .form-input-error {
@@ -106,11 +135,59 @@ input:-webkit-autofill:active {
 }
 
 .form-input[type='password'] {
-  padding-right: 40px !important; /* Увеличиваем отступ, чтобы освободить место для обоих иконок */
+  padding-right: 40px !important;
+}
+
+/* По умолчанию (606px) */
+/* .form-input--default {
+  width: 606px;
+} */
+
+/* Маленький (430px) - для форм входа */
+.form-input--small {
+  width: 430px;
+}
+
+/* Большой (915px) - для textarea */
+.form-input--large {
+  width: 915px;
+}
+
+/* На всю ширину родителя */
+.form-input--full {
+  width: 100%;
+}
+
+/* ===== ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ ===== */
+
+/* Для форм входа */
+.form-input--login {
+  width: 430px;
+}
+
+/* Для форм профиля */
+.form-input--profile {
+  width: 606px;
+}
+
+/* Для textarea */
+.form-input--textarea {
+  width: 915px;
 }
 
 /* Медиа-запросы */
 @media (max-width: 1024px) {
+  .form-input--default {
+    width: 380px;
+  }
+
+  .form-input--small {
+    width: 320px;
+  }
+
+  .form-input--large {
+    width: 600px;
+  }
   .form-input {
     width: 380px;
     height: 48px;
@@ -128,6 +205,21 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 768px) {
+  .form-input--default {
+    width: 330px;
+  }
+
+  .form-input--small {
+    width: 280px;
+  }
+
+  .form-input--large {
+    width: 400px;
+  }
+
+  .form-input--full {
+    width: 100%;
+  }
   .form-input {
     width: 330px;
     height: 40px;
@@ -151,6 +243,17 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 425px) {
+  .form-input--default {
+    width: 330px;
+  }
+
+  .form-input--small {
+    width: 280px;
+  }
+
+  .form-input--large {
+    width: 280px;
+  }
   .form-input {
     width: 330px;
     height: 48px;

@@ -1,0 +1,127 @@
+/* src/components/ui/CloseButton/CloseButton.module.css */
+
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #1a1a1a;
+  color: #dedede;
+  flex-shrink: 0;
+}
+
+.close-btn-svg {
+  display: block;
+  fill: currentColor;
+}
+
+.close-btn--small {
+  width: 27px;
+  height: 27px;
+}
+
+.close-btn--small .close-btn-svg {
+  width: 14px;
+  height: 14px;
+}
+
+.close-btn--medium {
+  width: 48px;
+  height: 48px;
+}
+
+.close-btn--medium .close-btn-svg {
+  width: 16px;
+  height: 16px;
+}
+
+.close-btn--large {
+  width: 56px;
+  height: 56px;
+}
+
+.close-btn--large .close-btn-svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===== ВАРИАНТЫ ===== */
+
+/* Стандартный (черный) */
+.close-btn--default {
+  background: #1a1a1a;
+  color: #dedede;
+}
+
+.close-btn--default:hover {
+  background: #333;
+}
+
+/* Темный (для светлого фона) */
+.close-btn--dark {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: 2px dashed #1a1a1a;
+}
+
+.close-btn--dark:hover {
+  background: none;
+  color: #1a1a1a;
+  border: 2px dashed #1a1a1a;
+}
+
+/* Светлый (для темного фона) */
+.close-btn--light {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.close-btn--light:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Прозрачный (для карточек) */
+.close-btn--transparent {
+  background: #dedede;
+  color: #1a1a1a;
+  border: 2px dashed #d9d9d9;
+}
+
+
+
+@media (max-width: 1024px) {
+  .close-btn--large {
+    width: 37px;
+    height: 37px;
+  }
+
+  .close-btn--large .close-btn-svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .close-btn--large {
+    width: 26px;
+    height: 26px;
+  }
+
+  .close-btn--large .close-btn-svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .close-btn--medium {
+    width: 26px;
+    height: 26px;
+  }
+
+  .close-btn--medium .close-btn-svg {
+    width: 12px;
+    height: 12px;
+  }
+}

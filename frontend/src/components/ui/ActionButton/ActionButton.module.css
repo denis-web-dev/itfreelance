@@ -1,0 +1,64 @@
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.action-btn--small {
+  width: 40px;
+  height: 40px;
+}
+
+.action-btn--small svg {
+  width: 14px;
+  height: 14px;
+}
+
+.action-btn--medium {
+  width: 48px;
+  height: 48px;
+}
+
+.action-btn--medium svg {
+  width: 18px;
+  height: 18px;
+}
+
+.action-btn--add {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: 2px dashed #1a1a1a;
+}
+
+.action-btn--add:hover {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.action-btn--edit {
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+}
+
+.action-btn--edit:hover {
+  background: #4a6cf7;
+  color: #ffffff;
+}
+
+.action-btn--delete {
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+}
+
+.action-btn--delete:hover {
+  background: #ff4444;
+  color: #ffffff;
+}

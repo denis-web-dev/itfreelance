@@ -13,7 +13,7 @@
   align-items: center;
   min-height: 100vh;
   padding: 15px;
-  background: var(--color-bg-pink);
+  background: var(--colorBg-pink);
 }
 
 .block-bg {
@@ -38,8 +38,8 @@
 
 .block-bg-close-btn {
   position: absolute;
-  right: 0;
-  top: 33px;
+  right: 216px;
+  top: 34px;
   padding-top: 5px;
   width: 48px;
   height: 48px;
@@ -57,12 +57,11 @@
 .main-title-registration {
   position: absolute;
   font-family: 'Unbounded';
-  left: 595px;
-  top: 285px;
+  left: 273px;
+  top: 137px;
   font-size: 80px;
   line-height: 99px;
   letter-spacing: -0.02em;
-  text-align: left;
   color: #000;
   z-index: 1;
 }
@@ -86,7 +85,7 @@
   line-height: 22px;
   letter-spacing: -0.02em;
 
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
   margin-top: 8px;
   margin-bottom: 16px;
 
@@ -111,7 +110,7 @@
   line-height: 1.2;
   text-align: center;
 
-  color: var(--color-text-secondary);
+  color: var(--colorText-secondary);
 }
 
 .account__link-registration {
@@ -129,7 +128,7 @@
 
   margin-right: 8px;
 
-  color: var(--color-text-secondary);
+  color: var(--colorText-secondary);
 }
 
 .account__link-enter {
@@ -140,7 +139,7 @@
   letter-spacing: -0.02em;
   text-decoration-line: underline !important;
 
-  color: var(--color-text-primary);
+  color: var(--colorText-primary);
 }
 
 /* Media queries */

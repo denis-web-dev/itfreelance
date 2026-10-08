@@ -1,0 +1,10 @@
+.wrapper {
+  background-color: #0cb660;
+  font-family: var(--font-primary);
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.profileMain {
+  position: relative;
+}
