@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import jwt from 'jsonwebtoken';
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
@@ -20,3 +21,14 @@ export const verifyAccessToken = (token) => {
 export const verifyRefreshToken = (token) => {
 	return jwt.verify(token, REFRESH_SECRET);
 };
+=======
+import crypto from 'node:crypto';
+
+export const generateAccessToken = (payload) =>
+	jwt.sign(payload, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES });
+
+export const generateRefreshToken = (payload) =>
+	jwt.sign({ ...payload, jti: crypto.randomUUID() }, REFRESH_SECRET, {
+		expiresIn: REFRESH_EXPIRES,
+	});
+>>>>>>> Stashed changes
