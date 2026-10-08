@@ -1,5 +1,5 @@
-<<<<<<< Updated upstream
 import jwt from 'jsonwebtoken';
+import crypto from 'node:crypto';
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
@@ -11,7 +11,10 @@ export const generateAccessToken = (payload) => {
 };
 
 export const generateRefreshToken = (payload) => {
-	return jwt.sign(payload, REFRESH_SECRET, { expiresIn: REFRESH_EXPIRES });
+	// jti делает каждый refresh-токен уникальным, даже для одного пользователя в ту же секунду
+	return jwt.sign({ ...payload, jti: crypto.randomUUID() }, REFRESH_SECRET, {
+		expiresIn: REFRESH_EXPIRES,
+	});
 };
 
 export const verifyAccessToken = (token) => {
@@ -21,14 +24,3 @@ export const verifyAccessToken = (token) => {
 export const verifyRefreshToken = (token) => {
 	return jwt.verify(token, REFRESH_SECRET);
 };
-=======
-import crypto from 'node:crypto';
-
-export const generateAccessToken = (payload) =>
-	jwt.sign(payload, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES });
-
-export const generateRefreshToken = (payload) =>
-	jwt.sign({ ...payload, jti: crypto.randomUUID() }, REFRESH_SECRET, {
-		expiresIn: REFRESH_EXPIRES,
-	});
->>>>>>> Stashed changes
