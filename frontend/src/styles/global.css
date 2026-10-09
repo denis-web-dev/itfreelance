@@ -15,7 +15,7 @@ body {
   background-attachment: fixed;
   background-size: cover;
 
-  cursor: url('../assets/icons/cursors.cur'), auto;
+  cursor: url('../assets/icons/cursor.cur'), auto;
 }
 
 a {
