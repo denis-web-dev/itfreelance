@@ -26,7 +26,8 @@ export const registerUser = async ({ email, password, role, fullName }) => {
 		data: {
 			email,
 			passwordHash,
-			role, // FREELANCER или CUSTOMER
+			role,
+			consentAt: new Date(),
 			profile: {
 				create: {
 					fullName: fullName || null,

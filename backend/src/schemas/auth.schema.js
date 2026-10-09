@@ -12,7 +12,7 @@ const password = z
 export const registerSchema = z.object({
 	email,
 	password,
-	role: z.enum(['FREELANCER', 'CUSTOMER'], { message: 'Выберите роль' }),
+	role: z.enum(['FREELANCER', 'CUSTOMER'], { error: 'Роль должна быть FREELANCER или CUSTOMER' }),
 	fullName: z.string().trim().min(2, 'Имя должно содержать минимум 2 символа').optional(),
 	consent: z.literal(true, { message: 'Необходимо согласие на обработку данных' }),
 });
