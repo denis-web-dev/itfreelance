@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import styles from './ProfileHeader.module.css';
+import logoWhite from '../../../assets/img-header/Logo-white.png';
 
-export default function ProfileHeader() {
+export default function ProfileHeader({ className = '' }) {
 	const { user } = useAuth();
 
 	return (
-		<header className={styles.headerProfile}>
+		<header className={`${styles.headerProfile} ${className}`}>
 			<div className={styles.headerInner}>
 				<Link to="/" className={styles.logo}>
-					<img src="src/assets/img-header/Logo.png" alt="Logotip" />
+					<img src={logoWhite} alt="Logotip" />
 				</Link>
 				<nav className={styles.nav}>
 					<Link to="/orders" className={styles.navLink}>
@@ -69,7 +70,7 @@ export default function ProfileHeader() {
 					</div>
 					{user && (
 						<div className={styles.userInfo}>
-							<div className={styles.profileHeaderUser}>{/* {user.fullName?.[0] || ''} */}</div>
+							<div className={styles.profileHeaderUser}>{}</div>
 						</div>
 					)}
 				</div>

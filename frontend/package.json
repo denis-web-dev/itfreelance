@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.10",
     "@hookform/resolvers": "^5.2.2",
     "clsx": "^2.1.1",
     "react": "^19.2.0",
@@ -38,6 +39,7 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "sass": "^1.97.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-svgr": "^5.2.0"
   }
 }
