@@ -7,21 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  FREELANCER
+  CUSTOMER
+  ADMIN
+}
+
 model User {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  password      String
-  role          Role     @default(FREELANCER)
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  role         Role           @default(FREELANCER)
+  isActive     Boolean        @default(true)
+  consentAt    DateTime       // согласие на обработку ПДн (152-ФЗ)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  profile      Profile?
+  refreshTokens RefreshToken[]
 
   @@map("users")
 }
 
-enum Role {
-  FREELANCER
-  EMPLOYER
-  ADMIN
+model Profile {
+  id       String  @id @default(cuid())
+  userId   String  @unique
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName String?
+  // остальные поля профиля (регион, телефон, ставка...) добавим на этапе профилей
+
+  @@map("profiles")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
 }
