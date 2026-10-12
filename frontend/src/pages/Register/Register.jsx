@@ -9,6 +9,8 @@ import { saveTokens } from '../../services/tokens';
 import { useAuth } from '../../contexts/AuthContext';
 import CloseIcon from '../../components/Icons/CloseIcon';
 import InputForm from '../../components/InputForm/InputForm';
+import ConsentCheckbox from '../../components/ConsentCheckbox/ConsentCheckbox';
+import RoleSelect from '../../components/RoleSelect/RoleSelect';
 import clsx from 'clsx';
 import styles from './Register.module.css';
 
@@ -168,53 +170,14 @@ function Register() {
 						/>
 
 						{/* Выбор роли */}
-						<div style={{ marginBottom: '15px' }}>
-							<label htmlFor="role" style={{ display: 'block', marginBottom: '5px' }}>
-								Я регистрируюсь как:
-							</label>
-							<select
-								id="role"
-								{...register('role')}
-								style={{
-									width: '100%',
-									padding: '10px',
-									borderRadius: '5px',
-									border: '1px solid #ccc',
-								}}
-							>
-								<option value="" disabled>
-									Выберите роль
-								</option>
-								<option value="FREELANCER">Фрилансер (ищу работу)</option>
-								<option value="CUSTOMER">Заказчик (ищу исполнителей)</option>
-							</select>
-							{errors.role && (
-								<p style={{ color: 'red', fontSize: '12px' }}>{errors.role.message}</p>
-							)}
-						</div>
+						<RoleSelect register={register} error={errors.role?.message} disabled={isLoading} />
 
 						{/* Чекбокс согласия */}
-						<div
-							style={{
-								marginBottom: '15px',
-								display: 'flex',
-								alignItems: 'flex-start',
-								gap: '8px',
-							}}
-						>
-							<input
-								type="checkbox"
-								id="consent"
-								{...register('consent')}
-								style={{ marginTop: '3px' }}
-							/>
-							<label htmlFor="consent" style={{ fontSize: '14px', lineHeight: '1.4' }}>
-								Я согласен на обработку персональных данных и принимаю{' '}
-								<Link to="/privacy" target="_blank">
-									Политику конфиденциальности
-								</Link>
-							</label>
-						</div>
+						<ConsentCheckbox
+							register={register}
+							error={errors.consent?.message}
+							disabled={isLoading}
+						/>
 						{errors.consent && (
 							<p style={{ color: 'red', fontSize: '12px', marginTop: '-10px' }}>
 								{errors.consent.message}

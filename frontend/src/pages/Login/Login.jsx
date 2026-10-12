@@ -1,11 +1,14 @@
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import clsx from 'clsx';
+import { useState } from 'react';
+import styles from './Login.module.css';
+import { useForm } from 'react-hook-form';
+import { loginUser } from '../../services/auth';
+import { saveTokens } from '../../services/tokens';
+import { useAuth } from '../../contexts/AuthContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import CloseIcon from '../../components/Icons/CloseIcon';
-import clsx from 'clsx';
-import styles from './Login.module.css';
-import { useState } from 'react';
 import InputForm from '../../components/InputForm/InputForm';
 
 const schema = z.object({
@@ -13,12 +16,20 @@ const schema = z.object({
 	password: z.string().min(6, 'Пароль минимум 6 символов'),
 	rememberMe: z.boolean().optional(),
 });
+const getRememberedEmail = () => {
+	try {
+		return localStorage.getItem('rememberedEmail') ?? '';
+	} catch {
+		return '';
+	}
+};
 
 function Login() {
 	const navigate = useNavigate();
+	const { login } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [serverError, setServerError] = useState('');
-	const [showPassword, setShowPassword] = useState(false);
+	const rememberedEmail = getRememberedEmail();
 
 	const {
 		register,
@@ -28,9 +39,9 @@ function Login() {
 	} = useForm({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			email: '',
+			email: rememberedEmail,
 			password: '',
-			rememberMe: false,
+			rememberMe: Boolean(rememberedEmail),
 		},
 	});
 
@@ -41,44 +52,23 @@ function Login() {
 		setServerError('');
 
 		try {
-			const response = await fetch('http://localhost:5000/api/v1/auth/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					email: data.email,
-					password: data.password,
-				}),
-			});
+			const result = await loginUser({ email: data.email, password: data.password });
 
-			const result = await response.json();
+			saveTokens(result.data.tokens);
+			login(result.data.user);
 
-			if (!response.ok) {
-				throw new Error(result.message || 'Ошибка входа');
-			}
-
-			// Сохраняем токены
-			localStorage.setItem('accessToken', result.data.tokens.accessToken);
-			localStorage.setItem('refreshToken', result.data.tokens.refreshToken);
-
-			// Запоминаем email, если отмечено "Запомнить меня"
 			if (data.rememberMe) {
 				localStorage.setItem('rememberedEmail', data.email);
 			} else {
 				localStorage.removeItem('rememberedEmail');
 			}
 
-			// Переход на страницу профиля
 			navigate('/profile-edit');
 		} catch (error) {
-			console.error('Ошибка входа:', error);
 			setServerError(error.message);
 		} finally {
 			setIsLoading(false);
 		}
-	};
-
-	const togglePasswordVisibility = () => {
-		setShowPassword(!showPassword);
 	};
 
 	return (
@@ -87,7 +77,12 @@ function Login() {
 				<h1 className={clsx(styles['main-title-entrance'], styles['main-title'])}>Вход</h1>
 
 				<div className={styles['block-bg']}>
-					<button className={styles['block-bg-close-btn']}>
+					<button
+						type="button"
+						className={styles['block-bg-close-btn']}
+						onClick={() => navigate('/')}
+						aria-label="Закрыть"
+					>
 						<CloseIcon className={styles['block-bg-close-svg']} />
 					</button>
 
@@ -121,12 +116,10 @@ function Login() {
 						/>
 
 						<InputForm
-							type={showPassword ? 'text' : 'password'}
+							type="password"
 							placeholder="Пароль"
 							error={errors.password?.message}
 							showPasswordToggle={true}
-							onTogglePassword={togglePasswordVisibility}
-							showPassword={showPassword}
 							inputSize="small"
 							disabled={isLoading}
 							{...register('password')}

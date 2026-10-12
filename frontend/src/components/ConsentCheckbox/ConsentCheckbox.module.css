@@ -1,0 +1,43 @@
+.wrapper {
+	margin-bottom: 15px;
+}
+
+.row {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+.checkbox {
+	margin-top: 3px;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.checkbox:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+.label {
+	font-size: 14px;
+	line-height: 1.4;
+	cursor: pointer;
+}
+
+.link {
+	color: #0cb761;
+	text-decoration: underline;
+}
+
+.link:hover {
+	text-decoration: none;
+}
+
+.error {
+	color: #e53935;
+	font-size: 12px;
+	margin-top: 6px;
+}
