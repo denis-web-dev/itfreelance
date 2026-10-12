@@ -1,18 +1,18 @@
 html {
-  box-sizing: border-box;
-  scroll-behavior: smooth;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: inherit;
+	box-sizing: inherit;
 }
 
 body {
-  overflow-x: hidden;
-  font-weight: 400;
-  margin: 0;
+	overflow-x: hidden;
+	font-weight: 400;
+	margin: 0;
 }
 
 h1,
@@ -21,49 +21,49 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 p {
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 ul,
 ol,
 li {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 input {
-  border: none;
-  outline: none;
-  max-width: 606px;
-  height: 56px;
-  border-bottom: #7b7b7b 1px solid;
+	border: none;
+	outline: none;
+	max-width: 606px;
+	height: 56px;
+	border-bottom: #7b7b7b 1px solid;
 }
 
 .btn {
-  border: none;
-  background: none;
-  font-size: 22px;
-  line-height: 25px;
-  color: #7b7b7b;
-  cursor: pointer;
+	border: none;
+	background: none;
+	font-size: 22px;
+	line-height: 25px;
+	color: #7b7b7b;
+	cursor: pointer;
 }
 
 .links {
-  font-size: 22px;
-  line-height: 25px;
-  color: #7b7b7b;
+	font-size: 22px;
+	line-height: 25px;
+	color: #7b7b7b;
 }
 
 .links:hover {
-  cursor: pointer;
-  text-decoration: revert;
+	cursor: pointer;
+	text-decoration: revert;
 }
 
 /* .none {

@@ -6,18 +6,18 @@
 
 html,
 body {
-  font-family: var(--font-primary);
-  color: var(--colorText-primary);
+	font-family: var(--font-primary);
+	color: var(--colorText-primary);
 
-  /* aspect-ratio: 1440; */
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  background-size: cover;
+	/* aspect-ratio: 1440; */
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+	background-size: cover;
 
-  cursor: url('../assets/icons/cursor.cur'), auto;
+	cursor: url('../assets/icons/cursor.cur'), auto;
 }
 
 a {
-  color: var(--colorText-active);
+	color: var(--colorText-active);
 }
