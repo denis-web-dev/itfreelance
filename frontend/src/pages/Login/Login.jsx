@@ -1,14 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CloseIcon from '../../components/Icons/CloseIcon';
 import clsx from 'clsx';
 import styles from './Login.module.css';
 import { useState } from 'react';
 import InputForm from '../../components/InputForm/InputForm';
 
-// Схема валидации (Zod) — точно как в вашей в моей верстке
 const schema = z.object({
 	email: z.string().email('Некорректно введен email'),
 	password: z.string().min(6, 'Пароль минимум 6 символов'),
@@ -16,6 +15,11 @@ const schema = z.object({
 });
 
 function Login() {
+	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(false);
+	const [serverError, setServerError] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
+
 	const {
 		register,
 		handleSubmit,
@@ -23,21 +27,56 @@ function Login() {
 		formState: { errors },
 	} = useForm({
 		resolver: zodResolver(schema),
+		defaultValues: {
+			email: '',
+			password: '',
+			rememberMe: false,
+		},
 	});
 
-	const [showPassword, setShowPassword] = useState(false);
-
-	// Отслеживаем состояние чекбокса
-	// eslint-disable-next-line react-hooks/incompatible-library
 	const rememberMe = watch('rememberMe');
 
-	const onSubmit = (data) => {
-		// TODO: Здесь будет вызов API
-		// eslint-disable-next-line no-console
-		console.log(data); // можно оставить временно для отладки
+	const onSubmit = async (data) => {
+		setIsLoading(true);
+		setServerError('');
+
+		try {
+			const response = await fetch('http://localhost:5000/api/v1/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					email: data.email,
+					password: data.password,
+				}),
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.message || 'Ошибка входа');
+			}
+
+			// Сохраняем токены
+			localStorage.setItem('accessToken', result.data.tokens.accessToken);
+			localStorage.setItem('refreshToken', result.data.tokens.refreshToken);
+
+			// Запоминаем email, если отмечено "Запомнить меня"
+			if (data.rememberMe) {
+				localStorage.setItem('rememberedEmail', data.email);
+			} else {
+				localStorage.removeItem('rememberedEmail');
+			}
+
+			// Переход на страницу профиля
+			navigate('/profile-edit');
+		} catch (error) {
+			console.error('Ошибка входа:', error);
+			setServerError(error.message);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
-	//Функция для переключения видимости пароля
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword);
 	};
@@ -48,12 +87,10 @@ function Login() {
 				<h1 className={clsx(styles['main-title-entrance'], styles['main-title'])}>Вход</h1>
 
 				<div className={styles['block-bg']}>
-					{/* Кнопка закрытия — вынесена в компонент */}
 					<button className={styles['block-bg-close-btn']}>
 						<CloseIcon className={styles['block-bg-close-svg']} />
 					</button>
 
-					{/* Фоновый SVG */}
 					<svg
 						className={styles['block-bg-svg']}
 						width="1410"
@@ -68,18 +105,21 @@ function Login() {
 						/>
 					</svg>
 
+					{serverError && (
+						<p style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{serverError}</p>
+					)}
+
 					<form onSubmit={handleSubmit(onSubmit)} className={styles['form__container-entrance']}>
-						{/* Поле Email */}
 						<InputForm
 							className={styles.InputFormlogin}
 							type="email"
 							placeholder="E-mail"
 							error={errors.email?.message}
 							inputSize="small"
+							disabled={isLoading}
 							{...register('email')}
 						/>
 
-						{/* Поле Пароль с переключателем видимости */}
 						<InputForm
 							type={showPassword ? 'text' : 'password'}
 							placeholder="Пароль"
@@ -88,18 +128,18 @@ function Login() {
 							onTogglePassword={togglePasswordVisibility}
 							showPassword={showPassword}
 							inputSize="small"
+							disabled={isLoading}
 							{...register('password')}
 						/>
 
-						{/* Чекбокс "Запомнить меня" */}
 						<div className={styles['form-group__checkbox']}>
 							<label className={styles['form__checkbox-label']}>
 								<input
 									type="checkbox"
 									{...register('rememberMe')}
 									className={styles['form__checkbox']}
+									disabled={isLoading}
 								/>
-
 								<svg
 									width="24"
 									height="24"
@@ -111,7 +151,6 @@ function Login() {
 										rememberMe ? styles['checkbox-checked'] : styles['checkbox-unchecked'],
 									)}
 								>
-									{/* Рамка чекбокса (всегда видна) */}
 									<rect
 										x="0.5"
 										y="0.5"
@@ -121,8 +160,6 @@ function Login() {
 										strokeWidth="2"
 										className={styles['checkbox-rect']}
 									/>
-
-									{/* Галочка (видна только когда чекбокс отмечен) */}
 									<path
 										className={styles['checkbox-checkmark']}
 										fillRule="evenodd"
@@ -130,7 +167,6 @@ function Login() {
 										d="M6.70711 10.7071C6.31658 10.3166 5.68342 10.3166 5.29289 10.7071L4.70711 11.2929C4.31658 11.6834 4.31658 12.3166 4.70711 12.7071L9.29289 17.2929C9.68342 17.6834 10.3166 17.6834 10.7071 17.2929L19.2929 8.70711C19.6834 8.31658 19.6834 7.68342 19.2929 7.29289L18.7071 6.70711C18.3166 6.31658 17.6834 6.31658 17.2929 6.70711L10.7071 13.2929C10.3166 13.6834 9.68342 13.6834 9.29289 13.2929L6.70711 10.7071Z"
 									/>
 								</svg>
-
 								<span className={styles['form__checkbox-text']}>Запомнить меня</span>
 							</label>
 							<Link to="/forgot-password" className={styles['form__forgot-password']}>
@@ -138,12 +174,11 @@ function Login() {
 							</Link>
 						</div>
 
-						<button type="submit" className={styles['form__btn']}>
-							Войти
+						<button type="submit" className={styles['form__btn']} disabled={isLoading}>
+							{isLoading ? 'Вход...' : 'Войти'}
 						</button>
 					</form>
 
-					{/* Ссылка на регистрацию */}
 					<div className={styles['account__link-entrance']}>
 						<span className={styles['account__entrance-reg']}>Нет аккаунта?</span>
 						<Link to="/register" className={styles['account__link-enter']}>

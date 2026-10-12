@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -5,7 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import CloseIcon from '../../components/Icons/CloseIcon';
 import InputForm from '../../components/InputForm/InputForm';
 import clsx from 'clsx';
-import { useState } from 'react';
 import styles from './Register.module.css';
 
 const schema = z
@@ -19,10 +19,10 @@ const schema = z
 			.regex(/[0-9]/, 'Пароль должен содержать хотя бы одну цифру'),
 		confirmPassword: z.string(),
 		role: z.enum(['FREELANCER', 'CUSTOMER'], {
-			error: 'Выберите роль',
+			error: () => ({ message: 'Выберите роль' }),
 		}),
 		consent: z.literal(true, {
-			error: 'Необходимо согласие на обработку данных',
+			error: () => ({ message: 'Необходимо согласие на обработку данных' }),
 		}),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
@@ -32,9 +32,9 @@ const schema = z
 
 function Register() {
 	const navigate = useNavigate();
-	const [isLoading, setIsLoading] = useState(false);
 	const [serverError, setServerError] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const {
 		register,
@@ -45,10 +45,14 @@ function Register() {
 		resolver: zodResolver(schema),
 	});
 
+	const handleClose = () => {
+		navigate('/');
+	};
+
 	const onSubmit = async (data) => {
-		setIsLoading(true);
 		setServerError('');
 		setSuccessMessage('');
+		setIsLoading(true);
 
 		try {
 			const response = await fetch('http://localhost:5000/api/v1/auth/register', {
@@ -65,32 +69,26 @@ function Register() {
 				}),
 			});
 
-			const result = await response.json();
-
 			if (!response.ok) {
-				throw new Error(result.message || 'Ошибка регистрации');
+				const errorData = await response.json().catch(() => ({}));
+				throw new Error(errorData.message || 'Ошибка регистрации');
 			}
 
-			setSuccessMessage('Регистрация прошла успешно! Сейчас вы будете перенаправлены...');
+			const result = await response.json();
 
+			// Сохраняем токены
 			localStorage.setItem('accessToken', result.data.tokens.accessToken);
 			localStorage.setItem('refreshToken', result.data.tokens.refreshToken);
 
-			reset();
+			setSuccessMessage('Регистрация прошла успешно!');
 
-			setTimeout(() => {
-				navigate('/login');
-			}, 1500);
+			reset();
+			navigate('/login');
 		} catch (error) {
-			console.error('Ошибка регистрации:', error);
-			setServerError(error.message);
+			setServerError(error.message || 'Что-то пошло не так');
 		} finally {
 			setIsLoading(false);
 		}
-	};
-
-	const handleClose = () => {
-		navigate('/');
 	};
 
 	return (
@@ -169,6 +167,7 @@ function Register() {
 							{...register('confirmPassword')}
 						/>
 
+						{/* Выбор роли */}
 						<div style={{ marginBottom: '15px' }}>
 							<label style={{ display: 'block', marginBottom: '5px' }}>Я регистрируюсь как:</label>
 							<select
@@ -192,6 +191,7 @@ function Register() {
 							)}
 						</div>
 
+						{/* Чекбокс согласия */}
 						<div
 							style={{
 								marginBottom: '15px',
@@ -211,17 +211,12 @@ function Register() {
 							</label>
 						</div>
 						{errors.consent && (
-							<p
-								style={{
-									color: 'red',
-									fontSize: '12px',
-									marginTop: '-10px',
-								}}
-							>
+							<p style={{ color: 'red', fontSize: '12px', marginTop: '-10px' }}>
 								{errors.consent.message}
 							</p>
 						)}
 
+						{/* Глобальная ошибка от сервера */}
 						{serverError && <p style={{ color: 'red', textAlign: 'center' }}>{serverError}</p>}
 						{successMessage && (
 							<p style={{ color: 'green', textAlign: 'center' }}>{successMessage}</p>
