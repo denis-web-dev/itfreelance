@@ -8,7 +8,6 @@ import InputForm from '../../components/InputForm/InputForm';
 import clsx from 'clsx';
 import styles from './Register.module.css';
 
-// Схема валидации
 const schema = z
 	.object({
 		name: z.string().min(2, 'Имя должно содержать минимум 2 символа'),
@@ -100,12 +99,10 @@ function Register() {
 				</h1>
 
 				<div className={styles['block-bg']}>
-					{/* Кнопка закрытия */}
 					<button className={styles['block-bg-close-btn']} onClick={handleClose}>
 						<CloseIcon className={styles['block-bg-close-svg']} />
 					</button>
 
-					{/* Фоновый SVG */}
 					<svg
 						className={styles['block-bg-svg']}
 						width="1410"
