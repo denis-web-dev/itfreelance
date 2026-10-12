@@ -178,11 +178,6 @@ function Register() {
 							error={errors.consent?.message}
 							disabled={isLoading}
 						/>
-						{errors.consent && (
-							<p style={{ color: 'red', fontSize: '12px', marginTop: '-10px' }}>
-								{errors.consent.message}
-							</p>
-						)}
 
 						{/* Глобальная ошибка от сервера */}
 						{serverError && <p style={{ color: 'red', textAlign: 'center' }}>{serverError}</p>}

@@ -4,9 +4,6 @@ import styles from './ProfileAbout.module.css';
 export default function ProfileAbout({ register, watch, errors }) {
 	const aboutText = watch('about') || '';
 
-	console.log('🔍 aboutText:', aboutText); // ← Проверь в консоли
-	console.log('📏 length:', aboutText.length);
-
 	// Класс для счетчика
 	const getCounterClass = () => {
 		const len = aboutText.length;
