@@ -142,7 +142,7 @@ input:not(:placeholder-shown) + label + .form__star {
 	font-size: 18px;
 }
 
-.form__checkbox:checked {
+/* .form__checkbox:checked {
 	border: none;
 }
 
@@ -155,7 +155,7 @@ input:not(:placeholder-shown) + label + .form__star {
 	width: 16px;
 	height: 16px;
 	border: none;
-}
+} */
 
 /* Стили для галочки (скрыта по умолчанию) */
 .checkbox-checkmark {
