@@ -92,7 +92,7 @@
 }
 
 .customer-block-svg {
-	cursor: url(../../img/icons/cursors.cur), auto;
+	cursor: url(../../assets/icons/cursor.cur), auto;
 }
 
 .customer-account-name {
@@ -112,7 +112,7 @@
 }
 
 .freelancer-block-svg {
-	cursor: url(../../img/icons/cursors.cur), auto;
+	cursor: url(../../assets/icons/cursor.cur), auto;
 }
 
 .freelancer-account-name {
