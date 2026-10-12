@@ -9,6 +9,7 @@ import CardBg from '../../components/CardBg/CardBg';
 import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader';
 import ProfileInfo from '../../components/Profile/ProfileInfo/ProfileInfo';
 import defaultAvatar from '../../assets/img-header/avatarBG.png';
+import bgImage from '../../assets/img-header/bg.png';
 import ProfileAbout from '../../components/Profile/ProfileAbout/ProfileAbout';
 import ProfilePortfolio from '../../components/Profile/ProfilePortfolio/ProfilePortfolio';
 
@@ -88,7 +89,7 @@ export default function ProfileEdit() {
 	return (
 		<div className={styles.wrapper}>
 			<div className="container">
-				<CardBg imageSrc="src/assets/img-header/bg.png" className="fullWidthBlock">
+				<CardBg imageSrc={bgImage} className="fullWidthBlock">
 					<ProfileHeader />
 					<ProfileInfo
 						avatarPreview={avatarPreview}

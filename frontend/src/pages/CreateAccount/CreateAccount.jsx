@@ -1,21 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import CloseButton from '../../components/ui/CloseButton/CloseButton';
+import UserIcon from '../../components/Icons/UserIcon';
 import styles from './CreateAccount.module.css';
 
 function CreateAccount() {
-	const handleClose = () => {
-		// Логика закрытия
-		console.log('Close CreateAccount');
-	};
-
-	const handleCloseCustomer = () => {
-		console.log('Close Customer');
-	};
-
-	const handleCloseFreelancer = () => {
-		console.log('Close Freelancer');
-	};
+	const navigate = useNavigate();
+	const handleClose = () => navigate(-1);
 
 	return (
 		<div className={styles['wrapper-create']}>
@@ -59,7 +50,11 @@ function CreateAccount() {
 						{/* Заказчик */}
 						<div className={styles.customer}>
 							<div className={styles['customer-block']}>
-								<Link className={styles['customer-link']} to="/register">
+								<Link
+									className={styles['customer-link']}
+									to="/register?role=CUSTOMER"
+									aria-label="Зарегистрироваться как заказчик"
+								>
 									<svg
 										className={styles['customer-block-svg']}
 										width="368"
@@ -78,14 +73,12 @@ function CreateAccount() {
 									</svg>
 								</Link>
 
-								{/* ✅ Кнопка закрытия заказчика */}
-								<CloseButton
-									onClick={handleCloseCustomer}
-									size="medium"
-									variant="transparent"
+								<span
 									className={clsx(styles['account-close-btn'], styles['customer-close-btn'])}
-									ariaLabel="Закрыть выбор заказчика"
-								/>
+									aria-hidden="true"
+								>
+									<UserIcon />
+								</span>
 
 								<span className={clsx(styles['account-name'], styles['customer-account-name'])}>
 									Я заказчик
@@ -96,7 +89,11 @@ function CreateAccount() {
 						{/* Исполнитель */}
 						<div className={styles.freelancer}>
 							<div className={styles['freelancer-block']}>
-								<Link className={styles['freelancer-link']} to="/register">
+								<Link
+									className={styles['freelancer-link']}
+									to="/register?role=FREELANCER"
+									aria-label="Зарегистрироваться как исполнитель"
+								>
 									<svg
 										className={styles['freelancer-block-svg']}
 										width="353"
@@ -115,14 +112,12 @@ function CreateAccount() {
 									</svg>
 								</Link>
 
-								{/* ✅ Кнопка закрытия исполнителя */}
-								<CloseButton
-									onClick={handleCloseFreelancer}
-									size="medium"
-									variant="transparent"
+								<span
 									className={clsx(styles['account-close-btn'], styles['freelancer-close-btn'])}
-									ariaLabel="Закрыть выбор фрилансера"
-								/>
+									aria-hidden="true"
+								>
+									<UserIcon />
+								</span>
 
 								<span className={clsx(styles['account-name'], styles['freelancer-account-name'])}>
 									Я исполнитель
