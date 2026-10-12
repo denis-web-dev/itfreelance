@@ -41,6 +41,7 @@ function Register() {
 		register,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm({
 		resolver: zodResolver(schema),
 	});
@@ -74,8 +75,16 @@ function Register() {
 				throw new Error(errorData.message || 'Ошибка регистрации');
 			}
 
+			const result = await response.json();
+
+			// Сохраняем токены
+			localStorage.setItem('accessToken', result.data.tokens.accessToken);
+			localStorage.setItem('refreshToken', result.data.tokens.refreshToken);
+
 			setSuccessMessage('Регистрация прошла успешно!');
-			// navigate('/login');
+
+			reset();
+			navigate('/login');
 		} catch (error) {
 			setServerError(error.message || 'Что-то пошло не так');
 		} finally {
