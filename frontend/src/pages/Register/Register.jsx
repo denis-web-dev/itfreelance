@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { registerUser } from '../../services/auth';
+import { toFieldErrors } from '../../services/api';
+import { saveTokens } from '../../services/tokens';
+import { useAuth } from '../../contexts/AuthContext';
 import CloseIcon from '../../components/Icons/CloseIcon';
 import InputForm from '../../components/InputForm/InputForm';
 import clsx from 'clsx';
@@ -32,17 +36,22 @@ const schema = z
 
 function Register() {
 	const navigate = useNavigate();
+	const { login } = useAuth();
+	const [searchParams] = useSearchParams();
 	const [serverError, setServerError] = useState('');
-	const [successMessage, setSuccessMessage] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
+
+	const roleFromUrl = searchParams.get('role');
+	const defaultRole = ['FREELANCER', 'CUSTOMER'].includes(roleFromUrl) ? roleFromUrl : '';
 
 	const {
 		register,
 		handleSubmit,
+		setError,
 		formState: { errors },
-		reset,
 	} = useForm({
 		resolver: zodResolver(schema),
+		defaultValues: { role: defaultRole, consent: false },
 	});
 
 	const handleClose = () => {
@@ -51,41 +60,32 @@ function Register() {
 
 	const onSubmit = async (data) => {
 		setServerError('');
-		setSuccessMessage('');
 		setIsLoading(true);
 
 		try {
-			const response = await fetch('http://localhost:5000/api/v1/auth/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					fullName: data.name,
-					email: data.email,
-					password: data.password,
-					role: data.role,
-					consent: data.consent,
-				}),
+			const result = await registerUser({
+				fullName: data.name,
+				email: data.email,
+				password: data.password,
+				role: data.role,
+				consent: data.consent,
 			});
 
-			if (!response.ok) {
-				const errorData = await response.json().catch(() => ({}));
-				throw new Error(errorData.message || 'Ошибка регистрации');
+			saveTokens(result.data.tokens);
+			login(result.data.user);
+			navigate('/profile-edit');
+		} catch (error) {
+			if (error.status === 409) {
+				setError('email', { message: error.message });
+				return;
 			}
 
-			const result = await response.json();
-
-			// Сохраняем токены
-			localStorage.setItem('accessToken', result.data.tokens.accessToken);
-			localStorage.setItem('refreshToken', result.data.tokens.refreshToken);
-
-			setSuccessMessage('Регистрация прошла успешно!');
-
-			reset();
-			navigate('/login');
-		} catch (error) {
-			setServerError(error.message || 'Что-то пошло не так');
+			const fieldMap = { fullName: 'name' };
+			const fieldErrors = Object.entries(toFieldErrors(error));
+			fieldErrors.forEach(([field, message]) => {
+				setError(fieldMap[field] ?? field, { message });
+			});
+			if (fieldErrors.length === 0) setServerError(error.message);
 		} finally {
 			setIsLoading(false);
 		}
@@ -169,8 +169,11 @@ function Register() {
 
 						{/* Выбор роли */}
 						<div style={{ marginBottom: '15px' }}>
-							<label style={{ display: 'block', marginBottom: '5px' }}>Я регистрируюсь как:</label>
+							<label htmlFor="role" style={{ display: 'block', marginBottom: '5px' }}>
+								Я регистрируюсь как:
+							</label>
 							<select
+								id="role"
 								{...register('role')}
 								style={{
 									width: '100%',
@@ -178,7 +181,6 @@ function Register() {
 									borderRadius: '5px',
 									border: '1px solid #ccc',
 								}}
-								defaultValue=""
 							>
 								<option value="" disabled>
 									Выберите роль
@@ -207,7 +209,10 @@ function Register() {
 								style={{ marginTop: '3px' }}
 							/>
 							<label htmlFor="consent" style={{ fontSize: '14px', lineHeight: '1.4' }}>
-								Я согласен на обработку персональных данных
+								Я согласен на обработку персональных данных и принимаю{' '}
+								<Link to="/privacy" target="_blank">
+									Политику конфиденциальности
+								</Link>
 							</label>
 						</div>
 						{errors.consent && (
@@ -218,18 +223,10 @@ function Register() {
 
 						{/* Глобальная ошибка от сервера */}
 						{serverError && <p style={{ color: 'red', textAlign: 'center' }}>{serverError}</p>}
-						{successMessage && (
-							<p style={{ color: 'green', textAlign: 'center' }}>{successMessage}</p>
-						)}
 
 						<button type="submit" disabled={isLoading} className={styles['form__btn-reg']}>
 							{isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
 						</button>
-
-						<p className={styles['form__text-reg']}>
-							Этот сайт защищен и к нему применяются Политика конфиденциальности и Условия
-							обслуживания.
-						</p>
 					</form>
 
 					<div className={styles['account__link-registration']}>

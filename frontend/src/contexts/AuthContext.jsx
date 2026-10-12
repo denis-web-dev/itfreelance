@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { clearTokens } from '../services/tokens';
 
 const AuthContext = createContext(null);
 
@@ -56,14 +57,19 @@ export const AuthProvider = ({ children }) => {
 		});
 	};
 
+	const login = (userData) => {
+		setUser(userData);
+		localStorage.setItem('user', JSON.stringify(userData));
+	};
+
 	const logout = () => {
 		setUser(null);
 		localStorage.removeItem('user');
-		// потом здесь же можно вызывать POST /api/auth/logout
+		clearTokens();
 	};
 
 	return (
-		<AuthContext.Provider value={{ user, setUser, updateUser, logout, loading }}>
+		<AuthContext.Provider value={{ user, setUser, updateUser, login, logout, loading }}>
 			{children}
 		</AuthContext.Provider>
 	);
