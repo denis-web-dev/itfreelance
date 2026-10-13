@@ -8,3 +8,22 @@
 .profileMain {
 	position: relative;
 }
+
+.noticeSuccess,
+.noticeError {
+	margin-top: 15px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	font-family: var(--font-secondery);
+	font-size: 16px;
+}
+
+.noticeSuccess {
+	background: #e6f9ec;
+	color: #1a7a3c;
+}
+
+.noticeError {
+	background: #fdeceb;
+	color: #cc4422;
+}
