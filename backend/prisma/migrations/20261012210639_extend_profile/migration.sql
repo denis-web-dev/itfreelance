@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE "profiles" ADD COLUMN     "about" VARCHAR(500),
+ADD COLUMN     "avatarUrl" TEXT,
+ADD COLUMN     "companyName" TEXT,
+ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "experience" TEXT,
+ADD COLUMN     "marketYears" INTEGER,
+ADD COLUMN     "phone" TEXT,
+ADD COLUMN     "rate" INTEGER,
+ADD COLUMN     "region" TEXT,
+ADD COLUMN     "site" TEXT,
+ADD COLUMN     "skills" TEXT[] DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN     "sphere" TEXT,
+ADD COLUMN     "telegram" TEXT,
+ADD COLUMN     "tools" TEXT[] DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "vk" TEXT;

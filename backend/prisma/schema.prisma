@@ -14,26 +14,48 @@ enum Role {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  email        String         @unique
-  passwordHash String
-  role         Role           @default(FREELANCER)
-  isActive     Boolean        @default(true)
-  consentAt    DateTime       // согласие на обработку ПДн (152-ФЗ)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  profile      Profile?
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  role          Role           @default(FREELANCER)
+  isActive      Boolean        @default(true)
+  consentAt     DateTime // согласие на обработку ПДн (152-ФЗ)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  profile       Profile?
   refreshTokens RefreshToken[]
 
   @@map("users")
 }
 
 model Profile {
-  id       String  @id @default(cuid())
-  userId   String  @unique
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fullName String?
-  // остальные поля профиля (регион, телефон, ставка...) добавим на этапе профилей
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // общие поля
+  fullName  String?
+  region    String?
+  phone     String?
+  sphere    String?
+  about     String?  @db.VarChar(500)
+  site      String?
+  telegram  String?
+  vk        String?
+  skills    String[] @default([])
+  tools     String[] @default([])
+  avatarUrl String?
+
+  // исполнитель
+  experience String?
+  rate       Int?
+
+  // заказчик
+  companyName String?
+  marketYears Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@map("profiles")
 }
