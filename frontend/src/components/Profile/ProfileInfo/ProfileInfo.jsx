@@ -35,7 +35,7 @@ export default function ProfileInfo({
 							<InputForm
 								label="Имя Фамилия *"
 								placeholder="Имя Фамилия *"
-								register={register('fullName')}
+								field={register('fullName')}
 								error={errors.fullName}
 								inputSize="default"
 							/>
@@ -43,7 +43,7 @@ export default function ProfileInfo({
 								className={styles.regionInput}
 								label="Регион *"
 								placeholder="Регион *"
-								register={register('region')}
+								field={register('region')}
 								error={errors.region}
 								inputSize="default"
 							/>
@@ -53,24 +53,41 @@ export default function ProfileInfo({
 									<InputForm
 										label="Опыт работы *"
 										placeholder="Опыт работы"
-										register={register('experience')}
+										field={register('experience')}
 										error={errors.experience}
 										inputSize="default"
 									/>
 									<InputForm
 										label="Ставка руб/час"
 										placeholder="Ставка руб/час"
-										register={register('rate')}
+										field={register('rate')}
 										error={errors.rate}
 										inputSize="default"
 									/>
 								</>
-							) : null}
+							) : (
+								<>
+									<InputForm
+										label="Название компании *"
+										placeholder="Название компании *"
+										field={register('companyName')}
+										error={errors.companyName}
+										inputSize="default"
+									/>
+									<InputForm
+										label="Лет на рынке *"
+										placeholder="Лет на рынке *"
+										field={register('marketYears')}
+										error={errors.marketYears}
+										inputSize="default"
+									/>
+								</>
+							)}
 							<div className={styles.fullWidth}>
 								<InputForm
 									label="Сфера деятельности *"
 									placeholder="Сфера деятельности *"
-									register={register('sphere')}
+									field={register('sphere')}
 									error={errors.sphere}
 									inputSize="default"
 								/>
@@ -88,7 +105,7 @@ export default function ProfileInfo({
 							<InputForm
 								label="Телефон"
 								placeholder="Телефон"
-								register={register('phone')}
+								field={register('phone')}
 								error={errors.phone}
 								inputSize="default"
 							/>
@@ -96,28 +113,29 @@ export default function ProfileInfo({
 								className={styles.emailInput}
 								label="E-mail *"
 								placeholder="E-mail *"
-								register={register('email')}
+								field={register('email')}
 								error={errors.email}
 								inputSize="default"
+								readOnly
 							/>
 							<InputForm
 								label="Site"
 								placeholder="Site"
-								register={register('site')}
+								field={register('site')}
 								error={errors.site}
 								inputSize="default"
 							/>
 							<InputForm
 								label="Telegram"
 								placeholder="Telegram"
-								register={register('telegram')}
+								field={register('telegram')}
 								error={errors.telegram}
 								inputSize="default"
 							/>
 							<InputForm
 								label="Vk"
 								placeholder="Vk"
-								register={register('vk')}
+								field={register('vk')}
 								error={errors.vk}
 								inputSize="default"
 							/>
