@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { afterAll } from 'vitest';
 
 // Тестовые переменные перекрывают обычные из .env
-dotenv.config({ path: '.env.test', override: true });
+dotenv.config({ path: '.env.test', override: true, quiet: true });
 process.env.NODE_ENV = 'test';
 
 // Защита: тесты очищают таблицы, поэтому работают только с базой, имя которой оканчивается на _test

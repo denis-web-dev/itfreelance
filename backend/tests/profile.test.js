@@ -50,12 +50,14 @@ describe('Доступ к профилю без действительной а�
 		expect(res.status).toBe(401);
 	});
 
-	it('произвольная строка вместо токена: 401', async () => {
-		// const res = await getProfile('это-не-токен');
-		const res = await getProfile('not-a-real-token');
+	it.each(['not-a-token', 'abc.def.ghi'])(
+		'некорректная строка вместо токена (%s): 401',
+		async (garbage) => {
+			const res = await getProfile(garbage);
 
-		expect(res.status).toBe(401);
-	});
+			expect(res.status).toBe(401);
+		},
+	);
 
 	it('токен, подписанный чужим секретом: 401', async () => {
 		const forged = jwt.sign({ userId: user.id, role: 'FREELANCER' }, 'чужой-секрет');
