@@ -13,6 +13,13 @@ enum Role {
   ADMIN
 }
 
+enum OrderStatus {
+  OPEN // открыт, принимает отклики
+  IN_PROGRESS // исполнитель выбран, работа идёт
+  COMPLETED // завершён
+  CANCELLED // отменён заказчиком
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -23,6 +30,7 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   profile       Profile?
+  orders        Order[]
   refreshTokens RefreshToken[]
 
   @@map("users")
@@ -70,4 +78,23 @@ model RefreshToken {
 
   @@index([userId])
   @@map("refresh_tokens")
+}
+
+model Order {
+  id         String @id @default(cuid())
+  customerId String
+  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  title       String      @db.VarChar(150)
+  description String      @db.VarChar(5000)
+  budget      Int // бюджет в рублях, целое число
+  tools       String[]    @default([])
+  status      OrderStatus @default(OPEN)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status, createdAt])
+  @@map("orders")
 }
