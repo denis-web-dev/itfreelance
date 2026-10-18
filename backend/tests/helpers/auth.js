@@ -20,3 +20,13 @@ export const login = (email, password = PASSWORD) =>
 	request(app).post('/api/v1/auth/login').send({ email, password });
 
 export const authHeader = (token) => ({ Authorization: `Bearer ${token}` });
+// Регистрирует пользователя и возвращает его id и токены
+export const createUser = async (overrides) => {
+	const res = await register(overrides);
+	return {
+		id: res.body.data.user.id,
+		email: res.body.data.user.email,
+		accessToken: res.body.data.tokens.accessToken,
+		refreshToken: res.body.data.tokens.refreshToken,
+	};
+};
