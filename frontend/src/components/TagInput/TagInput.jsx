@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import clsx from 'clsx';
 import styles from './TagInput.module.css';
 
@@ -8,6 +8,7 @@ export default function TagInput({
 	label,
 	placeholder,
 	value = [],
+	suggestions = [],
 	onChange,
 	error,
 	maxItems = 20,
@@ -16,8 +17,14 @@ export default function TagInput({
 	const [draft, setDraft] = useState('');
 	const isFull = value.length >= maxItems;
 
+	const listId = useId();
+
+	// Если название есть в подсказках, приводим регистр к эталонному: «react» -> «React»
+	const canonical = (name) =>
+		suggestions.find((s) => s.toLowerCase() === name.toLowerCase()) ?? name;
+
 	const addTag = (raw) => {
-		const name = raw.trim().slice(0, MAX_TAG_LENGTH);
+		const name = canonical(raw.trim().slice(0, MAX_TAG_LENGTH));
 		if (!name || value.length >= maxItems) return;
 
 		// Повторы без учёта регистра игнорируем: «react» и «React» это один пункт
@@ -47,11 +54,20 @@ export default function TagInput({
 					onBlur={() => addTag(draft)}
 					placeholder={isFull ? `Максимум ${maxItems}` : placeholder}
 					disabled={isFull}
+					list={suggestions.length ? listId : undefined}
 					maxLength={MAX_TAG_LENGTH}
 					aria-label={label}
 				/>
 				<span className={styles.label}>{label}</span>
 			</div>
+
+			{suggestions.length > 0 && (
+				<datalist id={listId}>
+					{suggestions.map((s) => (
+						<option key={s} value={s} />
+					))}
+				</datalist>
+			)}
 
 			{value.length > 0 && (
 				<ul className={styles.chips}>
