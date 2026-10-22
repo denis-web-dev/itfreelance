@@ -11,7 +11,16 @@ export const create = async (req, res, next) => {
 
 export const list = async (req, res, next) => {
 	try {
-		const data = await ordersService.listOrders(req.validatedQuery);
+		const data = await ordersService.listOrders(req.user.id, req.validatedQuery);
+		res.status(200).json({ success: true, data });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const listFavorites = async (req, res, next) => {
+	try {
+		const data = await ordersService.listFavoriteOrders(req.user.id, req.validatedQuery);
 		res.status(200).json({ success: true, data });
 	} catch (error) {
 		next(error);

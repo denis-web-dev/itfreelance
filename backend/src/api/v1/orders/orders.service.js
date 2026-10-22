@@ -1,28 +1,40 @@
 import prisma from '../../../lib/prisma.js';
 import ApiError from '../../../utils/ApiError.js';
 
-// Публичные данные заказчика: без e-mail и телефона
 const customerSelect = {
 	select: {
 		id: true,
-		profile: { select: { fullName: true, companyName: true } },
+		profile: {
+			select: { fullName: true, companyName: true, ratingAvg: true, ratingCount: true },
+		},
 	},
 };
 
-const orderSelect = {
+// userId нужен, чтобы подтянуть только СВОИ сердечки, а не чужие
+const orderSelectFor = (userId) => ({
 	id: true,
 	title: true,
 	description: true,
 	budget: true,
 	tools: true,
 	status: true,
+	deadline: true,
 	createdAt: true,
 	updatedAt: true,
 	customer: customerSelect,
-};
+	favorites: { where: { userId }, select: { userId: true } },
+});
 
 // В списке полное описание не отдаём: оно длинное и в карточке не нужно
-const listSelect = { ...orderSelect, description: false };
+const listSelectFor = (userId) => ({ ...orderSelectFor(userId), description: false });
+
+const stagesSelect = {
+	select: { position: true, title: true, budget: true },
+	orderBy: { position: 'asc' },
+};
+
+// Этапы нужны только в карточке заказа, в списке их нет
+const detailSelectFor = (userId) => ({ ...orderSelectFor(userId), stages: stagesSelect });
 
 const EDITABLE_FIELDS = ['title', 'description', 'budget', 'tools'];
 
@@ -31,11 +43,15 @@ const pick = (source, keys) =>
 		keys.filter((key) => source[key] !== undefined).map((key) => [key, source[key]]),
 	);
 
-const toDto = ({ customer, ...order }) => ({
+const toDto = ({ customer, favorites, deadline, ...order }) => ({
 	...order,
+	deadline: deadline ? deadline.toISOString().slice(0, 10) : null,
+	isFavorite: (favorites?.length ?? 0) > 0,
 	customer: {
 		id: customer.id,
 		name: customer.profile?.companyName || customer.profile?.fullName || 'Заказчик',
+		rating: customer.profile?.ratingAvg ?? null,
+		reviewsCount: customer.profile?.ratingCount ?? 0,
 	},
 });
 
@@ -58,8 +74,18 @@ export const createOrder = async (customerId, input) => {
 			description: input.description,
 			budget: input.budget,
 			tools: input.tools ?? [],
+			deadline: input.deadline ? new Date(input.deadline) : null,
+			stages: input.stages
+				? {
+						create: input.stages.map((item, index) => ({
+							position: index + 1,
+							title: item.title,
+							budget: item.budget,
+						})),
+					}
+				: undefined,
 		},
-		select: orderSelect,
+				select: detailSelectFor(customerId),
 	});
 	return toDto(order);
 };
@@ -67,8 +93,10 @@ export const createOrder = async (customerId, input) => {
 // Экранируем служебные символы LIKE, чтобы % и _ искались как обычные символы
 const escapeLike = (value) => value.replace(/[\\%_]/g, '\\$&');
 
-export const listOrders = async ({ budgetMin, budgetMax, tools, search, page, limit }) => {
-	// В списке показываем только открытые заказы
+export const listOrders = async (
+	userId,
+	{ budgetMin, budgetMax, minRating, tools, search, page, limit },
+) => {
 	const where = { status: 'OPEN' };
 
 	if (budgetMin !== undefined || budgetMax !== undefined) {
@@ -84,6 +112,9 @@ export const listOrders = async ({ budgetMin, budgetMax, tools, search, page, li
 			{ description: { contains: pattern, mode: 'insensitive' } },
 		];
 	}
+	if (minRating !== undefined) {
+		where.customer = { profile: { ratingAvg: { gte: minRating } } };
+	}
 
 	const [total, items] = await prisma.$transaction([
 		prisma.order.count({ where }),
@@ -93,17 +124,42 @@ export const listOrders = async ({ budgetMin, budgetMax, tools, search, page, li
 			orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 			skip: (page - 1) * limit,
 			take: limit,
-			select: listSelect,
+			select: listSelectFor(userId),
 		}),
 	]);
 
 	return { items: items.map(toDto), total, page, limit, pages: Math.ceil(total / limit) };
 };
 
+// Вкладка «Избранное»: мои сердечки, самые свежие сверху.
+// Показываем только открытые заказы: чужой отменённый заказ видеть нельзя
+export const listFavoriteOrders = async (userId, { page, limit }) => {
+	const where = { userId, order: { status: 'OPEN' } };
+
+	const [total, rows] = await prisma.$transaction([
+		prisma.favoriteOrder.count({ where }),
+		prisma.favoriteOrder.findMany({
+			where,
+			orderBy: [{ createdAt: 'desc' }, { orderId: 'desc' }],
+			skip: (page - 1) * limit,
+			take: limit,
+			select: { order: { select: listSelectFor(userId) } },
+		}),
+	]);
+
+	return {
+		items: rows.map((row) => toDto(row.order)),
+		total,
+		page,
+		limit,
+		pages: Math.ceil(total / limit),
+	};
+};
+
 export const getOrder = async (orderId, viewer) => {
 	const order = await prisma.order.findUnique({
 		where: { id: orderId },
-		select: orderSelect,
+				select: detailSelectFor(viewer.id),
 	});
 
 	// Не открытые заказы видит только автор, для остальных их как будто нет
