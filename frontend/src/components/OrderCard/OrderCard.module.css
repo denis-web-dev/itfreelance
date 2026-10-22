@@ -97,7 +97,7 @@
 	content: '•';
 	display: inline-block;
 	margin-left: 8px;
-	color: #111;
+	color: var(--colorText-primary);
 	font-weight: 900;
 }
 .actions {

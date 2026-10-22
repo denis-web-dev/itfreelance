@@ -18,54 +18,32 @@
 	position: relative;
 	display: grid;
 	justify-items: center;
-	max-width: 1890px;
+	max-width: 1410px;
 	width: 100%;
 	margin: 0 auto;
 }
 
-.block-bg__svg {
-	fill: #fff;
-}
-
-.block-bg__close-btn {
+.main-title-entrance {
 	position: absolute;
-	right: 0px;
-	top: 31px;
-	padding-top: 5px;
-	width: 48px;
-	height: 48px;
-	background: #1a1a1a;
-	border-radius: 50%;
-}
-
-.block-bg-close-svg {
-	fill: var(--color-grey);
-	width: 18px;
-	height: 18px;
+	left: 21px;
+	top: 12px;
+	font-size: 80px;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+	color: var(--colorText-primary);
+	z-index: 2;
+	margin: 0;
 }
 
 .block-bg-close-btn {
 	position: absolute;
-	right: 240px;
-	top: 33px;
-	padding-top: 5px;
-	width: 48px;
-	height: 48px;
-	background: #1a1a1a;
-	border-radius: 50%;
+	right: 0;
+	top: 34px;
+	z-index: 2;
 }
 
-.main-title-entrance {
-	position: absolute;
-	font-family: 'Unbounded';
-	left: 280px;
-	top: 137px;
-	font-size: 80px;
-	line-height: 99px;
-	letter-spacing: -0.02em;
-	text-align: left;
-	color: #000;
-	z-index: 1;
+.block-bg__svg {
+	fill: #fff;
 }
 
 .form__container-entrance {
@@ -141,21 +119,6 @@ input:not(:placeholder-shown) + label + .form__star {
 	color: var(--colorText-primary);
 	font-size: 18px;
 }
-
-/* .form__checkbox:checked {
-	border: none;
-}
-
-.form__checkbox:checked::after {
-	content: '';
-	position: absolute;
-	background-image: url(/img/icons/checkBox.svg);
-	top: 2px;
-	left: 0;
-	width: 16px;
-	height: 16px;
-	border: none;
-} */
 
 /* Стили для галочки (скрыта по умолчанию) */
 .checkbox-checkmark {
@@ -263,40 +226,50 @@ input:not(:placeholder-shown) + label + .form__star {
 /* Media */
 
 /* для экранов от 1921px до 2560px */
-@media (min-width: 1921px) {
+/* @media (min-width: 1921px) {
 	.main-title-entrance {
 		left: 592px;
 		top: 276px;
 	}
-}
+} */
 
 /* для экранов от 2561px до 3200px */
-@media (min-width: 2561px) {
+/* @media (min-width: 2561px) {
 	.main-title-entrance {
 		left: 895px;
 		top: 133px;
 	}
-}
+} */
 
 /* для 4K */
-@media (min-width: 3201px) {
+/* @media (min-width: 3201px) {
 	.main-title-entrance {
 		left: 1295px;
 		top: 133px;
 	}
-}
+} */
 
 @media (max-width: 1440px) {
-	.main-title-entrance {
+	@media (max-width: 1440px) {
+		.main-title-entrance {
+			left: 20px;
+			top: 16px;
+			font-size: 72px;
+		}
+
+		.block-bg-close-btn {
+			right: 0;
+			top: 34px;
+		}
+	}
+	/* .main-title-entrance {
 		position: absolute;
-		font-family: 'Unbounded';
-		left: 35px;
-		top: 21px;
+		left: 20px;
+		top: 5px;
 		font-size: 80px;
 		line-height: 99px;
 		letter-spacing: -0.02em;
-		text-align: left;
-		color: #000;
+		color: var(--colorText-primary);
 		z-index: 1;
 	}
 	.block-bg-close-btn {
@@ -306,9 +279,9 @@ input:not(:placeholder-shown) + label + .form__star {
 		padding-top: 5px;
 		width: 48px;
 		height: 48px;
-		background: #1a1a1a;
+		background: var(--colorText-primary);
 		border-radius: 50%;
-	}
+	} */
 	.block-bg__close-svg {
 		rotate: 45deg;
 	}

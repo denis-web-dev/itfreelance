@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
-import CloseIcon from '../../components/Icons/CloseIcon';
 import InputForm from '../../components/InputForm/InputForm';
+import CloseButton from '../../components/ui/CloseButton/CloseButton';
 import clsx from 'clsx';
 import styles from './ForgotPassword.module.css';
 
@@ -30,15 +30,17 @@ function ForgotPassword() {
 	return (
 		<div className={styles['wrapper-forgot']}>
 			<div className="container">
-				<h1 className={clsx(styles['main-title-forgot'], styles['main-title'])}>Забыли пароль?</h1>
-
 				<div className={styles['block-bg']}>
-					{/* Кнопка закрытия */}
-					<button className={styles['block-bg-close-btn']}>
-						<CloseIcon className={styles['block-bg-close-svg']} />
-					</button>
+					<h1 className={clsx(styles['main-title-forgot'], styles['main-title'])}>
+						Забыли пароль?
+					</h1>
+					<CloseButton
+						size="large"
+						variant="dark"
+						className={styles['block-bg-close-btn']}
+						ariaLabel="Закрыть"
+					/>
 
-					{/* Фоновый SVG */}
 					<svg
 						className={styles['block-bg-svg']}
 						width="1410"

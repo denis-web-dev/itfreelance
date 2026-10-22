@@ -90,6 +90,19 @@
 	border: 2px dashed #d9d9d9;
 }
 
+/* 1440 и ниже — 48px */
+@media (max-width: 1440px) {
+	.close-btn--large {
+		width: 48px;
+		height: 48px;
+	}
+
+	.close-btn--large .close-btn-svg {
+		width: 16px;
+		height: 16px;
+	}
+}
+
 @media (max-width: 1024px) {
 	.close-btn--large {
 		width: 37px;
