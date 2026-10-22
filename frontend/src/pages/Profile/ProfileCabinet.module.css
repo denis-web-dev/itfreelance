@@ -1,0 +1,16 @@
+/* Если у .wrapper в ProfileEdit.module.css есть фон или отступы страницы, скопируй их сюда */
+.wrapper {
+	padding-bottom: 40px;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin-top: 14px;
+}
+
+.status {
+	padding: 60px 20px;
+	text-align: center;
+}

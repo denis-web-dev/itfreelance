@@ -32,13 +32,21 @@ export default function ProfileInfo({
 				<form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
 					<div className={styles.formColumns}>
 						<div className={styles.formColumnLeft}>
-							<InputForm
-								label="Имя Фамилия *"
-								placeholder="Имя Фамилия *"
-								field={register('fullName')}
-								error={errors.fullName}
-								inputSize="default"
-							/>
+							{isFreelancer ? (
+								<InputForm
+									label="Имя Фамилия *"
+									placeholder="Имя Фамилия *"
+									field={register('fullName')}
+									error={errors.fullName}
+								/>
+							) : (
+								<InputForm
+									label="Название компании *"
+									placeholder="Название компании *"
+									field={register('companyName')}
+									error={errors.companyName}
+								/>
+							)}
 							<InputForm
 								className={styles.regionInput}
 								label="Регион *"
@@ -68,15 +76,8 @@ export default function ProfileInfo({
 							) : (
 								<>
 									<InputForm
-										label="Название компании *"
-										placeholder="Название компании *"
-										field={register('companyName')}
-										error={errors.companyName}
-										inputSize="default"
-									/>
-									<InputForm
-										label="Лет на рынке *"
-										placeholder="Лет на рынке *"
+										label="Кол-во лет на рынке *"
+										placeholder="Кол-во лет на рынке *"
 										field={register('marketYears')}
 										error={errors.marketYears}
 										inputSize="default"
@@ -91,13 +92,13 @@ export default function ProfileInfo({
 									error={errors.sphere}
 									inputSize="default"
 								/>
-								<div className={styles.exampleText}>
+								{/* <div className={styles.exampleText}>
 									Например: <span className={styles.exampleTextSpan}>Frontend Developer{'  '}</span>
 									<span className={styles.exampleTextSpan}>UX/UI дизайнер{'  '}</span>
 									<span className={styles.exampleTextSpan}>SEO </span>
 									<span className={styles.exampleTextSpan}>QA-инженер </span>
 									<span className={styles.exampleTextSpan}>Графический дизайнер{'  '}</span>
-								</div>
+								</div> */}
 							</div>
 						</div>
 

@@ -1,10 +1,11 @@
+import { Controller } from 'react-hook-form';
 import InputForm from '../../InputForm/InputForm';
+import TagInput from '../../TagInput/TagInput';
 import styles from './ProfileAbout.module.css';
 
-export default function ProfileAbout({ register, watch, errors }) {
+export default function ProfileAbout({ register, watch, errors, control, isFreelancer = true }) {
 	const aboutText = watch('about') || '';
 
-	// Класс для счетчика
 	const getCounterClass = () => {
 		const len = aboutText.length;
 		if (len >= 500) return styles.danger;
@@ -12,7 +13,6 @@ export default function ProfileAbout({ register, watch, errors }) {
 		return '';
 	};
 
-	// Класс для рамки textarea
 	const getBorderClass = () => {
 		const len = aboutText.length;
 		if (len >= 500) return styles.dangerBorder;
@@ -22,14 +22,14 @@ export default function ProfileAbout({ register, watch, errors }) {
 
 	return (
 		<div className={styles.profileAbout}>
-			<h2 className={styles.aboutTitle}>Обо мне</h2>
+			<h2 className={styles.aboutTitle}>{isFreelancer ? 'Обо мне' : 'О компании'}</h2>
 
 			<div className={styles.aboutContent}>
 				<div className={styles.aboutLeft}>
 					<div className={styles.textareaWrapper}>
 						<InputForm
-							label="О себе"
-							placeholder="О себе"
+							label={isFreelancer ? 'О себе' : 'О компании'}
+							placeholder={isFreelancer ? 'О себе' : 'О компании'}
 							field={register('about')}
 							name="about"
 							error={errors?.about?.message}
@@ -43,29 +43,45 @@ export default function ProfileAbout({ register, watch, errors }) {
 						</span>
 					</div>
 				</div>
-				<div className={styles.aboutRight}>
-					<div className={styles.skillsBlock}>
-						<InputForm
-							label="Навыки"
-							placeholder="JavaScript, React, CSS..."
-							field={register('skills')}
-							error={errors?.skills?.message}
-							className={styles.inputSkills}
-						/>
-						<p className={styles.hint}>Вводите через запятую</p>
-					</div>
 
-					<div className={styles.toolsBlock}>
-						<InputForm
-							label="Инструменты"
-							placeholder="Figma, VS Code, Git..."
-							field={register('tools')}
-							error={errors?.tools?.message}
-							className={styles.inputTools}
-						/>
-						<p className={styles.hint}>Введите через запятую</p>
+				{/* Навыки и инструменты — только исполнитель */}
+				{isFreelancer && (
+					<div className={styles.aboutRight}>
+						<div className={styles.skillsBlock}>
+							<Controller
+								name="skills"
+								control={control}
+								render={({ field }) => (
+									<TagInput
+										label="Навыки"
+										placeholder="Например: Верстка"
+										value={field.value ?? []}
+										onChange={field.onChange}
+										error={errors?.skills?.message}
+									/>
+								)}
+							/>
+							<p className={styles.hint}>Введите через запятую</p>
+						</div>
+
+						<div className={styles.toolsBlock}>
+							<Controller
+								name="tools"
+								control={control}
+								render={({ field }) => (
+									<TagInput
+										label="Инструменты"
+										placeholder="Например: Figma"
+										value={field.value ?? []}
+										onChange={field.onChange}
+										error={errors?.tools?.message}
+									/>
+								)}
+							/>
+							<p className={styles.hint}>Введите через запятую</p>
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 		</div>
 	);

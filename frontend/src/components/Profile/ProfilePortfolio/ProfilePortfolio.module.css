@@ -162,6 +162,80 @@
 	z-index: 2;
 }
 
+.portfolioHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.addProjectBtn {
+	height: 56px;
+	padding: 0 24px;
+	border-radius: 100px;
+	background: #dedede;
+	font-family: var(--font-primary);
+	font-size: 20px;
+	color: var(--colorText-primary);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.addProjectBtn:hover {
+	background: #1a1a1a;
+	color: #fff;
+}
+
+.portfolioError {
+	margin-bottom: 16px;
+	font-family: var(--font-secondery);
+	color: #cc4422;
+}
+
+/* Карточек может быть больше четырёх, поэтому разрешаем перенос */
+.profileGrid {
+	flex-wrap: wrap;
+}
+
+.portfolio-item__image {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 20px;
+}
+
+.portfolio-item__title {
+	position: absolute;
+	left: 16px;
+	bottom: 16px;
+	z-index: 2;
+	max-width: 70%;
+	font-family: var(--font-primary);
+	font-size: 20px;
+	line-height: 1.2;
+	color: #fff;
+	text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.portfolio-item__link {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	background: #1a1a1a;
+	color: #fff;
+	font-size: 20px;
+}
+
 /* ===== АДАПТИВ ===== */
 @media (max-width: 1200px) {
 	.portfolio-grid {

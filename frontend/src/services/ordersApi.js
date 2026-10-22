@@ -1,109 +1,50 @@
-/**
- * Сервис заказов (orders).
- * Сейчас — mock, форма ответа как у будущего бэкенда.
- * Позже заменим на fetch к /api/v1/orders
- */
+import { authRequest } from './authRequest';
 
-const MOCK_ORDERS = [
-	{
-		id: '1',
-		title: 'Разработка веб-приложения с админ-панелью',
-		budget: 580000,
-		rating: 5.0,
-		tools: ['React', 'Spring Boot', 'TypeScript', 'PostgreSQL'],
-		createdAt: '2025-12-08',
-		isFavorite: false,
-	},
-	{
-		id: '2',
-		title: 'Full-stack разработка интернет-магазина',
-		budget: 420000,
-		rating: 4.8,
-		tools: ['Vue.js', 'Node.js', 'MySQL', 'Java'],
-		createdAt: '2025-12-08',
-		isFavorite: false,
-	},
-	{
-		id: '3',
-		title: 'Разработка лендинга-визитки',
-		budget: 40000,
-		rating: 4.6,
-		tools: ['HTML', 'CSS', 'JavaScript', 'Bootstrap'],
-		createdAt: '2025-12-08',
-		isFavorite: false,
-	},
-];
+// Префикс пути должен быть таким же, как в profileApi.js:
+// если там '/profile', оставь '/orders'; если '/api/v1/profile', поставь '/api/v1/orders'
+const BASE = '/orders';
 
-/**
- * Задержка с поддержкой AbortSignal
- */
-function delay(ms, signal) {
-	return new Promise((resolve, reject) => {
-		const timer = setTimeout(resolve, ms);
+// Пустые значения не отправляем, массив (инструменты) склеиваем через запятую
+const buildQuery = (params = {}) => {
+	const query = new URLSearchParams();
 
-		if (signal) {
-			if (signal.aborted) {
-				clearTimeout(timer);
-				reject(new DOMException('Aborted', 'AbortError'));
-				return;
-			}
-
-			signal.addEventListener(
-				'abort',
-				() => {
-					clearTimeout(timer);
-					reject(new DOMException('Aborted', 'AbortError'));
-				},
-				{ once: true },
-			);
+	for (const [key, value] of Object.entries(params)) {
+		if (value === undefined || value === null || value === '') continue;
+		if (Array.isArray(value)) {
+			if (value.length > 0) query.set(key, value.join(','));
+			continue;
 		}
-	});
-}
+		query.set(key, String(value));
+	}
+
+	const text = query.toString();
+	return text ? `?${text}` : '';
+};
 
 /**
- * Получить список заказов с фильтрами
- * @param {Object} params - budgetMin, budgetMax, tools, minRating, search
- * @param {Object} options - { signal?: AbortSignal }
+ * Список открытых заказов.
+ * @param {Object} params budgetMin, budgetMax, tools (массив), search, page, limit
+ * @param {Object} options { signal?: AbortSignal }
+ * @returns {{ success: boolean, data: { items, total, page, limit, pages } }}
  */
-export async function getOrders(params = {}, { signal } = {}) {
-	await delay(300, signal);
+export const getOrders = (params, { signal } = {}) =>
+	authRequest(`${BASE}${buildQuery(params)}`, { signal });
 
-	let items = [...MOCK_ORDERS];
+export const getOrder = (id, { signal } = {}) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}`, { signal });
 
-	if (params.minRating != null) {
-		items = items.filter((o) => o.rating >= Number(params.minRating));
-	}
+export const createOrder = (data) => authRequest(BASE, { method: 'POST', body: data });
 
-	if (params.search) {
-		const q = String(params.search).toLowerCase();
-		items = items.filter((o) => o.title.toLowerCase().includes(q));
-	}
+export const updateOrder = (id, data) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}`, { method: 'PATCH', body: data });
 
-	if (params.budgetMin != null) {
-		items = items.filter((o) => o.budget >= Number(params.budgetMin));
-	}
+export const cancelOrder = (id) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}/cancel`, { method: 'POST' });
+export const addFavorite = (id) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}/favorite`, { method: 'PUT' });
 
-	if (params.budgetMax != null) {
-		items = items.filter((o) => o.budget <= Number(params.budgetMax));
-	}
+export const removeFavorite = (id) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}/favorite`, { method: 'DELETE' });
 
-	if (params.tools?.length) {
-		items = items.filter((o) => params.tools.some((t) => o.tools.includes(t)));
-	}
-
-	return {
-		success: true,
-		data: {
-			total: items.length,
-			items,
-		},
-	};
-}
-
-/**
- * Переключить избранное (заготовка под API)
- */
-export async function toggleFavorite(orderId, { signal } = {}) {
-	await delay(200, signal);
-	return { success: true, data: { id: orderId } };
-}
+export const getFavoriteOrders = (params, { signal } = {}) =>
+	authRequest(`${BASE}/favorites${buildQuery(params)}`, { signal });

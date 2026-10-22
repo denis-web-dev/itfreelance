@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { registerUser } from '../../services/auth';
 import { toFieldErrors } from '../../services/api';
 import { saveTokens } from '../../services/tokens';
@@ -10,7 +10,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import CloseIcon from '../../components/Icons/CloseIcon';
 import InputForm from '../../components/InputForm/InputForm';
 import ConsentCheckbox from '../../components/ConsentCheckbox/ConsentCheckbox';
-import RoleSelect from '../../components/RoleSelect/RoleSelect';
 import clsx from 'clsx';
 import styles from './Register.module.css';
 
@@ -24,9 +23,6 @@ const schema = z
 			.regex(/[A-Z]/, 'Пароль должен содержать хотя бы одну заглавную букву')
 			.regex(/[0-9]/, 'Пароль должен содержать хотя бы одну цифру'),
 		confirmPassword: z.string(),
-		role: z.enum(['FREELANCER', 'CUSTOMER'], {
-			error: () => ({ message: 'Выберите роль' }),
-		}),
 		consent: z.literal(true, {
 			error: () => ({ message: 'Необходимо согласие на обработку данных' }),
 		}),
@@ -36,6 +32,8 @@ const schema = z
 		path: ['confirmPassword'],
 	});
 
+const ROLES = ['FREELANCER', 'CUSTOMER'];
+
 function Register() {
 	const navigate = useNavigate();
 	const { login } = useAuth();
@@ -43,8 +41,9 @@ function Register() {
 	const [serverError, setServerError] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 
+	// Роль выбрана на странице «Создать аккаунт» и приходит в адресе: /register?role=CUSTOMER
 	const roleFromUrl = searchParams.get('role');
-	const defaultRole = ['FREELANCER', 'CUSTOMER'].includes(roleFromUrl) ? roleFromUrl : '';
+	const role = ROLES.includes(roleFromUrl) ? roleFromUrl : null;
 
 	const {
 		register,
@@ -53,7 +52,7 @@ function Register() {
 		formState: { errors },
 	} = useForm({
 		resolver: zodResolver(schema),
-		defaultValues: { role: defaultRole, consent: false },
+		defaultValues: { consent: false },
 	});
 
 	const handleClose = () => {
@@ -69,7 +68,7 @@ function Register() {
 				fullName: data.name,
 				email: data.email,
 				password: data.password,
-				role: data.role,
+				role: role,
 				consent: data.consent,
 			});
 
@@ -93,6 +92,9 @@ function Register() {
 		}
 	};
 
+	// Без выбранной роли регистрироваться нельзя: возвращаем на выбор роли
+	if (!role) return <Navigate to="/create-account" replace />;
+
 	return (
 		<div className={styles['wrapper-registration']}>
 			<div className="container">
@@ -107,13 +109,12 @@ function Register() {
 
 					<svg
 						className={styles['block-bg-svg']}
-						width="1410"
-						height="738"
 						viewBox="0 0 1410 738"
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
 						aria-hidden="true"
 						focusable="false"
+						preserveAspectRatio="none"
 					>
 						<path
 							fillRule="evenodd"
@@ -168,9 +169,6 @@ function Register() {
 							showPasswordToggle={true}
 							{...register('confirmPassword')}
 						/>
-
-						{/* Выбор роли */}
-						<RoleSelect register={register} error={errors.role?.message} disabled={isLoading} />
 
 						{/* Чекбокс согласия */}
 						<ConsentCheckbox

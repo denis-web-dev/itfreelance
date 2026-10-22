@@ -12,7 +12,7 @@ class ApiError extends Error {
 	static unauthorized(msg = 'Неверный email или пароль') {
 		return new ApiError(401, msg);
 	}
-	static forbidden(msg = 'Недостаточно прав') {
+	static forbidden(msg = 'Доступ запрещён') {
 		return new ApiError(403, msg);
 	}
 	static notFound(msg = 'Не найдено') {

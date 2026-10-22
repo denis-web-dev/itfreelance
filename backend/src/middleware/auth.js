@@ -1,21 +1,38 @@
 import { verifyAccessToken } from '../config/jwt.config.js';
+import prisma from '../lib/prisma.js';
 import ApiError from '../utils/ApiError.js';
 
-export const protect = (req, res, next) => {
+// Проверяет токен и берёт актуальные данные пользователя из базы:
+// заблокированный или удалённый пользователь теряет доступ сразу, а не через 15 минут
+export const protect = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
 	if (!authHeader?.startsWith('Bearer ')) {
 		return next(ApiError.unauthorized('Токен не предоставлен'));
 	}
+
+	let decoded;
 	try {
-		const decoded = verifyAccessToken(authHeader.split(' ')[1]);
-		req.user = { id: decoded.userId, role: decoded.role };
-		next();
+		decoded = verifyAccessToken(authHeader.split(' ')[1]);
 	} catch {
-		next(ApiError.unauthorized('Неверный или просроченный токен'));
+		return next(ApiError.unauthorized('Неверный или просроченный токен'));
+	}
+
+	try {
+		const user = await prisma.user.findUnique({
+			where: { id: decoded.userId },
+			select: { id: true, role: true, isActive: true },
+		});
+		if (!user || !user.isActive) {
+			return next(ApiError.unauthorized('Пользователь не найден или заблокирован'));
+		}
+		req.user = { id: user.id, role: user.role };
+		next();
+	} catch (error) {
+		next(error);
 	}
 };
 
-// Права на каждом эндпоинте: router.post('/jobs', protect, requireRole('CUSTOMER'), ...)
+// Права на эндпоинте: router.post('/orders', protect, requireRole('CUSTOMER'), ...)
 export const requireRole =
 	(...roles) =>
 	(req, res, next) =>

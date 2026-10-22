@@ -9,15 +9,19 @@ export class ApiError extends Error {
 	}
 }
 
-export async function request(path, { method = 'GET', body, headers = {} } = {}) {
+export async function request(path, { method = 'GET', body, headers = {}, signal } = {}) {
+	const isFormData = body instanceof FormData;
 	let response;
 	try {
 		response = await fetch(`${BASE_URL}${path}`, {
 			method,
-			headers: { 'Content-Type': 'application/json', ...headers },
-			body: body ? JSON.stringify(body) : undefined,
+			headers: { ...(isFormData ? {} : { 'Content-Type': 'application/json' }), ...headers },
+			body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
+			signal,
 		});
-	} catch {
+	} catch (error) {
+		// Отмена запроса не ошибка сети, её обрабатывает вызывающий код
+		if (error.name === 'AbortError') throw error;
 		throw new ApiError('Нет связи с сервером. Попробуйте позже.', 0);
 	}
 

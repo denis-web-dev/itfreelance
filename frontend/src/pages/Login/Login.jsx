@@ -7,7 +7,7 @@ import { loginUser } from '../../services/auth';
 import { saveTokens } from '../../services/tokens';
 import { useAuth } from '../../contexts/AuthContext';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import CloseIcon from '../../components/Icons/CloseIcon';
 import InputForm from '../../components/InputForm/InputForm';
 
@@ -26,6 +26,7 @@ const getRememberedEmail = () => {
 
 function Login() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { login } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [serverError, setServerError] = useState('');
@@ -63,7 +64,7 @@ function Login() {
 				localStorage.removeItem('rememberedEmail');
 			}
 
-			navigate('/profile-edit');
+			navigate(location.state?.from?.pathname || '/profile-edit', { replace: true });
 		} catch (error) {
 			setServerError(error.message);
 		} finally {
@@ -174,7 +175,7 @@ function Login() {
 
 					<div className={styles['account__link-entrance']}>
 						<span className={styles['account__entrance-reg']}>Нет аккаунта?</span>
-						<Link to="/register" className={styles['account__link-enter']}>
+						<Link to="/create-account" className={styles['account__link-enter']}>
 							Зарегистрироваться
 						</Link>
 					</div>

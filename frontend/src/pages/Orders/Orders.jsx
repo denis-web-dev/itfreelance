@@ -1,30 +1,36 @@
+import { useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader';
 import OrdersFilters from '../../components/OrdersFilters/OrdersFilters';
 import OrderCard from '../../components/OrderCard/OrderCard';
+import Pagination from '../../components/Pagination/Pagination';
 // import AiRecommendations from '../../components/AiRecommendations/AiRecommendations';
 import { useOrders } from '../../hooks/useOrders';
-import { toggleFavorite } from '../../services/ordersApi';
 import CardBg from '../../components/CardBg/CardBg';
 import bgOrder from '../../assets/img-orders/BgHeader-order.png';
 import eyesOrder from '../../assets/img-orders/eyes-order.png';
 import styles from './Orders.module.css';
 
 export default function Orders() {
-	const { orders, total, loading, error, filters, updateFilters, refetch } = useOrders();
+	const [isCreateOpen, setCreateOpen] = useState(false);
+	const { orders, total, pages, page, loading, error, filters, updateFilters, setPage } =
+		useOrders();
 
 	const handleRespond = (id) => {
-		console.log('Отклик на заказ', id);
 		// позже: navigate или API
 	};
 
 	const handleDetails = (id) => {
-		console.log('Подробнее', id);
 		// позже: navigate(`/orders/${id}`)
 	};
 
-	const handleFavorite = async (id) => {
-		await toggleFavorite(id);
-		refetch();
+	const handlePageChange = (nextPage) => {
+		setPage(nextPage);
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	};
+
+	const handleCreated = () => {
+		setCreateOpen(false);
+		updateFilters({}); // возвращаемся на первую страницу и перезагружаем список
 	};
 
 	return (
@@ -56,11 +62,13 @@ export default function Orders() {
 											order={order}
 											onRespond={handleRespond}
 											onDetails={handleDetails}
-											onToggleFavorite={handleFavorite}
 										/>
 									))}
 								{!loading && !error && orders.length === 0 && (
 									<p className={styles.status}>Заказов не найдено</p>
+								)}
+								{!loading && !error && (
+									<Pagination page={page} pages={pages} onChange={handlePageChange} />
 								)}
 							</div>
 

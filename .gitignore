@@ -75,6 +75,7 @@ frontend/dist/
 # Backend
 backend/build/
 backend/dist/
+backend/uploads/
 
 # Prisma
 backend/prisma/*.db
