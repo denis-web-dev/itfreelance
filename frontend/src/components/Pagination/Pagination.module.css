@@ -1,0 +1,43 @@
+.pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 32px;
+}
+
+.page,
+.arrow {
+	min-width: 44px;
+	height: 44px;
+	padding: 0 16px;
+	border: none;
+	border-radius: 22px;
+	background: #ececec;
+	color: #1a1a1a;
+	font: inherit;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.page:not(.pageActive):hover,
+.arrow:hover:not(:disabled) {
+	background: #dcdcdc;
+}
+
+.pageActive {
+	background: #1a1a1a;
+	color: #fff;
+	cursor: default;
+}
+
+.arrow:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.dots {
+	padding: 0 4px;
+	color: #7b7b7b;
+}

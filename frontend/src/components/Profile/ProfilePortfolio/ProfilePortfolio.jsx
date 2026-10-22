@@ -1,76 +1,109 @@
-// src/components/Profile/ProfilePortfolio/ProfilePortfolio.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PortfolioCard from './PortfolioCard';
+import AddProjectModal from './AddProjectModal';
+import { getMyPortfolio, deletePortfolioItem } from '../../../services/portfolioApi';
 import styles from './ProfilePortfolio.module.css';
 
-export default function ProfilePortfolio() {
-	const [portfolioItems, setPortfolioItems] = useState([
-		// {
-		//   id: 1,
-		//   image: 'https://via.placeholder.com/475x384/7b7b7b/ffffff?text=Работа+1',
-		//   title: 'Работа 1',
-		// },
-		// {
-		//   id: 2,
-		//   image: 'https://via.placeholder.com/475x384/7b7b7b/ffffff?text=Работа+2',
-		//   title: 'Работа 2',
-		// },
-		// {
-		//   id: 3,
-		//   image: 'https://via.placeholder.com/475x384/7b7b7b/ffffff?text=Работа+3',
-		//   title: 'Работа 3',
-		// },
-	]);
+const MAX_ITEMS = 12; // как на сервере
+const MIN_SLOTS = 8; // сколько ячеек показываем в режиме редактирования
 
-	const handleAddCard = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				const newItem = {
-					id: Date.now(),
-					image: reader.result,
-					title: file.name,
-				};
-				setPortfolioItems([...portfolioItems, newItem]);
-			};
-			reader.readAsDataURL(file);
+export default function ProfilePortfolio({ readOnly = false }) {
+	const [items, setItems] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState('');
+	// null: окно закрыто; { item: null }: добавление; { item }: редактирование
+	const [modal, setModal] = useState(null);
+
+	useEffect(() => {
+		const controller = new AbortController();
+
+		async function load() {
+			try {
+				const res = await getMyPortfolio({ signal: controller.signal });
+				setItems(res.data.items);
+			} catch (e) {
+				if (e.name === 'AbortError') return;
+				setError(e.message || 'Не удалось загрузить портфолио');
+			} finally {
+				if (!controller.signal.aborted) setLoading(false);
+			}
 		}
-		e.target.value = '';
+
+		load();
+		return () => controller.abort();
+	}, []);
+
+	const handleSaved = (saved) => {
+		setItems((prev) =>
+			prev.some((i) => i.id === saved.id)
+				? prev.map((i) => (i.id === saved.id ? saved : i))
+				: [saved, ...prev],
+		);
+		setModal(null);
 	};
 
-	// Редактирование работы
-	const handleEditCard = (id) => {
-		console.log('Редактировать работу:', id);
-		// TODO: Открыть модалку с данными работы
+	const handleDelete = async (id) => {
+		if (!window.confirm('Удалить проект из портфолио?')) return;
+		try {
+			await deletePortfolioItem(id);
+			setItems((prev) => prev.filter((i) => i.id !== id));
+			setError('');
+		} catch (e) {
+			setError(e.message || 'Не удалось удалить проект');
+		}
 	};
 
-	// Удаление работы
-	const handleDeleteCard = (id) => {
-		setPortfolioItems(portfolioItems.filter((item) => item.id !== id));
-	};
+	const openCreate = () => setModal({ item: null });
+	const openEdit = (id) => setModal({ item: items.find((i) => i.id === id) ?? null });
+
+	const canAdd = !readOnly && items.length < MAX_ITEMS;
+	const emptySlots = canAdd ? Math.max(1, MIN_SLOTS - items.length) : 0;
 
 	return (
 		<div className={styles.profilePortfolio}>
-			<h2 className={styles.profileTitle}>Портфолио</h2>
-
-			<div className={styles.profileGrid}>
-				{portfolioItems.map((item) => (
-					<PortfolioCard
-						key={item.id}
-						id={item.id}
-						image={item.image}
-						title={item.title}
-						onDelete={handleDeleteCard}
-						onEdit={handleEditCard}
-					/>
-				))}
-
-				<PortfolioCard isAdd={true} onAdd={handleAddCard} />
-				<PortfolioCard isAdd={true} onAdd={handleAddCard} />
-				<PortfolioCard isAdd={true} onAdd={handleAddCard} />
-				<PortfolioCard isAdd={true} onAdd={handleAddCard} />
+			<div className={styles.portfolioHeader}>
+				<h2 className={styles.profileTitle}>Портфолио</h2>
+				{canAdd && (
+					<button type="button" className={styles.addProjectBtn} onClick={openCreate}>
+						+ Добавить проект
+					</button>
+				)}
 			</div>
+
+			{error && (
+				<p className={styles.portfolioError} role="alert">
+					{error}
+				</p>
+			)}
+
+			{loading ? (
+				<p>Загрузка...</p>
+			) : readOnly && items.length === 0 ? (
+				<p>Пока нет проектов</p>
+			) : (
+				<div className={styles.profileGrid}>
+					{items.map((item) => (
+						<PortfolioCard
+							key={item.id}
+							id={item.id}
+							image={item.imageUrl}
+							title={item.title}
+							projectUrl={item.projectUrl}
+							readOnly={readOnly}
+							onDelete={handleDelete}
+							onEdit={openEdit}
+						/>
+					))}
+
+					{Array.from({ length: emptySlots }, (_, i) => (
+						<PortfolioCard key={`empty-${i}`} isAdd onAdd={openCreate} />
+					))}
+				</div>
+			)}
+
+			{!readOnly && modal && (
+				<AddProjectModal item={modal.item} onClose={() => setModal(null)} onSaved={handleSaved} />
+			)}
 		</div>
 	);
 }
