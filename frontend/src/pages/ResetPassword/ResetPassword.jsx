@@ -30,7 +30,6 @@ function ResetPassword() {
 	});
 
 	const onSubmit = (data) => {
-		console.log('Новый пароль установлен:', data);
 		// Здесь позже будет API-запрос
 		alert('Пароль успешно изменён! (симуляция)');
 		navigate('/login');

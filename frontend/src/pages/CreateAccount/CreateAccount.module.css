@@ -88,7 +88,13 @@
 .customer-close-btn {
 	left: 231px;
 	top: -12px;
-	rotate: 73deg;
+	rotate: 343deg;
+}
+
+.customer-close-btn svg {
+	position: absolute;
+	left: 8px;
+	top: 7px;
 }
 
 .customer-block-svg {
@@ -109,6 +115,12 @@
 .freelancer-close-btn {
 	left: 313px;
 	top: 67px;
+}
+
+.freelancer-close-btn svg {
+	position: absolute;
+	left: 8px;
+	top: 7px;
 }
 
 .freelancer-block-svg {

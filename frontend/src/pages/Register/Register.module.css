@@ -21,24 +21,29 @@
 	display: grid;
 	justify-items: center;
 	border-radius: 30px;
+
+	width: 100%;
+	max-width: 1410px;
+	min-height: 738px;
+	margin: 0 auto;
+	overflow: hidden;
 }
 .bg-mobile-svg {
 	display: none;
 }
 
-.block-bg__svg {
+.block-bg-svg {
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
 	border-radius: 30px;
-	z-index: -1;
 }
 
 .block-bg-close-btn {
 	position: absolute;
-	right: 216px;
+	right: 0;
 	top: 34px;
 	padding-top: 5px;
 	width: 48px;
@@ -58,7 +63,7 @@
 	position: absolute;
 	font-family: 'Unbounded';
 	left: 273px;
-	top: 137px;
+	top: 170px;
 	font-size: 80px;
 	line-height: 99px;
 	letter-spacing: -0.02em;
@@ -68,6 +73,7 @@
 
 .form__container-registration {
 	position: absolute;
+	max-width: 430px;
 	left: 50%;
 	top: 24%;
 	transform: translateX(-50%);
