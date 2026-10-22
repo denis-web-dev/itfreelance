@@ -1,13 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import CloseButton from '../../components/ui/CloseButton/CloseButton';
-import UserIcon from '../../components/Icons/UserIcon';
+import UserIconCreate from '../../components/ui/UserIconCreate/UserIconCreate';
 import styles from './CreateAccount.module.css';
 
 function CreateAccount() {
-	const navigate = useNavigate();
-	const handleClose = () => navigate(-1);
-
 	return (
 		<div className={styles['wrapper-create']}>
 			<div className={styles['container']}>
@@ -16,7 +13,6 @@ function CreateAccount() {
 						Создать аккаунт
 					</h1>
 					<CloseButton
-						onClick={handleClose}
 						size="large"
 						variant="dark"
 						className={styles['block-bg-close-btn-create']}
@@ -73,13 +69,11 @@ function CreateAccount() {
 									</svg>
 								</Link>
 
-								<span
+								<UserIconCreate
+									size="large"
+									variant="pink"
 									className={clsx(styles['account-close-btn'], styles['customer-close-btn'])}
-									aria-hidden="true"
-								>
-									<UserIcon />
-								</span>
-
+								/>
 								<span className={clsx(styles['account-name'], styles['customer-account-name'])}>
 									Я заказчик
 								</span>
@@ -112,13 +106,11 @@ function CreateAccount() {
 									</svg>
 								</Link>
 
-								<span
+								<UserIconCreate
+									size="large"
+									variant="pink"
 									className={clsx(styles['account-close-btn'], styles['freelancer-close-btn'])}
-									aria-hidden="true"
-								>
-									<UserIcon />
-								</span>
-
+								/>
 								<span className={clsx(styles['account-name'], styles['freelancer-account-name'])}>
 									Я исполнитель
 								</span>

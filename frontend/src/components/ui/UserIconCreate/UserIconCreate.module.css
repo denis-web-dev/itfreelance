@@ -1,0 +1,77 @@
+.userIconCreate {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	flex-shrink: 0;
+	color: #1a1a1a;
+}
+
+.icon {
+	display: block;
+}
+
+/* Размеры круга */
+.userIconCreate--small {
+	width: 28px;
+	height: 28px;
+}
+
+.userIconCreate--medium {
+	width: 40px;
+	height: 40px;
+}
+
+.userIconCreate--large {
+	width: 56px;
+	height: 56px;
+}
+
+/* Варианты фона */
+.userIconCreate--light {
+	background: #dedede;
+	color: #1a1a1a;
+}
+
+.userIconCreate--dark {
+	background: #1a1a1a;
+	color: #fff;
+}
+
+.userIconCreate--pink {
+	background: #fff;
+	color: #1a1a1a;
+}
+
+.userIconCreate--yellow {
+	background: #fff;
+	color: #1a1a1a;
+}
+
+/* Адаптив: large 56 → 48 на 1440 → меньше на мобиле */
+@media (max-width: 1440px) {
+	.userIconCreate--large {
+		width: 40px;
+		height: 40px;
+	}
+}
+
+@media (max-width: 1024px) {
+	.userIconCreate--large {
+		width: 40px;
+		height: 40px;
+	}
+
+	.userIconCreate--medium {
+		width: 36px;
+		height: 36px;
+	}
+}
+
+@media (max-width: 768px) {
+	.userIconCreate--large,
+	.userIconCreate--medium {
+		width: 32px;
+		height: 32px;
+	}
+}

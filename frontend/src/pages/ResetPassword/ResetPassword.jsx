@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
-import CloseIcon from '../../components/Icons/CloseIcon';
 import Button from '../../components/Button/Button';
 import InputForm from '../../components/InputForm/InputForm';
+import CloseButton from '../../components/ui/CloseButton/CloseButton';
 import clsx from 'clsx';
 import styles from './ResetPassword.module.css';
 
@@ -41,12 +41,13 @@ function ResetPassword() {
 				<h1 className={clsx(styles['main-title-new-pass'], styles['main-title'])}>Новый пароль</h1>
 
 				<div className={styles['block-bg']}>
-					{/* Кнопка закрытия */}
-					<button className={styles['block-bg-close-btn']}>
-						<CloseIcon className={styles['block-bg-close-svg']} />
-					</button>
+					<CloseButton
+						size="large"
+						variant="dark"
+						className={styles['block-bg-close-svg']}
+						ariaLabel="Закрыть"
+					/>
 
-					{/* Фоновый SVG */}
 					<svg
 						className={styles['block-bg-svg']}
 						viewBox="0 0 1410 770"
