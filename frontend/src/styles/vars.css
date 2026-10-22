@@ -6,6 +6,7 @@
 	--colorBg-black: #1a1a1a;
 	/* Color */
 	--color-grey: #dedede;
+	--color-greyDD: #dddddd;
 	--color-error: #cc4422;
 	--color-black: #1a1a1a1a;
 	--color-green: #29e429;
@@ -15,6 +16,7 @@
 	--colorText-secondary: #7b7b7b;
 	--colorText-hover: #b7b7b7;
 	--colorText-disabled: #b7b7b7;
+	--colorText-white: #ffffff;
 	/*  Buttons Primary*/
 	--colorBtn-primary-default: #38f838;
 	--colorBtn-primary-hover: #1a1a1a;

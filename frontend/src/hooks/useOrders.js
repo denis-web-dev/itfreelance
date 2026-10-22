@@ -1,26 +1,24 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { getOrders } from '../services/ordersApi';
 
+const PAGE_SIZE = 10;
+
 /**
- * Хук загрузки заказов с фильтрами.
- * Поддерживает отмену запроса (AbortController) и refetch.
+ * Хук загрузки заказов: фильтры, пагинация, отмена устаревших запросов.
  */
 export function useOrders(initialFilters = {}) {
+	const { logout } = useAuth(); // внутри хука — правильно
+
 	const [orders, setOrders] = useState([]);
-	const [total, setTotal] = useState(0);
+	const [meta, setMeta] = useState({ total: 0, pages: 0 });
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const [filters, setFilters] = useState(initialFilters);
+	const [filters, setFilters] = useState({ page: 1, limit: PAGE_SIZE, ...initialFilters });
 	const [reloadKey, setReloadKey] = useState(0);
-	const abortRef = useRef(null);
 
 	useEffect(() => {
-		if (abortRef.current) {
-			abortRef.current.abort();
-		}
-
 		const controller = new AbortController();
-		abortRef.current = controller;
 
 		async function load() {
 			setLoading(true);
@@ -28,47 +26,48 @@ export function useOrders(initialFilters = {}) {
 
 			try {
 				const res = await getOrders(filters, { signal: controller.signal });
-
 				if (controller.signal.aborted) return;
 
-				if (res.success) {
-					setOrders(res.data.items);
-					setTotal(res.data.total);
-				} else {
-					setError('Не удалось загрузить заказы');
-				}
+				setOrders(res.data.items);
+				setMeta({ total: res.data.total, pages: res.data.pages });
 			} catch (e) {
 				if (e.name === 'AbortError') return;
+				if (e.status === 401) {
+					logout();
+					return;
+				}
 				setError(e.message || 'Ошибка сети');
 			} finally {
-				if (!controller.signal.aborted) {
-					setLoading(false);
-				}
+				if (!controller.signal.aborted) setLoading(false);
 			}
 		}
 
 		load();
 
-		return () => {
-			controller.abort();
-		};
-	}, [filters, reloadKey]);
+		return () => controller.abort();
+	}, [filters, reloadKey, logout]);
 
+	// При смене фильтров возвращаемся на первую страницу
 	const updateFilters = useCallback((next) => {
-		setFilters((prev) => ({ ...prev, ...next }));
+		setFilters((prev) => ({ ...prev, page: 1, ...next }));
 	}, []);
 
-	const refetch = useCallback(() => {
-		setReloadKey((k) => k + 1);
+	const setPage = useCallback((page) => {
+		setFilters((prev) => ({ ...prev, page }));
 	}, []);
+
+	const refetch = useCallback(() => setReloadKey((k) => k + 1), []);
 
 	return {
 		orders,
-		total,
+		total: meta.total,
+		pages: meta.pages,
+		page: filters.page,
 		loading,
 		error,
 		filters,
 		updateFilters,
+		setPage,
 		refetch,
 	};
 }

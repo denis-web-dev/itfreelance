@@ -1,14 +1,18 @@
-// "React, Node.js" -> ["React", "Node.js"] (без пустых и повторов)
-export const parseTags = (value) => [
-	...new Set(
-		(value ?? '')
-			.split(',')
-			.map((item) => item.trim())
-			.filter(Boolean),
-	),
-];
+// "React, Node.js" -> ["React", "Node.js"]
+export const parseTags = (value) => {
+	if (Array.isArray(value)) {
+		return [...new Set(value.map((item) => String(item).trim()).filter(Boolean))];
+	}
 
-export const tagsToString = (tags) => (tags ?? []).join(', ');
+	return [
+		...new Set(
+			(value ?? '')
+				.split(',')
+				.map((item) => item.trim())
+				.filter(Boolean),
+		),
+	];
+};
 
 const toNumberOrNull = (value) => {
 	if (value === '' || value == null) return null;
@@ -16,25 +20,38 @@ const toNumberOrNull = (value) => {
 	return Number.isFinite(number) ? Math.trunc(number) : null;
 };
 
-// Данные формы -> тело запроса к API (только поля своей роли)
-export const formToApi = (data, isFreelancer) => ({
-	fullName: data.fullName,
-	region: data.region,
-	phone: data.phone,
-	sphere: data.sphere,
-	about: data.about,
-	site: data.site,
-	telegram: data.telegram,
-	vk: data.vk,
-	skills: parseTags(data.skills),
-	tools: parseTags(data.tools),
-	...(isFreelancer
-		? { experience: data.experience, rate: toNumberOrNull(data.rate) }
-		: { companyName: data.companyName, marketYears: toNumberOrNull(data.marketYears) }),
-});
+// Форма → API
+export const formToApi = (data, isFreelancer) => {
+	const base = {
+		fullName: data.fullName || null,
+		region: data.region || null,
+		phone: data.phone || null,
+		sphere: data.sphere || null,
+		about: data.about || null,
+		site: data.site || null,
+		telegram: data.telegram || null,
+		vk: data.vk || null,
+	};
 
-// Ответ API -> значения формы
-export const apiToForm = ({ user, profile }) => ({
+	if (isFreelancer) {
+		return {
+			...base,
+			experience: data.experience || null,
+			rate: toNumberOrNull(data.rate),
+			skills: parseTags(data.skills),
+			tools: parseTags(data.tools),
+		};
+	}
+
+	return {
+		...base,
+		companyName: data.companyName || null,
+		marketYears: toNumberOrNull(data.marketYears),
+	};
+};
+
+// API → форма (skills/tools всегда массивы!)
+export const apiToForm = ({ user, profile } = {}) => ({
 	fullName: profile?.fullName ?? '',
 	email: user?.email ?? '',
 	region: profile?.region ?? '',
@@ -44,8 +61,8 @@ export const apiToForm = ({ user, profile }) => ({
 	site: profile?.site ?? '',
 	telegram: profile?.telegram ?? '',
 	vk: profile?.vk ?? '',
-	skills: tagsToString(profile?.skills),
-	tools: tagsToString(profile?.tools),
+	skills: Array.isArray(profile?.skills) ? profile.skills : [],
+	tools: Array.isArray(profile?.tools) ? profile.tools : [],
 	experience: profile?.experience ?? '',
 	rate: profile?.rate != null ? String(profile.rate) : '',
 	companyName: profile?.companyName ?? '',
