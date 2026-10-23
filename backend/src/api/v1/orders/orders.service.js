@@ -74,6 +74,7 @@ export const createOrder = async (customerId, input) => {
 			description: input.description,
 			budget: input.budget,
 			tools: input.tools ?? [],
+			toolsSearch: toolsToSearchText(input.tools),
 			deadline: input.deadline ? new Date(input.deadline) : null,
 			stages: input.stages
 				? {
@@ -85,13 +86,16 @@ export const createOrder = async (customerId, input) => {
 					}
 				: undefined,
 		},
-				select: detailSelectFor(customerId),
+		select: detailSelectFor(customerId),
 	});
 	return toDto(order);
 };
 
 // Экранируем служебные символы LIKE, чтобы % и _ искались как обычные символы
 const escapeLike = (value) => value.replace(/[\\%_]/g, '\\$&');
+
+// Инструменты одной строкой в нижнем регистре: по ней ищем без учёта регистра и по части слова
+const toolsToSearchText = (tools = []) => tools.join(' ').toLowerCase();
 
 export const listOrders = async (
 	userId,
@@ -110,6 +114,7 @@ export const listOrders = async (
 		where.OR = [
 			{ title: { contains: pattern, mode: 'insensitive' } },
 			{ description: { contains: pattern, mode: 'insensitive' } },
+			{ toolsSearch: { contains: pattern.toLowerCase() } },
 		];
 	}
 	if (minRating !== undefined) {
@@ -159,7 +164,7 @@ export const listFavoriteOrders = async (userId, { page, limit }) => {
 export const getOrder = async (orderId, viewer) => {
 	const order = await prisma.order.findUnique({
 		where: { id: orderId },
-				select: detailSelectFor(viewer.id),
+		select: detailSelectFor(viewer.id),
 	});
 
 	// Не открытые заказы видит только автор, для остальных их как будто нет
@@ -171,15 +176,18 @@ export const getOrder = async (orderId, viewer) => {
 
 export const updateOrder = async (userId, orderId, input) => {
 	await findOwnedOrder(orderId, userId);
-
 	// Условие status: 'OPEN' прямо в запросе защищает от гонки:
 	// между проверкой и записью статус мог измениться
+	const data = pick(input, EDITABLE_FIELDS);
+	// Инструменты изменились, значит, обновляем и строку для поиска
+	if (data.tools) data.toolsSearch = toolsToSearchText(data.tools);
+
 	const { count } = await prisma.order.updateMany({
 		where: { id: orderId, customerId: userId, status: 'OPEN' },
-		data: pick(input, EDITABLE_FIELDS),
+		data,
 	});
-	if (count === 0) throw ApiError.conflict('Заказ нельзя изменить в текущем статусе');
 
+	if (count === 0) throw ApiError.conflict('Заказ нельзя изменить в текущем статусе');
 	return getOrder(orderId, { id: userId });
 };
 
