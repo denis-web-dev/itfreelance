@@ -890,3 +890,44 @@ describe('POST /orders: этапы', () => {
 		expect(res.body.data.items[0]).not.toHaveProperty('stages');
 	});
 });
+describe('GET /orders: поиск по инструментам', () => {
+	it('находит заказ по инструменту без учёта регистра и по части названия', async () => {
+		const customer = await createCustomer();
+		await postOrder(customer.accessToken, {
+			...validOrder(),
+			title: 'Разработка CRM',
+			tools: ['React', 'Node.js'],
+		});
+		await postOrder(customer.accessToken, {
+			...validOrder(),
+			title: 'Лендинг для кафе',
+			tools: ['Figma'],
+		});
+
+		const byFullName = await listOrders(customer.accessToken, { search: 'react' });
+		const byPart = await listOrders(customer.accessToken, { search: 'node' });
+
+		expect(byFullName.body.data.items.map((order) => order.title)).toEqual(['Разработка CRM']);
+		expect(byPart.body.data.items.map((order) => order.title)).toEqual(['Разработка CRM']);
+	});
+
+	it('после изменения списка инструментов поиск находит по новым', async () => {
+		const customer = await createCustomer();
+		const created = await postOrder(customer.accessToken, {
+			...validOrder(),
+			title: 'Разработка CRM',
+			tools: ['React'],
+		});
+
+		await request(app)
+			.patch(`${ORDERS}/${created.body.data.order.id}`)
+			.set(authHeader(customer.accessToken))
+			.send({ tools: ['Vue.js'] });
+
+		const oldTool = await listOrders(customer.accessToken, { search: 'react' });
+		const newTool = await listOrders(customer.accessToken, { search: 'vue' });
+
+		expect(oldTool.body.data.items).toHaveLength(0);
+		expect(newTool.body.data.items).toHaveLength(1);
+	});
+});

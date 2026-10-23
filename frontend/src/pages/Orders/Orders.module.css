@@ -73,23 +73,6 @@
 	color: #c0392b;
 }
 
-.createBtn {
-	margin-bottom: 24px;
-	padding: 14px 28px;
-	border-radius: 100px;
-	background: #37f737;
-	font-family: var(--font-primary);
-	font-size: 18px;
-	color: #1a1a1a;
-	cursor: pointer;
-	transition: all 0.2s;
-}
-
-.createBtn:hover {
-	background: #1a1a1a;
-	color: #fff;
-}
-
 @media (max-width: 1100px) {
 	.layout {
 		grid-template-columns: 1fr;

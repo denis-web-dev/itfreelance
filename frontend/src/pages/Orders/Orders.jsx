@@ -3,8 +3,6 @@ import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader'
 import OrdersFilters from '../../components/OrdersFilters/OrdersFilters';
 import OrderCard from '../../components/OrderCard/OrderCard';
 import Pagination from '../../components/Pagination/Pagination';
-import CreateOrderModal from '../../components/CreateOrderModal/CreateOrderModal';
-import { useAuth } from '../../contexts/AuthContext';
 // import AiRecommendations from '../../components/AiRecommendations/AiRecommendations';
 import { useOrders } from '../../hooks/useOrders';
 import CardBg from '../../components/CardBg/CardBg';
@@ -14,7 +12,6 @@ import styles from './Orders.module.css';
 
 export default function Orders() {
 	const [isCreateOpen, setCreateOpen] = useState(false);
-	const { user } = useAuth();
 	const { orders, total, pages, page, loading, error, filters, updateFilters, setPage } =
 		useOrders();
 
@@ -49,15 +46,6 @@ export default function Orders() {
 
 				<main className={styles.orderMain}>
 					<div className={styles.containerMain}>
-						{user?.role === 'CUSTOMER' && (
-							<button
-								type="button"
-								className={styles.createBtn}
-								onClick={() => setCreateOpen(true)}
-							>
-								+ Создать заказ
-							</button>
-						)}
 						<OrdersFilters filters={filters} onChange={updateFilters} />
 
 						<p className={styles.count}>Найдено {total} проектов</p>
@@ -91,9 +79,6 @@ export default function Orders() {
 					</div>
 				</main>
 			</div>
-			{isCreateOpen && (
-				<CreateOrderModal onClose={() => setCreateOpen(false)} onCreated={handleCreated} />
-			)}
 		</div>
 	);
 }
