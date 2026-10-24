@@ -50,7 +50,7 @@ export default function ProfileCabinet() {
 					<ProfileSummary user={user} profile={profile} isFreelancer={isFreelancer} />
 				</CardBg>
 
-				<div className={`fullWidthBlock ${styles.content}`}>
+				<div className={styles['content']}>
 					<CabinetTabs showEdit={pathname.endsWith('/about')} />
 					<Outlet context={{ user, profile, isFreelancer }} />
 				</div>
