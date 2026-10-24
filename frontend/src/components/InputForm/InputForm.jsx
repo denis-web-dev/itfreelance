@@ -20,6 +20,7 @@ const InputForm = forwardRef(
 			width,
 			height,
 			inputSize = 'default',
+			placeholderShift,
 			...props
 		},
 		ref,

@@ -1,5 +1,6 @@
 @import '../../styles/vars.css';
 
+/* ===== Autofill ===== */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -10,11 +11,20 @@ input:-webkit-autofill:active {
 	background: white !important;
 }
 
+/* ===== Группа ===== */
 .form-group {
 	position: relative;
 	margin-bottom: 17px;
+	/* сдвиг плейсхолдера по умолчанию (поле ~430px) */
+	--placeholder-shift: 280px;
 }
 
+.form-group__password {
+	/* можно чуть меньше из‑за иконки глаза */
+	--placeholder-shift: 230px;
+}
+
+/* ===== Input ===== */
 .form-input {
 	width: 430px;
 	height: 56px;
@@ -32,13 +42,17 @@ input:-webkit-autofill:active {
 	border-color: #37f737;
 	caret-color: #37f737;
 	outline: none;
-	padding-right: 40px;
 }
 
 .form-input::placeholder {
 	color: transparent;
 }
 
+.form-input[type='password'] {
+	padding-right: 48px;
+}
+
+/* ===== Textarea ===== */
 .form-textarea {
 	width: 915px;
 	height: 445px;
@@ -54,25 +68,13 @@ input:-webkit-autofill:active {
 	min-height: 150px;
 	transition: border-color 0.2s;
 }
+
 .form-textarea:focus {
 	outline: none;
-	border-color: var(--bg-btn-normal);
-}
-.form-textarea__counter {
-	position: absolute;
-	bottom: 16px;
-	left: 24px;
-	text-align: right;
-	font-size: 14px;
-	color: var(--colorText-secondary);
+	border-color: #37f737;
 }
 
-.error-text {
-	color: #e74c3c;
-	font-size: 14px;
-	font-family: var(--font-secondery);
-}
-
+/* ===== Плейсхолдер-label ===== */
 .form-placeholder {
 	position: absolute;
 	left: 24px;
@@ -82,8 +84,10 @@ input:-webkit-autofill:active {
 	font-size: 18px;
 	font-family: var(--font-secondery);
 	pointer-events: none;
-	transition: all 0.3s ease;
-	background: none;
+	transition:
+		transform 0.3s ease,
+		opacity 0.3s ease,
+		font-size 0.3s ease;
 	padding: 0 4px;
 	white-space: nowrap;
 	z-index: 1;
@@ -91,15 +95,88 @@ input:-webkit-autofill:active {
 
 .form-input:focus ~ .form-placeholder,
 .form-input:not(:placeholder-shown) ~ .form-placeholder {
-	transform: translateY(-50%) translateX(300px);
+	transform: translateY(-50%) translateX(var(--placeholder-shift));
 	opacity: 0.7;
 	font-size: 16px;
 }
 
-.form-input:focus ~ .form-placeholder--password {
-	transform: translateY(-50%) translateX(250px);
+.form-placeholder--password {
+	/* базовый сдвиг для password уже через .form-group__password */
 }
 
+/* ===== Размеры поля ===== */
+.form-input--small {
+	width: 430px;
+	--placeholder-shift: 280px;
+}
+
+.form-input--default {
+	width: 430px;
+	--placeholder-shift: 280px;
+}
+
+.form-input--profile {
+	width: 606px;
+	--placeholder-shift: 420px;
+}
+
+.form-input--large {
+	width: 915px;
+	--placeholder-shift: 700px;
+}
+
+.form-input--full {
+	width: 100%;
+	--placeholder-shift: 60%;
+}
+
+/* переменная на группе, если sizeClass висит на input —
+   дублируем shift на группе через обёртку не всегда возможно,
+   поэтому дублируем rule для focus на size-классах */
+
+.form-input--small:focus ~ .form-placeholder,
+.form-input--small:not(:placeholder-shown) ~ .form-placeholder {
+	transform: translateY(-50%) translateX(280px);
+}
+
+.form-input--default:focus ~ .form-placeholder,
+.form-input--default:not(:placeholder-shown) ~ .form-placeholder {
+	transform: translateY(-50%) translateX(280px);
+}
+
+.form-input--profile:focus ~ .form-placeholder,
+.form-input--profile:not(:placeholder-shown) ~ .form-placeholder {
+	transform: translateY(-50%) translateX(420px);
+}
+
+.form-input--large:focus ~ .form-placeholder,
+.form-input--large:not(:placeholder-shown) ~ .form-placeholder {
+	transform: translateY(-50%) translateX(700px);
+}
+
+/* ===== Ошибка ===== */
+.error {
+	position: absolute;
+	font-family: var(--font-secondery);
+	font-size: 14px;
+	left: 12px;
+	bottom: -18px;
+	color: #cc4422;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.form-input-error {
+	border-color: #cc4422 !important;
+}
+
+.error__svg {
+	flex-shrink: 0;
+}
+
+/* ===== Toggle password ===== */
 .toggle-password {
 	position: absolute;
 	right: 20px;
@@ -117,86 +194,39 @@ input:-webkit-autofill:active {
 	z-index: 2;
 }
 
-/* Ошибка */
-.error {
-	position: absolute;
-	font-family: var(--font-secondery);
-	font-size: 14px;
-	left: 12px;
-	color: #cc4422;
-	white-space: nowrap;
-	display: flex;
-	align-items: center;
-	gap: 6px;
-}
-
-.form-input-error {
-	border-color: #cc4422 !important;
-}
-
-.form-input[type='password'] {
-	padding-right: 40px !important;
-}
-
-/* По умолчанию (606px) */
-/* .form-input--default {
-  width: 606px;
-} */
-
-/* Маленький (430px) - для форм входа */
-.form-input--small {
-	width: 430px;
-}
-
-/* Большой (915px) - для textarea */
-.form-input--large {
-	width: 915px;
-}
-
-/* На всю ширину родителя */
-.form-input--full {
-	width: 100%;
-}
-
-/* ===== ВАРИАНТЫ ИСПОЛЬЗОВАНИЯ ===== */
-
-/* Для форм входа */
-.form-input--login {
-	width: 430px;
-}
-
-/* Для форм профиля */
-.form-input--profile {
-	width: 606px;
-}
-
-/* Для textarea */
-.form-input--textarea {
-	width: 915px;
-}
-
-/* Медиа-запросы */
+/* ===== Адаптив ===== */
 @media (max-width: 1024px) {
+	.form-group {
+		--placeholder-shift: 220px;
+	}
+
+	.form-input,
+	.form-input--small,
 	.form-input--default {
-		width: 380px;
-	}
-
-	.form-input--small {
-		width: 320px;
-	}
-
-	.form-input--large {
-		width: 600px;
-	}
-	.form-input {
 		width: 380px;
 		height: 48px;
 		padding: 12px 20px;
 	}
 
-	.form-input:focus ~ .form-placeholder,
-	.form-input:not(:placeholder-shown) ~ .form-placeholder {
-		transform: translateY(-50%) translateX(250px);
+	.form-input--profile {
+		width: 480px;
+	}
+
+	.form-input--large {
+		width: 600px;
+	}
+
+	.form-input--small:focus ~ .form-placeholder,
+	.form-input--small:not(:placeholder-shown) ~ .form-placeholder,
+	.form-input--default:focus ~ .form-placeholder,
+	.form-input--default:not(:placeholder-shown) ~ .form-placeholder {
+		transform: translateY(-50%) translateX(220px);
+		font-size: 14px;
+	}
+
+	.form-input--profile:focus ~ .form-placeholder,
+	.form-input--profile:not(:placeholder-shown) ~ .form-placeholder {
+		transform: translateY(-50%) translateX(320px);
 	}
 
 	.toggle-password {
@@ -205,77 +235,77 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 768px) {
+	.form-group {
+		--placeholder-shift: 160px;
+	}
+
+	.form-input,
+	.form-input--small,
 	.form-input--default {
 		width: 330px;
+		height: 44px;
+		padding: 12px 18px;
 	}
 
-	.form-input--small {
-		width: 280px;
-	}
-
-	.form-input--large {
-		width: 400px;
-	}
-
+	.form-input--profile,
+	.form-input--large,
 	.form-input--full {
 		width: 100%;
-	}
-	.form-input {
-		width: 330px;
-		height: 40px;
-		padding: 12px 20px;
 	}
 
 	.form-placeholder {
 		font-size: 16px;
+		left: 18px;
 	}
 
 	.form-input:focus ~ .form-placeholder,
-	.form-input:not(:placeholder-shown) ~ .form-placeholder {
-		transform: translateY(-50%) translateX(200px);
-		font-size: 14px;
+	.form-input:not(:placeholder-shown) ~ .form-placeholder,
+	.form-input--small:focus ~ .form-placeholder,
+	.form-input--small:not(:placeholder-shown) ~ .form-placeholder,
+	.form-input--default:focus ~ .form-placeholder,
+	.form-input--default:not(:placeholder-shown) ~ .form-placeholder {
+		transform: translateY(-50%) translateX(160px);
+		font-size: 13px;
 	}
 
 	.error {
 		font-size: 12px;
-		bottom: -18px;
+		bottom: -16px;
 	}
 }
 
 @media (max-width: 425px) {
+	.form-group {
+		--placeholder-shift: 140px;
+	}
+
+	.form-input,
+	.form-input--small,
 	.form-input--default {
-		width: 330px;
-	}
-
-	.form-input--small {
-		width: 280px;
-	}
-
-	.form-input--large {
-		width: 280px;
-	}
-	.form-input {
-		width: 330px;
+		width: 100%;
+		max-width: 330px;
 		height: 48px;
-		padding: 12px 24px;
 	}
 
 	.form-input:focus ~ .form-placeholder,
 	.form-input:not(:placeholder-shown) ~ .form-placeholder {
-		transform: translateY(-50%) translateX(180px);
+		transform: translateY(-50%) translateX(140px);
 	}
 }
 
 @media (max-width: 320px) {
+	.form-group {
+		--placeholder-shift: 110px;
+	}
+
 	.form-input {
-		width: 280px;
-		height: 48px;
-		padding: 12px 24px;
+		width: 100%;
+		max-width: 280px;
 	}
 
 	.form-input:focus ~ .form-placeholder,
 	.form-input:not(:placeholder-shown) ~ .form-placeholder {
-		transform: translateY(-50%) translateX(150px);
+		transform: translateY(-50%) translateX(110px);
 	}
 
 	.toggle-password {
