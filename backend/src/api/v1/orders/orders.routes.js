@@ -4,6 +4,7 @@ import { validate, validateQuery } from '../../../middleware/validate.js';
 import {
 	createOrderSchema,
 	listOrdersQuerySchema,
+	listMyOrdersQuerySchema,
 	listFavoritesQuerySchema,
 	updateOrderSchema,
 } from '../../../schemas/order.schema.js';
@@ -22,6 +23,14 @@ router.get(
 	requireRole('FREELANCER'),
 	validateQuery(listFavoritesQuerySchema),
 	ordersController.listFavorites,
+);
+
+// Мои заказы заказчика. ВАЖНО: до '/:id'
+router.get(
+	'/mine',
+	requireRole('CUSTOMER'),
+	validateQuery(listMyOrdersQuerySchema),
+	ordersController.listMine,
 );
 
 router.get('/:id', ordersController.getOne);

@@ -97,6 +97,8 @@ const escapeLike = (value) => value.replace(/[\\%_]/g, '\\$&');
 // Инструменты одной строкой в нижнем регистре: по ней ищем без учёта регистра и по части слова
 const toolsToSearchText = (tools = []) => tools.join(' ').toLowerCase();
 
+const sumBudgets = (items) => items.reduce((sum, item) => sum + item.budget, 0);
+
 export const listOrders = async (
 	userId,
 	{ budgetMin, budgetMax, minRating, tools, search, page, limit },
@@ -161,6 +163,25 @@ export const listFavoriteOrders = async (userId, { page, limit }) => {
 	};
 };
 
+// Мои заказы заказчика: любые статусы, самые свежие сверху
+export const listMyOrders = async (userId, { status, page, limit }) => {
+	const where = { customerId: userId };
+	if (status?.length) where.status = { in: status };
+
+	const [total, items] = await prisma.$transaction([
+		prisma.order.count({ where }),
+		prisma.order.findMany({
+			where,
+			orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+			skip: (page - 1) * limit,
+			take: limit,
+			select: listSelectFor(userId),
+		}),
+	]);
+
+	return { items: items.map(toDto), total, page, limit, pages: Math.ceil(total / limit) };
+};
+
 export const getOrder = async (orderId, viewer) => {
 	const order = await prisma.order.findUnique({
 		where: { id: orderId },
@@ -176,18 +197,52 @@ export const getOrder = async (orderId, viewer) => {
 
 export const updateOrder = async (userId, orderId, input) => {
 	await findOwnedOrder(orderId, userId);
-	// Условие status: 'OPEN' прямо в запросе защищает от гонки:
-	// между проверкой и записью статус мог измениться
+
 	const data = pick(input, EDITABLE_FIELDS);
 	// Инструменты изменились, значит, обновляем и строку для поиска
 	if (data.tools) data.toolsSearch = toolsToSearchText(data.tools);
+	// null очищает дедлайн
+	if (input.deadline !== undefined) {
+		data.deadline = input.deadline ? new Date(input.deadline) : null;
+	}
 
-	const { count } = await prisma.order.updateMany({
-		where: { id: orderId, customerId: userId, status: 'OPEN' },
-		data,
+	// Массив заменяет этапы, null убирает их
+	const changesStages = input.stages !== undefined;
+	// С этапами бюджет заказа всегда равен сумме этапов
+	if (input.stages) data.budget = sumBudgets(input.stages);
+
+	// Всё в одной транзакции: либо изменилось и заказ, и этапы, либо ничего
+	await prisma.$transaction(async (tx) => {
+		// Бюджет заказа с этапами меняется только через этапы
+		if (input.budget !== undefined && !changesStages) {
+			const stagesCount = await tx.orderStage.count({ where: { orderId } });
+			if (stagesCount > 0) {
+				throw ApiError.badRequest('У заказа есть этапы: бюджет меняется через их сумму');
+			}
+		}
+
+		// Условие status: 'OPEN' прямо в запросе защищает от гонки
+		const { count } = await tx.order.updateMany({
+			where: { id: orderId, customerId: userId, status: 'OPEN' },
+			data,
+		});
+		if (count === 0) throw ApiError.conflict('Заказ нельзя изменить в текущем статусе');
+
+		if (changesStages) {
+			await tx.orderStage.deleteMany({ where: { orderId } });
+			if (input.stages) {
+				await tx.orderStage.createMany({
+					data: input.stages.map((item, index) => ({
+						orderId,
+						position: index + 1,
+						title: item.title,
+						budget: item.budget,
+					})),
+				});
+			}
+		}
 	});
 
-	if (count === 0) throw ApiError.conflict('Заказ нельзя изменить в текущем статусе');
 	return getOrder(orderId, { id: userId });
 };
 

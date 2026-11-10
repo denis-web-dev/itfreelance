@@ -63,13 +63,21 @@ export const createOrderSchema = z
 		{ message: 'Сумма бюджетов этапов должна равняться бюджету заказа', path: ['budget'] },
 	);
 
-// При изменении можно прислать любые поля, но хотя бы одно
+// При изменении можно прислать любые поля, но хотя бы одно.
+// deadline: null убирает дедлайн, stages: null убирает разбивку на этапы
 export const updateOrderSchema = z
-	.object(orderFields)
+	.object({ ...orderFields, deadline: deadline.nullable(), stages: stages.nullable() })
 	.partial()
 	.refine((data) => Object.keys(data).length > 0, {
 		message: 'Укажите хотя бы одно поле для изменения',
-	});
+	})
+	.refine(
+		(data) =>
+			!data.stages ||
+			data.budget === undefined ||
+			data.stages.reduce((sum, item) => sum + item.budget, 0) === data.budget,
+		{ message: 'Сумма бюджетов этапов должна равняться бюджету заказа', path: ['budget'] },
+	);
 
 // Параметры адресной строки приходят строками, поэтому приводим типы
 const emptyToUndefined = (value) => (value === '' ? undefined : value);
@@ -108,6 +116,28 @@ export const listOrdersQuerySchema = z
 	);
 // Вкладка «Избранное»: только страница и размер страницы
 export const listFavoritesQuerySchema = z.object({
+	page: intParam(1, 100000).default(1),
+	limit: intParam(1, 50).default(10),
+});
+
+const ORDER_STATUSES = ['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
+
+// Мои заказы: ?status=OPEN,IN_PROGRESS (пусто = любые), плюс страница и размер страницы
+export const listMyOrdersQuerySchema = z.object({
+	status: z
+		.string()
+		.trim()
+		.max(100)
+		.optional()
+		.transform((value) =>
+			value
+				? value
+						.split(',')
+						.map((item) => item.trim())
+						.filter(Boolean)
+				: [],
+		)
+		.pipe(z.array(z.enum(ORDER_STATUSES, 'Неизвестный статус заказа'))),
 	page: intParam(1, 100000).default(1),
 	limit: intParam(1, 50).default(10),
 });

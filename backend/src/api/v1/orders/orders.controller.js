@@ -27,6 +27,15 @@ export const listFavorites = async (req, res, next) => {
 	}
 };
 
+export const listMine = async (req, res, next) => {
+	try {
+		const data = await ordersService.listMyOrders(req.user.id, req.validatedQuery);
+		res.status(200).json({ success: true, data });
+	} catch (error) {
+		next(error);
+	}
+};
+
 export const getOne = async (req, res, next) => {
 	try {
 		const order = await ordersService.getOrder(req.params.id, req.user);
