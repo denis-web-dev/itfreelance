@@ -4,15 +4,32 @@ import RatingStars from '../RatingStars/RatingStars';
 import IconLike from '../../assets/icons/icon-like.svg?react';
 import { formatBudget, formatDate } from '../../utils/format';
 
+const STATUS_LABELS = {
+	OPEN: 'Ожидает исполнителя',
+	IN_PROGRESS: 'В работе',
+	COMPLETED: 'Завершён',
+	CANCELLED: 'Отменён',
+};
+
+// "2026-10-15" -> "15.10.2026" (без часовых поясов)
+const formatDeadline = (iso) => iso.split('-').reverse().join('.');
+
 /**
- * Карточка заказа
+ * Карточка заказа.
+ * isOwn: карточка моего заказа в кабинете заказчика
  */
-export default function OrderCard({ order, onRespond, onDetails, onToggleFavorite }) {
+export default function OrderCard({
+	order,
+	isOwn = false,
+	onRespond,
+	onDetails,
+	onToggleFavorite,
+}) {
 	const { rating } = order.customer;
 
 	return (
 		<article className={styles.card}>
-			{onToggleFavorite && (
+			{!isOwn && onToggleFavorite && (
 				<button
 					type="button"
 					className={styles.favorite}
@@ -23,24 +40,40 @@ export default function OrderCard({ order, onRespond, onDetails, onToggleFavorit
 				</button>
 			)}
 
+			{isOwn && (
+				<span className={styles.status}>{STATUS_LABELS[order.status] ?? order.status}</span>
+			)}
+
 			<h3 className={styles.title}>{order.title}</h3>
 
-			<div className={styles.rating}>
-				<span className={styles.ratingLabel}>Рейтинг заказчика</span>
-				{rating == null ? (
-					<span className={styles.ratingValue}>Пока нет оценок</span>
-				) : (
-					<div className={styles.stars}>
-						<RatingStars value={rating} />
-						<span className={styles.ratingValue}>{rating.toFixed(1)}/5</span>
-					</div>
-				)}
-			</div>
+			{!isOwn && (
+				<div className={styles.rating}>
+					<span className={styles.ratingLabel}>Рейтинг заказчика</span>
+					{rating == null ? (
+						<span className={styles.ratingValue}>Пока нет оценок</span>
+					) : (
+						<div className={styles.stars}>
+							<RatingStars value={rating} />
+							<span className={styles.ratingValue}>{rating.toFixed(1)}/5</span>
+						</div>
+					)}
+				</div>
+			)}
 
 			<div className={styles.budget}>
 				<span className={styles.budgetLabel}>Бюджет проекта</span>
-				<span className={styles.budgetValue}>{formatBudget(order.budget)}</span>
+				<span className={styles.budgetValue}>
+					{order.budget == null ? 'Не указан' : formatBudget(order.budget)}
+				</span>
 			</div>
+
+			{/* Дедлайн показываем только у заказа в работе (в «Сделки → Активные») */}
+			{isOwn && order.status === 'IN_PROGRESS' && order.deadline && (
+				<div className={styles.budget}>
+					<span className={styles.budgetLabel}>Дедлайн</span>
+					<span className={styles.budgetValue}>{formatDeadline(order.deadline)}</span>
+				</div>
+			)}
 
 			{order.tools.length > 0 && (
 				<div className={styles.tools}>
@@ -56,10 +89,12 @@ export default function OrderCard({ order, onRespond, onDetails, onToggleFavorit
 			)}
 
 			<div className={styles.actions}>
-				<Button variant="primary" onClick={() => onRespond?.(order.id)}>
-					Откликнуться
-				</Button>
-				<Button variant="secondary" onClick={() => onDetails?.(order.id)}>
+				{!isOwn && (
+					<Button variant="primary" onClick={() => onRespond?.(order.id)}>
+						Откликнуться
+					</Button>
+				)}
+				<Button variant={isOwn ? 'primary' : 'secondary'} onClick={() => onDetails?.(order.id)}>
 					Подробнее
 				</Button>
 				<span className={styles.date}>{formatDate(order.createdAt)}</span>

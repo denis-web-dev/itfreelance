@@ -86,6 +86,17 @@
 	color: #7b7b7b;
 }
 
+.orders {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.error {
+	font-family: var(--font-secondery);
+	color: #cc4422;
+}
+
 @media (max-width: 900px) {
 	.columns {
 		grid-template-columns: 1fr;
