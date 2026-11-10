@@ -931,3 +931,173 @@ describe('GET /orders: поиск по инструментам', () => {
 		expect(newTool.body.data.items).toHaveLength(1);
 	});
 });
+const listMine = (token, query = {}) =>
+	request(app).get(`${ORDERS}/mine`).set(authHeader(token)).query(query);
+
+describe('GET /orders/mine: мои заказы', () => {
+	it('возвращает мои заказы любого статуса и не показывает чужие', async () => {
+		const me = await createCustomer('me@example.com');
+		const other = await createCustomer('other@example.com');
+		await insertOrder(me.id, { title: 'Мой открытый' });
+		await insertOrder(me.id, { title: 'Мой отменённый', status: 'CANCELLED' });
+		await insertOrder(other.id, { title: 'Чужой' });
+
+		const res = await listMine(me.accessToken);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.items.map((order) => order.title).sort()).toEqual([
+			'Мой открытый',
+			'Мой отменённый',
+		]);
+		expect(res.body.data.total).toBe(2);
+	});
+
+	it('фильтрует по статусам', async () => {
+		const me = await createCustomer();
+		await insertOrder(me.id, { title: 'Открытый' });
+		await insertOrder(me.id, { title: 'В работе', status: 'IN_PROGRESS' });
+		await insertOrder(me.id, { title: 'Завершён', status: 'COMPLETED' });
+		await insertOrder(me.id, { title: 'Отменён', status: 'CANCELLED' });
+
+		const open = await listMine(me.accessToken, { status: 'OPEN' });
+		const done = await listMine(me.accessToken, { status: 'COMPLETED,CANCELLED' });
+
+		expect(open.body.data.items.map((order) => order.title)).toEqual(['Открытый']);
+		expect(done.body.data.items.map((order) => order.title).sort()).toEqual([
+			'Завершён',
+			'Отменён',
+		]);
+	});
+
+	it('исполнитель: 403', async () => {
+		const freelancer = await createFreelancer();
+
+		const res = await listMine(freelancer.accessToken);
+
+		expect(res.status).toBe(403);
+	});
+
+	it('без токена: 401', async () => {
+		const res = await request(app).get(`${ORDERS}/mine`);
+
+		expect(res.status).toBe(401);
+	});
+
+	it('неизвестный статус: 400', async () => {
+		const me = await createCustomer();
+
+		const res = await listMine(me.accessToken, { status: 'HACKED' });
+
+		expect(res.status).toBe(400);
+	});
+
+	it('разбивает на страницы', async () => {
+		const me = await createCustomer();
+		for (let i = 1; i <= 12; i++) {
+			await insertOrder(me.id, { title: `Заказ номер ${i}` });
+		}
+
+		const res = await listMine(me.accessToken, { page: 2, limit: 5 });
+
+		expect(res.body.data).toMatchObject({ total: 12, page: 2, limit: 5, pages: 3 });
+		expect(res.body.data.items).toHaveLength(5);
+	});
+});
+
+describe('PATCH /orders/:id: дедлайн и этапы', () => {
+	const stagesFor = (first, second) => [
+		{ title: 'Дизайн', budget: first },
+		{ title: 'Вёрстка', budget: second },
+	];
+
+	const patch = (token, id, body) =>
+		request(app).patch(`${ORDERS}/${id}`).set(authHeader(token)).send(body);
+
+	const createWithStages = async (customer) => {
+		const created = await postOrder(customer.accessToken, {
+			...validOrder(),
+			budget: 50000,
+			stages: stagesFor(30000, 20000),
+		});
+		return created.body.data.order.id;
+	};
+
+	it('устанавливает и очищает дедлайн', async () => {
+		const customer = await createCustomer();
+		const created = await postOrder(customer.accessToken, validOrder());
+		const id = created.body.data.order.id;
+
+		const set = await patch(customer.accessToken, id, { deadline: '2099-01-01' });
+		const cleared = await patch(customer.accessToken, id, { deadline: null });
+
+		expect(set.body.data.order.deadline).toBe('2099-01-01');
+		expect(cleared.body.data.order.deadline).toBeNull();
+	});
+
+	it('дедлайн в прошлом: 400', async () => {
+		const customer = await createCustomer();
+		const created = await postOrder(customer.accessToken, validOrder());
+
+		const res = await patch(customer.accessToken, created.body.data.order.id, {
+			deadline: '2000-01-01',
+		});
+
+		expect(res.status).toBe(400);
+	});
+
+	it('заменяет этапы, бюджет становится суммой этапов', async () => {
+		const customer = await createCustomer();
+		const id = await createWithStages(customer);
+
+		const res = await patch(customer.accessToken, id, {
+			stages: [
+				{ title: 'Дизайн', budget: 10000 },
+				{ title: 'Вёрстка', budget: 20000 },
+				{ title: 'Тесты', budget: 30000 },
+			],
+		});
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.order.budget).toBe(60000);
+		expect(res.body.data.order.stages.map((item) => item.title)).toEqual([
+			'Дизайн',
+			'Вёрстка',
+			'Тесты',
+		]);
+	});
+
+	it('stages: null убирает этапы, бюджет можно менять', async () => {
+		const customer = await createCustomer();
+		const id = await createWithStages(customer);
+
+		const res = await patch(customer.accessToken, id, { stages: null, budget: 70000 });
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.order.stages).toEqual([]);
+		expect(res.body.data.order.budget).toBe(70000);
+	});
+
+	it('сумма этапов не равна переданному бюджету: 400', async () => {
+		const customer = await createCustomer();
+		const id = await createWithStages(customer);
+
+		const res = await patch(customer.accessToken, id, {
+			budget: 100000,
+			stages: stagesFor(30000, 20000),
+		});
+
+		expect(res.status).toBe(400);
+		expect(errorFields(res)).toContain('budget');
+	});
+
+	it('у заказа есть этапы: менять только бюджет нельзя: 400', async () => {
+		const customer = await createCustomer();
+		const id = await createWithStages(customer);
+
+		const res = await patch(customer.accessToken, id, { budget: 90000 });
+
+		expect(res.status).toBe(400);
+		const saved = await prisma.order.findUnique({ where: { id } });
+		expect(saved.budget).toBe(50000);
+	});
+});
