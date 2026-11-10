@@ -1101,3 +1101,71 @@ describe('PATCH /orders/:id: дедлайн и этапы', () => {
 		expect(saved.budget).toBe(50000);
 	});
 });
+describe('Необязательные поля заказа', () => {
+	it('создаёт заказ только с названием и инструментами', async () => {
+		const customer = await createCustomer();
+
+		const res = await postOrder(customer.accessToken, {
+			title: 'Заказ без описания и бюджета',
+			tools: ['React'],
+		});
+
+		expect(res.status).toBe(201);
+		expect(res.body.data.order).toMatchObject({ description: null, budget: null });
+	});
+
+	it('с этапами без бюджета: бюджет равен сумме этапов', async () => {
+		const customer = await createCustomer();
+
+		const res = await postOrder(customer.accessToken, {
+			title: 'Заказ с этапами',
+			stages: [
+				{ title: 'Дизайн', budget: 30000 },
+				{ title: 'Вёрстка', budget: 20000 },
+			],
+		});
+
+		expect(res.status).toBe(201);
+		expect(res.body.data.order.budget).toBe(50000);
+	});
+
+	it('описание из пробелов: 400', async () => {
+		const customer = await createCustomer();
+
+		const res = await postOrder(customer.accessToken, {
+			title: 'Заказ с пустым описанием',
+			description: '   ',
+		});
+
+		expect(res.status).toBe(400);
+	});
+
+	it('описание и бюджет можно очистить при изменении', async () => {
+		const customer = await createCustomer();
+		const created = await postOrder(customer.accessToken, {
+			title: 'Заказ с описанием и бюджетом',
+			description: 'Подробное описание заказа',
+			budget: 40000,
+		});
+
+		const res = await request(app)
+			.patch(`${ORDERS}/${created.body.data.order.id}`)
+			.set(authHeader(customer.accessToken))
+			.send({ description: null, budget: null });
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.order).toMatchObject({ description: null, budget: null });
+	});
+
+	it('заказы без бюджета видны без фильтра и не попадают под фильтр по бюджету', async () => {
+		const customer = await createCustomer();
+		await postOrder(customer.accessToken, { title: 'Без бюджета заказ' });
+		await postOrder(customer.accessToken, { title: 'С бюджетом заказ', budget: 50000 });
+
+		const all = await listOrders(customer.accessToken);
+		const filtered = await listOrders(customer.accessToken, { budgetMin: 1000 });
+
+		expect(all.body.data.items).toHaveLength(2);
+		expect(filtered.body.data.items.map((order) => order.title)).toEqual(['С бюджетом заказ']);
+	});
+});
