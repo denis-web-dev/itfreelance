@@ -9,7 +9,7 @@ const phone = z.preprocess(
 	emptyToNull,
 	z
 		.string()
-		.regex(/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, 'Введите корректный телефон')
+		.regex(/^\+7\d{10}$/, 'Введите корректный телефон')
 		.nullable()
 		.optional(),
 );

@@ -11,6 +11,7 @@ export default function PhoneInput({ value, onChange, onBlur, error }) {
 				name="phone"
 				mask="+{7} (000) 000-00-00"
 				lazy={false}
+				unmask={false}
 				value={value ?? ''}
 				onAccept={(val) => onChange(val)}
 				onBlur={onBlur}

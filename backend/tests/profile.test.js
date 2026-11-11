@@ -135,7 +135,7 @@ describe('PUT /profile/me: права и целостность данных', (
 
 		const res = await updateProfile(user.accessToken, {
 			region: 'Москва',
-			phone: '+7 (999) 123-45-67',
+			phone: '+79991234567',
 			site: 'https://example.com',
 			skills: ['React', 'Node.js'],
 		});
@@ -143,7 +143,7 @@ describe('PUT /profile/me: права и целостность данных', (
 		expect(res.status).toBe(200);
 		const profile = await profileOf(user.id);
 		expect(profile.region).toBe('Москва');
-		expect(profile.phone).toBe('+7 (999) 123-45-67');
+		expect(profile.phone).toBe('+79991234567');
 		expect(profile.skills).toEqual(['React', 'Node.js']);
 	});
 
