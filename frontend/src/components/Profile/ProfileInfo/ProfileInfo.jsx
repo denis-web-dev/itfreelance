@@ -1,7 +1,10 @@
 import InputForm from '../../../components/InputForm/InputForm';
 import styles from './ProfileInfo.module.css';
+import { Controller } from 'react-hook-form';
+import PhoneInput from '../../../components/PhoneInput/PhoneInput';
 
 export default function ProfileInfo({
+	control,
 	avatarPreview,
 	handleAvatarChange,
 	register,
@@ -106,12 +109,17 @@ export default function ProfileInfo({
 						</div>
 
 						<div className={styles.formColumnRight}>
-							<InputForm
-								label="Телефон"
-								placeholder="Телефон"
-								field={register('phone')}
-								error={errors.phone}
-								inputSize="profile"
+							<Controller
+								name="phone"
+								control={control}
+								render={({ field }) => (
+									<PhoneInput
+										value={field.value}
+										onChange={field.onChange}
+										onBlur={field.onBlur}
+										error={errors.phone}
+									/>
+								)}
 							/>
 							<InputForm
 								className={styles.emailInput}

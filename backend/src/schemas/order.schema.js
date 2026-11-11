@@ -3,6 +3,19 @@ import { z } from 'zod';
 const MAX_BUDGET = 100_000_000;
 const MAX_STAGES = 10;
 
+const title = z
+	.string()
+	.trim()
+	.min(5, 'Название не короче 5 символов')
+	.max(150, 'Название не длиннее 150 символов');
+
+// Описание необязательное; если заполнено, то не пустое
+const description = z
+	.string()
+	.trim()
+	.min(20, 'Описание не короче 20 символов')
+	.max(5000, 'Описание не длиннее 5000 символов');
+
 const tools = z
 	.array(
 		z
@@ -18,22 +31,6 @@ const budget = z
 	.int('Бюджет должен быть целым числом')
 	.min(100, 'Минимальный бюджет 100 ₽')
 	.max(MAX_BUDGET, 'Бюджет слишком большой');
-
-// Одни и те же правила для создания и для изменения заказа
-const orderFields = {
-	title: z
-		.string()
-		.trim()
-		.min(5, 'Название не короче 5 символов')
-		.max(150, 'Название не длиннее 150 символов'),
-	description: z
-		.string()
-		.trim()
-		.min(20, 'Описание не короче 20 символов')
-		.max(5000, 'Описание не длиннее 5000 символов'),
-	budget,
-	tools: tools.optional(),
-};
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -55,29 +52,45 @@ const stages = z
 	.min(2, 'Для разбивки нужно минимум 2 этапа')
 	.max(MAX_STAGES, `Не более ${MAX_STAGES} этапов`);
 
-export const createOrderSchema = z
-	.object({ ...orderFields, deadline: deadline.optional(), stages: stages.optional() })
-	.refine(
-		(data) =>
-			!data.stages || data.stages.reduce((sum, item) => sum + item.budget, 0) === data.budget,
-		{ message: 'Сумма бюджетов этапов должна равняться бюджету заказа', path: ['budget'] },
-	);
+// Если бюджет указан вместе с этапами, он должен равняться их сумме
+const stagesMatchBudget = (data) =>
+	!data.stages ||
+	data.budget == null ||
+	data.stages.reduce((sum, item) => sum + item.budget, 0) === data.budget;
 
-// При изменении можно прислать любые поля, но хотя бы одно.
-// deadline: null убирает дедлайн, stages: null убирает разбивку на этапы
+const stagesMatchBudgetIssue = {
+	message: 'Сумма бюджетов этапов должна равняться бюджету заказа',
+	path: ['budget'],
+};
+
+// Создание: обязательны только название и (на стороне окна) инструменты
+export const createOrderSchema = z
+	.object({
+		title,
+		description: description.optional(),
+		budget: budget.optional(),
+		tools: tools.optional(),
+		deadline: deadline.optional(),
+		stages: stages.optional(),
+	})
+	.refine(stagesMatchBudget, stagesMatchBudgetIssue);
+
+// Изменение: любые поля, но хотя бы одно.
+// null очищает описание, бюджет, дедлайн или разбивку на этапы
 export const updateOrderSchema = z
-	.object({ ...orderFields, deadline: deadline.nullable(), stages: stages.nullable() })
+	.object({
+		title,
+		description: description.nullable(),
+		budget: budget.nullable(),
+		tools,
+		deadline: deadline.nullable(),
+		stages: stages.nullable(),
+	})
 	.partial()
 	.refine((data) => Object.keys(data).length > 0, {
 		message: 'Укажите хотя бы одно поле для изменения',
 	})
-	.refine(
-		(data) =>
-			!data.stages ||
-			data.budget === undefined ||
-			data.stages.reduce((sum, item) => sum + item.budget, 0) === data.budget,
-		{ message: 'Сумма бюджетов этапов должна равняться бюджету заказа', path: ['budget'] },
-	);
+	.refine(stagesMatchBudget, stagesMatchBudgetIssue);
 
 // Параметры адресной строки приходят строками, поэтому приводим типы
 const emptyToUndefined = (value) => (value === '' ? undefined : value);
@@ -114,6 +127,7 @@ export const listOrdersQuerySchema = z
 			query.budgetMin <= query.budgetMax,
 		{ message: 'budgetMin не может быть больше budgetMax', path: ['budgetMin'] },
 	);
+
 // Вкладка «Избранное»: только страница и размер страницы
 export const listFavoritesQuerySchema = z.object({
 	page: intParam(1, 100000).default(1),

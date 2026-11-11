@@ -71,8 +71,9 @@ export const createOrder = async (customerId, input) => {
 		data: {
 			customerId,
 			title: input.title,
-			description: input.description,
-			budget: input.budget,
+			description: input.description ?? null,
+			// С этапами бюджет всегда равен сумме этапов; без этапов он необязателен
+			budget: input.stages ? sumBudgets(input.stages) : (input.budget ?? null),
 			tools: input.tools ?? [],
 			toolsSearch: toolsToSearchText(input.tools),
 			deadline: input.deadline ? new Date(input.deadline) : null,

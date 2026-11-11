@@ -48,3 +48,12 @@ export const removeFavorite = (id) =>
 
 export const getFavoriteOrders = (params, { signal } = {}) =>
 	authRequest(`${BASE}/favorites${buildQuery(params)}`, { signal });
+
+/**
+ * Список моих заказов (для вкладки «Сделки»).
+ * @param {Object} params status (массив), page, limit
+ * @param {Object} options { signal?: AbortSignal }
+ * @returns {{ success: boolean, data: { items, total, page, limit, pages } }}
+ */
+export const getMyOrders = (params, { signal } = {}) =>
+	authRequest(`${BASE}/mine${buildQuery(params)}`, { signal });

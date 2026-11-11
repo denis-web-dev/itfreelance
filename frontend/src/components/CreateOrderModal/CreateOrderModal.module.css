@@ -33,6 +33,21 @@
 	gap: 10px;
 }
 
+.fieldset {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.fieldset:disabled .input,
+.fieldset:disabled .textarea {
+	opacity: 0.6;
+}
+
 .header {
 	display: flex;
 	align-items: center;
