@@ -5,7 +5,15 @@ const customerSelect = {
 	select: {
 		id: true,
 		profile: {
-			select: { fullName: true, companyName: true, ratingAvg: true, ratingCount: true },
+			select: {
+				fullName: true,
+				companyName: true,
+				ratingAvg: true,
+				ratingCount: true,
+				avatarUrl: true,
+				sphere: true,
+				marketYears: true,
+			},
 		},
 	},
 };
@@ -18,6 +26,7 @@ const orderSelectFor = (userId) => ({
 	budget: true,
 	tools: true,
 	status: true,
+	executorId: true,
 	deadline: true,
 	createdAt: true,
 	updatedAt: true,
@@ -43,15 +52,20 @@ const pick = (source, keys) =>
 		keys.filter((key) => source[key] !== undefined).map((key) => [key, source[key]]),
 	);
 
-const toDto = ({ customer, favorites, deadline, ...order }) => ({
+const toDto = ({ customer, favorites, deadline, _count, ...order }) => ({
 	...order,
 	deadline: deadline ? deadline.toISOString().slice(0, 10) : null,
 	isFavorite: (favorites?.length ?? 0) > 0,
+	// Сколько откликов ждут решения: есть только в списке «мои заказы»
+	...(_count ? { responsesCount: _count.responses } : {}),
 	customer: {
 		id: customer.id,
 		name: customer.profile?.companyName || customer.profile?.fullName || 'Заказчик',
 		rating: customer.profile?.ratingAvg ?? null,
 		reviewsCount: customer.profile?.ratingCount ?? 0,
+		avatarUrl: customer.profile?.avatarUrl ?? null,
+		sphere: customer.profile?.sphere ?? null,
+		marketYears: customer.profile?.marketYears ?? null,
 	},
 });
 
@@ -59,7 +73,7 @@ const toDto = ({ customer, favorites, deadline, ...order }) => ({
 const findOwnedOrder = async (orderId, userId) => {
 	const order = await prisma.order.findUnique({
 		where: { id: orderId },
-		select: { id: true, customerId: true },
+		select: { id: true, customerId: true, title: true, status: true },
 	});
 	if (!order) throw ApiError.notFound('Заказ не найден');
 	if (order.customerId !== userId) throw ApiError.forbidden('Можно менять только свои заказы');
@@ -176,11 +190,65 @@ export const listMyOrders = async (userId, { status, page, limit }) => {
 			orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 			skip: (page - 1) * limit,
 			take: limit,
-			select: listSelectFor(userId),
+			select: {
+				...listSelectFor(userId),
+				// Только отклики, ждущие решения: по ним в карточке появляется «Выбрать исполнителя»
+				_count: { select: { responses: { where: { status: 'PENDING' } } } },
+			},
 		}),
 	]);
 
 	return { items: items.map(toDto), total, page, limit, pages: Math.ceil(total / limit) };
+};
+
+const personSelect = {
+	id: true,
+	profile: {
+		select: {
+			fullName: true,
+			avatarUrl: true,
+			sphere: true,
+			experience: true,
+			ratingAvg: true,
+			ratingCount: true,
+		},
+	},
+};
+
+const toPerson = ({ id, profile }) => ({
+	id,
+	name: profile?.fullName || 'Без имени',
+	avatarUrl: profile?.avatarUrl ?? null,
+	sphere: profile?.sphere ?? null,
+	experience: profile?.experience ?? null,
+	rating: profile?.ratingAvg ?? null,
+	reviewsCount: profile?.ratingCount ?? 0,
+});
+
+// Только для автора: статистика и откликнувшиеся (отклонённые из списка уходят)
+const loadOwnerExtras = async (orderId) => {
+	const [responses, views, favorites] = await Promise.all([
+		prisma.orderResponse.findMany({
+			where: { orderId, status: { in: ['PENDING', 'SELECTED'] } },
+			orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+			select: {
+				id: true,
+				status: true,
+				createdAt: true,
+				freelancer: { select: personSelect },
+			},
+		}),
+		prisma.orderView.count({ where: { orderId } }),
+		prisma.favoriteOrder.count({ where: { orderId } }),
+	]);
+
+	return {
+		stats: { responses: responses.length, views, favorites },
+		responses: responses.map(({ freelancer, ...response }) => ({
+			...response,
+			freelancer: toPerson(freelancer),
+		})),
+	};
 };
 
 export const getOrder = async (orderId, viewer) => {
@@ -189,11 +257,35 @@ export const getOrder = async (orderId, viewer) => {
 		select: detailSelectFor(viewer.id),
 	});
 
-	// Не открытые заказы видит только автор, для остальных их как будто нет
-	if (!order || (order.status !== 'OPEN' && order.customer.id !== viewer.id)) {
-		throw ApiError.notFound('Заказ не найден');
+	// Не открытые заказы видят только автор и выбранный исполнитель, для остальных их нет
+	const canSee =
+		order &&
+		(order.status === 'OPEN' || order.customer.id === viewer.id || order.executorId === viewer.id);
+	if (!canSee) throw ApiError.notFound('Заказ не найден');
+
+	const dto = toDto(order);
+
+	if (order.customer.id === viewer.id) {
+		Object.assign(dto, await loadOwnerExtras(orderId));
+	} else if (viewer.role === 'FREELANCER') {
+		dto.myResponse = await prisma.orderResponse.findUnique({
+			where: { orderId_freelancerId: { orderId, freelancerId: viewer.id } },
+			select: { id: true, status: true },
+		});
 	}
-	return toDto(order);
+	return dto;
+};
+
+// Открытие страницы заказа. Просмотр считаем один раз на исполнителя; автор не в счёт
+export const viewOrder = async (orderId, viewer) => {
+	const order = await getOrder(orderId, viewer);
+	if (viewer.role === 'FREELANCER') {
+		await prisma.orderView.createMany({
+			data: [{ orderId, userId: viewer.id }],
+			skipDuplicates: true,
+		});
+	}
+	return order;
 };
 
 export const updateOrder = async (userId, orderId, input) => {
@@ -257,4 +349,108 @@ export const cancelOrder = async (userId, orderId) => {
 	if (count === 0) throw ApiError.conflict('Заказ нельзя отменить в текущем статусе');
 
 	return getOrder(orderId, { id: userId });
+};
+
+// Отклик исполнителя на открытый заказ
+export const respondToOrder = async (freelancerId, orderId) => {
+	const order = await prisma.order.findUnique({
+		where: { id: orderId },
+		select: { id: true, title: true, status: true, customerId: true },
+	});
+	// Не открытый заказ для исполнителя «не существует»
+	if (!order || order.status !== 'OPEN') throw ApiError.notFound('Заказ не найден');
+
+	try {
+		// Отклик и уведомление заказчику создаются вместе: либо оба, либо ничего
+		await prisma.$transaction([
+			prisma.orderResponse.create({ data: { orderId, freelancerId } }),
+			prisma.notification.create({
+				data: {
+					userId: order.customerId,
+					type: 'ORDER_RESPONSE',
+					title: 'Новый отклик на заказ',
+					body: order.title,
+					orderId,
+				},
+			}),
+		]);
+	} catch (error) {
+		// Уникальное ограничение: повторный отклик (в том числе после отклонения) невозможен
+		if (error.code === 'P2002') throw ApiError.conflict('Вы уже откликнулись на этот заказ');
+		throw error;
+	}
+
+	return getOrder(orderId, { id: freelancerId, role: 'FREELANCER' });
+};
+
+// Заказчик выбирает исполнителя: заказ переходит в работу, остальные отклики отклоняются
+export const selectResponse = async (customerId, orderId, responseId) => {
+	const order = await findOwnedOrder(orderId, customerId);
+
+	await prisma.$transaction(async (tx) => {
+		// Отклик ищем среди откликов именно этого заказа: чужой id не подойдёт
+		const response = await tx.orderResponse.findFirst({
+			where: { id: responseId, orderId },
+			select: { id: true, status: true, freelancerId: true },
+		});
+		if (!response) throw ApiError.notFound('Отклик не найден');
+		if (response.status === 'REJECTED') throw ApiError.conflict('Этот отклик уже отклонён');
+
+		// Условие status: 'OPEN' в запросе защищает от гонки: два выбора разом не пройдут оба
+		const { count } = await tx.order.updateMany({
+			where: { id: orderId, customerId, status: 'OPEN' },
+			data: { status: 'IN_PROGRESS', executorId: response.freelancerId },
+		});
+		if (count === 0) {
+			throw ApiError.conflict('Исполнителя можно выбрать только у открытого заказа');
+		}
+
+		await tx.orderResponse.update({ where: { id: responseId }, data: { status: 'SELECTED' } });
+		await tx.orderResponse.updateMany({
+			where: { orderId, id: { not: responseId }, status: 'PENDING' },
+			data: { status: 'REJECTED' },
+		});
+		await tx.notification.create({
+			data: {
+				userId: response.freelancerId,
+				type: 'EXECUTOR_SELECTED',
+				title: 'Вы выбраны исполнителем!',
+				body: order.title,
+				orderId,
+			},
+		});
+	});
+
+	return getOrder(orderId, { id: customerId });
+};
+
+// Заказчик отклоняет отклик (крестик)
+export const rejectResponse = async (customerId, orderId, responseId) => {
+	await findOwnedOrder(orderId, customerId);
+
+	const { count } = await prisma.orderResponse.updateMany({
+		where: { id: responseId, orderId, status: 'PENDING' },
+		data: { status: 'REJECTED' },
+	});
+	if (count === 0) {
+		const exists = await prisma.orderResponse.findFirst({
+			where: { id: responseId, orderId },
+			select: { id: true },
+		});
+		if (!exists) throw ApiError.notFound('Отклик не найден');
+		throw ApiError.conflict('Этот отклик уже обработан');
+	}
+
+	return getOrder(orderId, { id: customerId });
+};
+
+// Полное удаление. Заказ в работе или завершённый удалять нельзя: к нему привяжутся
+// сообщения, оплата и отзывы. Этапы, отклики, избранное и уведомления удаляются вместе с ним
+export const deleteOrder = async (userId, orderId) => {
+	await findOwnedOrder(orderId, userId);
+
+	const { count } = await prisma.order.deleteMany({
+		where: { id: orderId, customerId: userId, status: { in: ['OPEN', 'CANCELLED'] } },
+	});
+	if (count === 0) throw ApiError.conflict('Заказ в работе или завершённый удалить нельзя');
 };

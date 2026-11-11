@@ -41,5 +41,19 @@ router.delete('/:id/favorite', requireRole('FREELANCER'), favoritesController.re
 router.post('/', requireRole('CUSTOMER'), validate(createOrderSchema), ordersController.create);
 router.patch('/:id', requireRole('CUSTOMER'), validate(updateOrderSchema), ordersController.update);
 router.post('/:id/cancel', requireRole('CUSTOMER'), ordersController.cancel);
+router.delete('/:id', requireRole('CUSTOMER'), ordersController.remove);
+
+// Отклики: исполнитель откликается, автор заказа выбирает или отклоняет
+router.post('/:id/respond', requireRole('FREELANCER'), ordersController.respond);
+router.post(
+	'/:id/responses/:responseId/select',
+	requireRole('CUSTOMER'),
+	ordersController.selectResponse,
+);
+router.post(
+	'/:id/responses/:responseId/reject',
+	requireRole('CUSTOMER'),
+	ordersController.rejectResponse,
+);
 
 export default router;

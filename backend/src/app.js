@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import profileRoutes from './api/v1/profile/profile.routes.js';
 import portfolioRoutes from './api/v1/portfolio/portfolio.routes.js';
+import notificationsRoutes from './api/v1/notifications/notifications.routes.js';
 import { authRateLimiter } from './middleware/rateLimiter.js';
 import ordersRoutes from './api/v1/orders/orders.routes.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -37,6 +38,7 @@ app.use('/api/v1/auth', authRateLimiter);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/portfolio', portfolioRoutes);
+app.use('/api/v1/notifications', notificationsRoutes);
 app.use('/api/v1/orders', ordersRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
