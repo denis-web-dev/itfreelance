@@ -30,10 +30,14 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   profile       Profile?
-  orders        Order[]
+  orders        Order[]        @relation("OrderCustomer")
   refreshTokens RefreshToken[]
   favoriteOrders FavoriteOrder[]
   portfolioItems PortfolioItem[]
+  ordersAsExecutor Order[]         @relation("OrderExecutor")
+  orderResponses   OrderResponse[]
+  orderViews       OrderView[]
+  notifications    Notification[]
 
   @@map("users")
 }
@@ -88,7 +92,7 @@ model RefreshToken {
 model Order {
   id         String @id @default(cuid())
   customerId String
-  customer   User   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   User   @relation("OrderCustomer", fields: [customerId], references: [id], onDelete: Cascade)
 
   title       String      @db.VarChar(150)
   description String?      @db.VarChar(5000)
@@ -98,6 +102,11 @@ model Order {
   deadline DateTime?     @db.Date
   stages   OrderStage[]
   favorites FavoriteOrder[]
+  executorId    String? // выбранный исполнитель
+  executor      User?           @relation("OrderExecutor", fields: [executorId], references: [id], onDelete: SetNull)
+  responses     OrderResponse[]
+  views         OrderView[]
+  notifications Notification[]
 
   toolsSearch String @default("") // инструменты в нижнем регистре, для поиска
   createdAt DateTime @default(now())
@@ -105,6 +114,7 @@ model Order {
 
   @@index([customerId])
   @@index([status, createdAt])
+  @@index([executorId])
   @@map("orders")
 }
 
@@ -145,4 +155,60 @@ model PortfolioItem {
 
   @@index([userId, createdAt])
   @@map("portfolio_items")
+}
+
+enum ResponseStatus {
+  PENDING // ждёт решения заказчика
+  SELECTED // выбран исполнителем
+  REJECTED // отклонён
+}
+
+// Отклик исполнителя на заказ
+model OrderResponse {
+  id           String         @id @default(cuid())
+  orderId      String
+  order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  freelancerId String
+  freelancer   User           @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  status       ResponseStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([orderId, freelancerId]) // один отклик на заказ от одного исполнителя
+  @@index([freelancerId, status])
+  @@map("order_responses")
+}
+
+// Просмотр заказа исполнителем: одна запись на пару, поэтому счётчик не накручивается
+model OrderView {
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([orderId, userId])
+  @@map("order_views")
+}
+
+enum NotificationType {
+  ORDER_RESPONSE // на ваш заказ откликнулся исполнитель
+  EXECUTOR_SELECTED // вас выбрали исполнителем
+}
+
+// Уведомления (колокольчик в шапке)
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String           @db.VarChar(150)
+  body      String           @db.VarChar(300) // название заказа
+  orderId   String?
+  order     Order?           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, createdAt])
+  @@map("notifications")
 }

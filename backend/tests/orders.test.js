@@ -1168,3 +1168,404 @@ describe('Необязательные поля заказа', () => {
 		expect(filtered.body.data.items.map((order) => order.title)).toEqual(['С бюджетом заказ']);
 	});
 });
+
+const respondTo = (token, id) =>
+	request(app).post(`${ORDERS}/${id}/respond`).set(authHeader(token));
+const chooseResponse = (token, orderId, responseId) =>
+	request(app).post(`${ORDERS}/${orderId}/responses/${responseId}/select`).set(authHeader(token));
+const dismissResponse = (token, orderId, responseId) =>
+	request(app).post(`${ORDERS}/${orderId}/responses/${responseId}/reject`).set(authHeader(token));
+const removeOrder = (token, id) => request(app).delete(`${ORDERS}/${id}`).set(authHeader(token));
+const notificationsOf = (token, query = {}) =>
+	request(app).get('/api/v1/notifications').set(authHeader(token)).query(query);
+
+// id отклика конкретного исполнителя, глазами автора заказа
+const responseIdOf = async (customer, orderId, freelancerId) => {
+	const res = await getOrder(customer.accessToken, orderId);
+	return res.body.data.order.responses.find((item) => item.freelancer.id === freelancerId).id;
+};
+
+describe('POST /orders/:id/respond: отклик', () => {
+	it('исполнитель откликается: отклик сохранён, заказчик получил уведомление', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id, { title: 'Заказ для отклика' });
+
+		const res = await respondTo(freelancer.accessToken, order.id);
+
+		expect(res.status).toBe(201);
+		expect(res.body.data.order.myResponse.status).toBe('PENDING');
+		expect(await prisma.orderResponse.count({ where: { orderId: order.id } })).toBe(1);
+		const notifications = await notificationsOf(customer.accessToken);
+		expect(notifications.body.data.items[0]).toMatchObject({
+			type: 'ORDER_RESPONSE',
+			body: 'Заказ для отклика',
+			orderId: order.id,
+		});
+	});
+
+	it('повторный отклик: 409, отклик один', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+		await respondTo(freelancer.accessToken, order.id);
+
+		const res = await respondTo(freelancer.accessToken, order.id);
+
+		expect(res.status).toBe(409);
+		expect(await prisma.orderResponse.count()).toBe(1);
+	});
+
+	it('заказчик откликнуться не может: 403', async () => {
+		const customer = await createCustomer();
+		const order = await insertOrder(customer.id);
+
+		const res = await respondTo(customer.accessToken, order.id);
+
+		expect(res.status).toBe(403);
+	});
+
+	it('на не открытый заказ откликнуться нельзя: 404', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id, { status: 'CANCELLED' });
+
+		const res = await respondTo(freelancer.accessToken, order.id);
+
+		expect(res.status).toBe(404);
+		expect(await prisma.orderResponse.count()).toBe(0);
+	});
+
+	it('без токена: 401', async () => {
+		const res = await request(app).post(`${ORDERS}/any-id/respond`);
+
+		expect(res.status).toBe(401);
+	});
+});
+
+describe('GET /orders/:id: отклики, статистика, просмотры', () => {
+	it('автор видит откликнувшихся и статистику, исполнитель не видит ни того, ни другого', async () => {
+		const customer = await createCustomer();
+		const first = await createFreelancer('first@example.com');
+		const second = await createFreelancer('second@example.com');
+		const order = await insertOrder(customer.id);
+		await respondTo(first.accessToken, order.id);
+		await respondTo(second.accessToken, order.id);
+		await putFavorite(first.accessToken, order.id);
+
+		const forOwner = await getOrder(customer.accessToken, order.id);
+		const forFreelancer = await getOrder(second.accessToken, order.id);
+
+		expect(forOwner.body.data.order.responses).toHaveLength(2);
+		expect(forOwner.body.data.order.stats).toMatchObject({ responses: 2, favorites: 1 });
+		expect(forFreelancer.body.data.order.responses).toBeUndefined();
+		expect(forFreelancer.body.data.order.stats).toBeUndefined();
+	});
+
+	it('просмотр считается один раз на исполнителя, автор не в счёт', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+
+		await getOrder(freelancer.accessToken, order.id);
+		await getOrder(freelancer.accessToken, order.id);
+		await getOrder(customer.accessToken, order.id);
+		const res = await getOrder(customer.accessToken, order.id);
+
+		expect(res.body.data.order.stats.views).toBe(1);
+	});
+
+	it('в списке «мои заказы» есть число откликов, ждущих решения', async () => {
+		const customer = await createCustomer();
+		const first = await createFreelancer('first@example.com');
+		const second = await createFreelancer('second@example.com');
+		const order = await insertOrder(customer.id);
+		await respondTo(first.accessToken, order.id);
+		await respondTo(second.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, second.id);
+		await dismissResponse(customer.accessToken, order.id, responseId);
+
+		const res = await listMine(customer.accessToken);
+
+		expect(res.body.data.items[0].responsesCount).toBe(1);
+	});
+});
+
+describe('POST /orders/:id/responses/:responseId/select: выбор исполнителя', () => {
+	it('заказ переходит в работу, остальные отклики отклоняются, исполнитель получает уведомление', async () => {
+		const customer = await createCustomer();
+		const chosen = await createFreelancer('chosen@example.com');
+		const other = await createFreelancer('other@example.com');
+		const order = await insertOrder(customer.id, { title: 'Заказ в работу' });
+		await respondTo(chosen.accessToken, order.id);
+		await respondTo(other.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, chosen.id);
+
+		const res = await chooseResponse(customer.accessToken, order.id, responseId);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.order).toMatchObject({ status: 'IN_PROGRESS', executorId: chosen.id });
+		const statuses = await prisma.orderResponse.findMany({ orderBy: { createdAt: 'asc' } });
+		expect(statuses.map((item) => item.status)).toEqual(['SELECTED', 'REJECTED']);
+		const notifications = await notificationsOf(chosen.accessToken);
+		expect(notifications.body.data.items[0]).toMatchObject({
+			type: 'EXECUTOR_SELECTED',
+			title: 'Вы выбраны исполнителем!',
+		});
+	});
+
+	it('выбранный исполнитель открывает заказ в работе, остальные получают 404', async () => {
+		const customer = await createCustomer();
+		const chosen = await createFreelancer('chosen@example.com');
+		const other = await createFreelancer('other@example.com');
+		const order = await insertOrder(customer.id);
+		await respondTo(chosen.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, chosen.id);
+		await chooseResponse(customer.accessToken, order.id, responseId);
+
+		const forChosen = await getOrder(chosen.accessToken, order.id);
+		const forOther = await getOrder(other.accessToken, order.id);
+
+		expect(forChosen.status).toBe(200);
+		expect(forOther.status).toBe(404);
+	});
+
+	it('чужой заказчик выбрать не может: 403', async () => {
+		const owner = await createCustomer('owner@example.com');
+		const stranger = await createCustomer('stranger@example.com');
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(owner.id);
+		await respondTo(freelancer.accessToken, order.id);
+		const responseId = await responseIdOf(owner, order.id, freelancer.id);
+
+		const res = await chooseResponse(stranger.accessToken, order.id, responseId);
+
+		expect(res.status).toBe(403);
+		const saved = await prisma.order.findUnique({ where: { id: order.id } });
+		expect(saved.status).toBe('OPEN');
+	});
+
+	it('отклик другого заказа не подходит: 404', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const first = await insertOrder(customer.id, { title: 'Первый заказ' });
+		const second = await insertOrder(customer.id, { title: 'Второй заказ' });
+		await respondTo(freelancer.accessToken, first.id);
+		const responseId = await responseIdOf(customer, first.id, freelancer.id);
+
+		const res = await chooseResponse(customer.accessToken, second.id, responseId);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('второй выбор у заказа в работе: 409', async () => {
+		const customer = await createCustomer();
+		const first = await createFreelancer('first@example.com');
+		const second = await createFreelancer('second@example.com');
+		const order = await insertOrder(customer.id);
+		await respondTo(first.accessToken, order.id);
+		await respondTo(second.accessToken, order.id);
+		const firstId = await responseIdOf(customer, order.id, first.id);
+		const secondId = await responseIdOf(customer, order.id, second.id);
+		await chooseResponse(customer.accessToken, order.id, firstId);
+
+		const res = await chooseResponse(customer.accessToken, order.id, secondId);
+
+		expect(res.status).toBe(409);
+	});
+
+	it('исполнитель выбирать не может: 403', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+		await respondTo(freelancer.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, freelancer.id);
+
+		const res = await chooseResponse(freelancer.accessToken, order.id, responseId);
+
+		expect(res.status).toBe(403);
+	});
+});
+
+describe('POST /orders/:id/responses/:responseId/reject: отклонение', () => {
+	it('отклик отклонён и пропал из списка автора, повторно откликнуться нельзя', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+		await respondTo(freelancer.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, freelancer.id);
+
+		const res = await dismissResponse(customer.accessToken, order.id, responseId);
+		const again = await respondTo(freelancer.accessToken, order.id);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.order.responses).toHaveLength(0);
+		expect(again.status).toBe(409);
+	});
+
+	it('чужой заказчик отклонить не может: 403', async () => {
+		const owner = await createCustomer('owner@example.com');
+		const stranger = await createCustomer('stranger@example.com');
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(owner.id);
+		await respondTo(freelancer.accessToken, order.id);
+		const responseId = await responseIdOf(owner, order.id, freelancer.id);
+
+		const res = await dismissResponse(stranger.accessToken, order.id, responseId);
+
+		expect(res.status).toBe(403);
+		const saved = await prisma.orderResponse.findFirst();
+		expect(saved.status).toBe('PENDING');
+	});
+
+	it('уже отклонённый отклик: 409', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+		await respondTo(freelancer.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, freelancer.id);
+		await dismissResponse(customer.accessToken, order.id, responseId);
+
+		const res = await dismissResponse(customer.accessToken, order.id, responseId);
+
+		expect(res.status).toBe(409);
+	});
+});
+
+describe('DELETE /orders/:id: удаление', () => {
+	it('автор удаляет открытый заказ вместе с откликами', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+		await respondTo(freelancer.accessToken, order.id);
+
+		const res = await removeOrder(customer.accessToken, order.id);
+
+		expect(res.status).toBe(200);
+		expect(await prisma.order.count()).toBe(0);
+		expect(await prisma.orderResponse.count()).toBe(0);
+	});
+
+	it('снятый с публикации заказ удалить можно', async () => {
+		const customer = await createCustomer();
+		const order = await insertOrder(customer.id, { status: 'CANCELLED' });
+
+		const res = await removeOrder(customer.accessToken, order.id);
+
+		expect(res.status).toBe(200);
+	});
+
+	it('заказ в работе удалить нельзя: 409, заказ остаётся', async () => {
+		const customer = await createCustomer();
+		const order = await insertOrder(customer.id, { status: 'IN_PROGRESS' });
+
+		const res = await removeOrder(customer.accessToken, order.id);
+
+		expect(res.status).toBe(409);
+		expect(await prisma.order.count()).toBe(1);
+	});
+
+	it('чужой заказ удалить нельзя: 403', async () => {
+		const owner = await createCustomer('owner@example.com');
+		const stranger = await createCustomer('stranger@example.com');
+		const order = await insertOrder(owner.id);
+
+		const res = await removeOrder(stranger.accessToken, order.id);
+
+		expect(res.status).toBe(403);
+		expect(await prisma.order.count()).toBe(1);
+	});
+
+	it('исполнитель удалить не может: 403', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		const order = await insertOrder(customer.id);
+
+		const res = await removeOrder(freelancer.accessToken, order.id);
+
+		expect(res.status).toBe(403);
+	});
+
+	it('несуществующий заказ: 404', async () => {
+		const customer = await createCustomer();
+
+		const res = await removeOrder(customer.accessToken, 'no-such-id');
+
+		expect(res.status).toBe(404);
+	});
+});
+
+describe('/notifications: уведомления', () => {
+	const makeNotification = (userId, overrides = {}) =>
+		prisma.notification.create({
+			data: {
+				userId,
+				type: 'ORDER_RESPONSE',
+				title: 'Новый отклик на заказ',
+				body: 'Заказ',
+				...overrides,
+			},
+		});
+
+	it('возвращает только мои уведомления и число непрочитанных', async () => {
+		const me = await createCustomer('me@example.com');
+		const other = await createCustomer('other@example.com');
+		await makeNotification(me.id);
+		await makeNotification(me.id, { readAt: new Date() });
+		await makeNotification(other.id);
+
+		const res = await notificationsOf(me.accessToken);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.items).toHaveLength(2);
+		expect(res.body.data.unread).toBe(1);
+	});
+
+	it('отмечает уведомление прочитанным', async () => {
+		const me = await createCustomer();
+		const item = await makeNotification(me.id);
+
+		const res = await request(app)
+			.post(`/api/v1/notifications/${item.id}/read`)
+			.set(authHeader(me.accessToken));
+
+		expect(res.status).toBe(200);
+		const saved = await prisma.notification.findUnique({ where: { id: item.id } });
+		expect(saved.readAt).not.toBeNull();
+	});
+
+	it('чужое уведомление прочитать нельзя: 404, оно не меняется', async () => {
+		const me = await createCustomer('me@example.com');
+		const other = await createCustomer('other@example.com');
+		const item = await makeNotification(other.id);
+
+		const res = await request(app)
+			.post(`/api/v1/notifications/${item.id}/read`)
+			.set(authHeader(me.accessToken));
+
+		expect(res.status).toBe(404);
+		const saved = await prisma.notification.findUnique({ where: { id: item.id } });
+		expect(saved.readAt).toBeNull();
+	});
+
+	it('«прочитать все» затрагивает только мои', async () => {
+		const me = await createCustomer('me@example.com');
+		const other = await createCustomer('other@example.com');
+		await makeNotification(me.id);
+		await makeNotification(me.id);
+		await makeNotification(other.id);
+
+		await request(app).post('/api/v1/notifications/read-all').set(authHeader(me.accessToken));
+
+		const mine = await notificationsOf(me.accessToken);
+		const theirs = await notificationsOf(other.accessToken);
+		expect(mine.body.data.unread).toBe(0);
+		expect(theirs.body.data.unread).toBe(1);
+	});
+
+	it('без токена: 401', async () => {
+		const res = await request(app).get('/api/v1/notifications');
+
+		expect(res.status).toBe(401);
+	});
+});
