@@ -25,7 +25,7 @@ export const formToApi = (data, isFreelancer) => {
 	const base = {
 		fullName: data.fullName || null,
 		region: data.region || null,
-		phone: data.phone || null,
+		phone: maskToE164(data.phone),
 		sphere: data.sphere || null,
 		about: data.about || null,
 		site: data.site || null,
@@ -55,7 +55,7 @@ export const apiToForm = ({ user, profile } = {}) => ({
 	fullName: profile?.fullName ?? '',
 	email: user?.email ?? '',
 	region: profile?.region ?? '',
-	phone: profile?.phone ?? '',
+	phone: profile?.phone ? e164ToMask(profile.phone) : '',
 	sphere: profile?.sphere ?? '',
 	about: profile?.about ?? '',
 	site: profile?.site ?? '',
@@ -68,3 +68,19 @@ export const apiToForm = ({ user, profile } = {}) => ({
 	companyName: profile?.companyName ?? '',
 	marketYears: profile?.marketYears != null ? String(profile.marketYears) : '',
 });
+
+// "+7 (925) 123-45-67" -> "+79251234567" (E.164, то, что уходит на сервер)
+export const maskToE164 = (masked) => {
+	if (!masked) return null;
+	const digits = masked.replace(/\D/g, '');
+	return digits.length === 11 ? `+${digits}` : null;
+};
+
+// "+79251234567" -> "+7 (925) 123-45-67" (то, что показывает маска)
+export const e164ToMask = (e164) => {
+	if (!e164) return '';
+	const digits = e164.replace(/\D/g, '');
+	if (digits.length !== 11) return e164; // легаси-значение показываем как есть
+	const d = digits.slice(1); // убираем 7
+	return `+7 (${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6, 8)}-${d.slice(8)}`;
+};

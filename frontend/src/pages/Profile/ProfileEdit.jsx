@@ -21,10 +21,15 @@ const tagList = z
 	.array(z.string().trim().min(1).max(50, 'Не более 50 символов'))
 	.max(20, 'Не более 20 пунктов');
 
+const phoneRegex = /^\+\d \(\d{3}\) \d{3}-\d{2}-\d{2}$/;
+
 const baseSchema = z.object({
 	email: z.string(),
 	region: z.string().trim().min(1, 'Укажите регион').max(100),
-	phone: z.string().regex(/^\+?[0-9\s()-]{10,20}$/, 'Введите корректный телефон'),
+	phone: z
+		.string()
+		.trim()
+		.refine((v) => v === '' || phoneRegex.test(v), 'Введите номер полностью'),
 	sphere: z.string().trim().min(1, 'Укажите сферу деятельности').max(100),
 	about: z.string().max(500, 'Максимум 500 символов').optional(),
 	site: z
@@ -154,6 +159,7 @@ export default function ProfileEdit() {
 				<CardBg imageSrc={bgImage} className="fullWidthBlock">
 					<ProfileHeader />
 					<ProfileInfo
+						control={control}
 						avatarPreview={avatarPreview}
 						handleAvatarChange={handleAvatarChange}
 						register={register}

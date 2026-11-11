@@ -13,7 +13,7 @@ const title = z
 const description = z
 	.string()
 	.trim()
-	.min(1, 'Описание не может быть пустым')
+	.min(20, 'Описание не короче 20 символов')
 	.max(5000, 'Описание не длиннее 5000 символов');
 
 const tools = z

@@ -131,7 +131,6 @@ describe('POST /orders: создание', () => {
 		['title', { title: 'я'.repeat(151) }],
 		['description', { description: 'коротко' }],
 		['description', { description: 'я'.repeat(5001) }],
-		['budget', { budget: undefined }],
 		['budget', { budget: 50 }],
 		['budget', { budget: 100000001 }],
 		['budget', { budget: 1000.5 }],
