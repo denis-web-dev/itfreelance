@@ -18,13 +18,7 @@ const formatDeadline = (iso) => iso.split('-').reverse().join('.');
  * Карточка заказа.
  * isOwn: карточка моего заказа в кабинете заказчика
  */
-export default function OrderCard({
-	order,
-	isOwn = false,
-	onRespond,
-	onDetails,
-	onToggleFavorite,
-}) {
+export default function OrderCard({ order, isOwn = false, onDetails, onToggleFavorite }) {
 	const { rating } = order.customer;
 
 	return (
@@ -89,11 +83,6 @@ export default function OrderCard({
 			)}
 
 			<div className={styles.actions}>
-				{!isOwn && (
-					<Button variant="primary" onClick={() => onRespond?.(order.id)}>
-						Откликнуться
-					</Button>
-				)}
 				<Button variant={isOwn ? 'primary' : 'secondary'} onClick={() => onDetails?.(order.id)}>
 					Подробнее
 				</Button>

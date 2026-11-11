@@ -69,9 +69,9 @@ export default function ProfileHeader({ className = '' }) {
 						</a>
 					</div>
 					{user && (
-						<div className={styles.userInfo}>
+						<Link to="/profile" className={styles.userInfo} aria-label="Личный кабинет">
 							<div className={styles.profileHeaderUser}>{}</div>
-						</div>
+						</Link>
 					)}
 				</div>
 			</div>

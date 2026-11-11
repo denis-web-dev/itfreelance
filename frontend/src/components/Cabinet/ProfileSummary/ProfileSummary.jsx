@@ -2,6 +2,7 @@ import RatingStars from '../../RatingStars/RatingStars';
 import { formatNumber, formatYears } from '../../../utils/format';
 import { telegramUrl, toSafeUrl } from '../../../utils/links';
 import defaultAvatar from '../../../assets/img-header/avatarBG.png';
+import { formatPhone } from '../../../utils/format';
 import styles from './ProfileSummary.module.css';
 
 function Field({ label, children }) {
@@ -85,7 +86,7 @@ export default function ProfileSummary({ user, profile, isFreelancer }) {
 							profile?.site
 						)}
 					</Field>
-					<Field label="Телефон">{profile?.phone}</Field>
+					<Field label="Телефон">{profile?.phone ? formatPhone(profile?.phone) : ''}</Field>
 					<div>
 						<dt className={styles.label}>Соц. сети</dt>
 						<dd className={`${styles.value} ${styles.socials}`}>

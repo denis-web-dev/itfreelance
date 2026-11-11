@@ -15,10 +15,6 @@ export default function Orders() {
 	const { orders, total, pages, page, loading, error, filters, updateFilters, setPage } =
 		useOrders();
 
-	const handleRespond = (_id) => {
-		// позже: navigate или API
-	};
-
 	const handleDetails = (_id) => {
 		// позже: navigate(`/orders/${id}`)
 	};
@@ -57,12 +53,7 @@ export default function Orders() {
 								{!loading &&
 									!error &&
 									orders.map((order) => (
-										<OrderCard
-											key={order.id}
-											order={order}
-											onRespond={handleRespond}
-											onDetails={handleDetails}
-										/>
+										<OrderCard key={order.id} order={order} onDetails={handleDetails} />
 									))}
 								{!loading && !error && orders.length === 0 && (
 									<p className={styles.status}>Заказов не найдено</p>

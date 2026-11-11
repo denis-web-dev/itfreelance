@@ -23,3 +23,11 @@ export const formatYears = (n) => {
 	}
 	return `${n} ${word}`;
 };
+// '+79519368777' -> '+7 (951) 936-87-77'; незнакомые значения возвращает как есть
+export const formatPhone = (value) => {
+	if (!value) return '';
+	const digits = value.replace(/\D/g, '');
+	if (digits.length !== 11) return value;
+	const d = digits.slice(1); // без «7»
+	return `+7 (${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6, 8)}-${d.slice(8)}`;
+};
