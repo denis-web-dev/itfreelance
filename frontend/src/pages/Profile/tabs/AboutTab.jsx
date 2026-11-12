@@ -19,7 +19,7 @@ function Block({ label, children }) {
 }
 
 export default function AboutTab() {
-	const { profile, isFreelancer } = useOutletContext();
+	const { user, profile, isFreelancer, isPublic } = useOutletContext();
 	const rating = profile?.ratingAvg ?? null;
 	const reviewsCount = profile?.ratingCount ?? 0;
 
@@ -38,7 +38,7 @@ export default function AboutTab() {
 				</div>
 			</section>
 
-			{isFreelancer && <ProfilePortfolio readOnly />}
+			{isFreelancer && <ProfilePortfolio readOnly userId={isPublic ? user.id : undefined} />}
 
 			<section className={styles.card}>
 				<div className={styles.headingRow}>

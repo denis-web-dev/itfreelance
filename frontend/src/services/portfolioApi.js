@@ -21,3 +21,6 @@ export const updatePortfolioItem = (id, data) =>
 
 export const deletePortfolioItem = (id) =>
 	authRequest(`${BASE}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+export const getUserPortfolio = (userId, { signal } = {}) =>
+	authRequest(`${BASE}/user/${encodeURIComponent(userId)}`, { signal });

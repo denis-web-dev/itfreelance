@@ -31,6 +31,9 @@ function App() {
 
 				{/* защищённые */}
 				<Route element={<ProtectedRoute />}>
+					<Route path="/users/:id" element={<ProfileCabinet />}>
+						<Route index element={<AboutTab />} />
+					</Route>
 					<Route path="/profile" element={<ProfileCabinet />}>
 						<Route index element={<Navigate to="deals" replace />} />
 						<Route path="deals" element={<DealsTab />} />

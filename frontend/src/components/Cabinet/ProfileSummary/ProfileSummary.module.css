@@ -95,6 +95,12 @@
 	text-decoration: none;
 }
 
+.extra {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 16px;
+}
+
 @media (max-width: 900px) {
 	.body,
 	.fields {

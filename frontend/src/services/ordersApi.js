@@ -76,3 +76,9 @@ export const getFavoriteOrders = (params, { signal } = {}) =>
  */
 export const getMyOrders = (params, { signal } = {}) =>
 	authRequest(`${BASE}/mine${buildQuery(params)}`, { signal });
+
+export const getAssignedOrders = (params, { signal } = {}) =>
+	authRequest(`${BASE}/assigned${buildQuery(params)}`, { signal });
+
+export const getRejectedOrders = (params, { signal } = {}) =>
+	authRequest(`${BASE}/rejected${buildQuery(params)}`, { signal });

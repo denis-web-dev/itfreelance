@@ -5,7 +5,7 @@ import Button from '../../../components/Button/Button';
 import CreateOrderModal from '../../../components/CreateOrderModal/CreateOrderModal';
 import OrderCard from '../../../components/OrderCard/OrderCard';
 import Pagination from '../../../components/Pagination/Pagination';
-import { getMyOrders } from '../../../services/ordersApi';
+import { getAssignedOrders, getMyOrders, getRejectedOrders } from '../../../services/ordersApi';
 import styles from './Tabs.module.css';
 
 const SUBTABS = {
@@ -21,14 +21,28 @@ const SUBTABS = {
 	],
 };
 
-// Какие статусы заказа входят в каждую вкладку заказчика
+// Какие статусы заказа входят в каждую вкладку
 const CUSTOMER_STATUSES = {
 	active: ['IN_PROGRESS'],
 	waiting: ['OPEN'],
 	done: ['COMPLETED', 'CANCELLED'],
 };
+const FREELANCER_STATUSES = {
+	active: ['IN_PROGRESS'],
+	done: ['COMPLETED'],
+};
 
 const PAGE_SIZE = 10;
+
+// Нужный запрос для вкладки и роли
+const requestFor = (isCustomer, tabId, page, signal) => {
+	const params = { page, limit: PAGE_SIZE };
+	if (isCustomer) {
+		return getMyOrders({ ...params, status: CUSTOMER_STATUSES[tabId] }, { signal });
+	}
+	if (tabId === 'rejected') return getRejectedOrders(params, { signal });
+	return getAssignedOrders({ ...params, status: FREELANCER_STATUSES[tabId] }, { signal });
+};
 
 export default function DealsTab() {
 	const { user } = useOutletContext();
@@ -41,24 +55,20 @@ export default function DealsTab() {
 	const [page, setPage] = useState(1);
 	const [reloadKey, setReloadKey] = useState(0);
 	const [list, setList] = useState({ items: [], pages: 0 });
-	const [loading, setLoading] = useState(isCustomer);
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 	const [isCreateOpen, setCreateOpen] = useState(false);
 	// Сообщение может прийти со страницы заказа (после удаления или выбора исполнителя)
 	const [notice, setNotice] = useState(location.state?.notice ?? '');
 
 	useEffect(() => {
-		if (!isCustomer) return;
 		const controller = new AbortController();
 
 		async function load() {
 			setLoading(true);
 			setError('');
 			try {
-				const res = await getMyOrders(
-					{ status: CUSTOMER_STATUSES[activeId], page, limit: PAGE_SIZE },
-					{ signal: controller.signal },
-				);
+				const res = await requestFor(isCustomer, activeId, page, controller.signal);
 				setList({ items: res.data.items, pages: res.data.pages });
 			} catch (e) {
 				if (e.name === 'AbortError') return;
@@ -119,36 +129,31 @@ export default function DealsTab() {
 				</p>
 			)}
 
-			{isCustomer ? (
-				<>
-					{loading && <p className={styles.empty}>Загрузка...</p>}
-					{error && (
-						<p className={styles.error} role="alert">
-							{error}
-						</p>
-					)}
-					{!loading && !error && list.items.length === 0 && (
-						<p className={styles.empty}>Здесь пока ничего нет</p>
-					)}
-					{!loading && !error && list.items.length > 0 && (
-						<div className={styles.orders}>
-							{list.items.map((order) => (
-								<OrderCard
-									key={order.id}
-									order={order}
-									isOwn
-									onDetails={(id) => navigate(`/orders/${id}`)}
-									onOpenChat={() => setNotice('Чат появится в следующем обновлении')}
-								/>
-							))}
-						</div>
-					)}
-					{!loading && !error && <Pagination page={page} pages={list.pages} onChange={setPage} />}
-				</>
-			) : (
-				// Для исполнителя список сделок появится вместе с модулем сделок
+			{loading && <p className={styles.empty}>Загрузка...</p>}
+			{error && (
+				<p className={styles.error} role="alert">
+					{error}
+				</p>
+			)}
+			{!loading && !error && list.items.length === 0 && (
 				<p className={styles.empty}>Здесь пока ничего нет</p>
 			)}
+			{!loading && !error && list.items.length > 0 && (
+				<div className={styles.orders}>
+					{list.items.map((order) => (
+						<OrderCard
+							key={order.id}
+							order={order}
+							isOwn={isCustomer}
+							isAssigned={!isCustomer}
+							statusLabel={!isCustomer && activeId === 'rejected' ? 'Отклонён' : undefined}
+							onDetails={(id) => navigate(`/orders/${id}`)}
+							onOpenChat={() => setNotice('Чат появится в следующем обновлении')}
+						/>
+					))}
+				</div>
+			)}
+			{!loading && !error && <Pagination page={page} pages={list.pages} onChange={setPage} />}
 
 			{isCreateOpen && (
 				<CreateOrderModal onClose={() => setCreateOpen(false)} onCreated={handleCreated} />

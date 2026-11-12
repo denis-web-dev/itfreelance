@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import PortfolioCard from './PortfolioCard';
 import AddProjectModal from './AddProjectModal';
-import { getMyPortfolio, deletePortfolioItem } from '../../../services/portfolioApi';
+import {
+	getMyPortfolio,
+	getUserPortfolio,
+	deletePortfolioItem,
+} from '../../../services/portfolioApi';
 import styles from './ProfilePortfolio.module.css';
 
 const MAX_ITEMS = 12; // как на сервере
 const MIN_SLOTS = 8; // сколько ячеек показываем в режиме редактирования
 
-export default function ProfilePortfolio({ readOnly = false }) {
+export default function ProfilePortfolio({ readOnly = false, userId }) {
 	const [items, setItems] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
@@ -19,7 +23,10 @@ export default function ProfilePortfolio({ readOnly = false }) {
 
 		async function load() {
 			try {
-				const res = await getMyPortfolio({ signal: controller.signal });
+				// userId задан в чужом кабинете, иначе показываем своё портфолио
+				const res = userId
+					? await getUserPortfolio(userId, { signal: controller.signal })
+					: await getMyPortfolio({ signal: controller.signal });
 				setItems(res.data.items);
 			} catch (e) {
 				if (e.name === 'AbortError') return;
@@ -31,7 +38,7 @@ export default function ProfilePortfolio({ readOnly = false }) {
 
 		load();
 		return () => controller.abort();
-	}, []);
+	}, [userId]);
 
 	const handleSaved = (saved) => {
 		setItems((prev) =>

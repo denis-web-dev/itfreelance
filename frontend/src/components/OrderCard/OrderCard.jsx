@@ -16,23 +16,26 @@ const formatDeadline = (iso) => iso.split('-').reverse().join('.');
 
 /**
  * Карточка заказа.
- * isOwn: карточка моего заказа в кабинете заказчика
+ * isOwn: мой заказ в кабинете заказчика; isAssigned: заказ в кабинете исполнителя
  */
 export default function OrderCard({
 	order,
 	isOwn = false,
+	isAssigned = false,
+	statusLabel,
 	onDetails,
 	onOpenChat,
 	onToggleFavorite,
 }) {
 	const { rating } = order.customer;
+	const isMine = isOwn || isAssigned; // карточка внутри личного кабинета
 	const hasResponses = (order.responsesCount ?? 0) > 0;
 	const canChooseExecutor = isOwn && order.status === 'OPEN' && hasResponses;
-	const canOpenChat = isOwn && order.status === 'IN_PROGRESS';
+	const canOpenChat = isMine && order.status === 'IN_PROGRESS' && !statusLabel;
 
 	return (
 		<article className={styles.card}>
-			{!isOwn && onToggleFavorite && (
+			{!isMine && onToggleFavorite && (
 				<button
 					type="button"
 					className={styles.favorite}
@@ -43,13 +46,15 @@ export default function OrderCard({
 				</button>
 			)}
 
-			{isOwn && (
-				<span className={styles.status}>{STATUS_LABELS[order.status] ?? order.status}</span>
+			{isMine && (
+				<span className={styles.status}>
+					{statusLabel ?? STATUS_LABELS[order.status] ?? order.status}
+				</span>
 			)}
 
 			<h3 className={styles.title}>{order.title}</h3>
 
-			{!isOwn && (
+			{!isMine && (
 				<div className={styles.rating}>
 					<span className={styles.ratingLabel}>Рейтинг заказчика</span>
 					{rating == null ? (
@@ -63,6 +68,13 @@ export default function OrderCard({
 				</div>
 			)}
 
+			{isAssigned && (
+				<div className={styles.budget}>
+					<span className={styles.budgetLabel}>Заказчик</span>
+					<span className={styles.budgetValue}>{order.customer.name}</span>
+				</div>
+			)}
+
 			<div className={styles.budget}>
 				<span className={styles.budgetLabel}>Бюджет проекта</span>
 				<span className={styles.budgetValue}>
@@ -71,7 +83,7 @@ export default function OrderCard({
 			</div>
 
 			{/* Дедлайн показываем только у заказа в работе (в «Сделки → Активные») */}
-			{isOwn && order.status === 'IN_PROGRESS' && order.deadline && (
+			{isMine && order.status === 'IN_PROGRESS' && order.deadline && !statusLabel && (
 				<div className={styles.budget}>
 					<span className={styles.budgetLabel}>Дедлайн</span>
 					<span className={styles.budgetValue}>{formatDeadline(order.deadline)}</span>
