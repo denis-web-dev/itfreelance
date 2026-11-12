@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader';
 import OrdersFilters from '../../components/OrdersFilters/OrdersFilters';
 import OrderCard from '../../components/OrderCard/OrderCard';
@@ -12,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Orders.module.css';
 
 export default function Orders() {
-	const [isCreateOpen, setCreateOpen] = useState(false);
 	const { orders, total, pages, page, loading, error, filters, updateFilters, setPage } =
 		useOrders();
 
@@ -25,11 +23,6 @@ export default function Orders() {
 	const handlePageChange = (nextPage) => {
 		setPage(nextPage);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
-	};
-
-	const handleCreated = () => {
-		setCreateOpen(false);
-		updateFilters({}); // возвращаемся на первую страницу и перезагружаем список
 	};
 
 	return (
