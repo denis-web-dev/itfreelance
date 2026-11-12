@@ -47,7 +47,6 @@ function Login() {
 		},
 	});
 	const isRememberMe = watch('rememberMe');
-	const rememberMe = watch('rememberMe');
 
 	const onSubmit = async (data) => {
 		setIsLoading(true);
