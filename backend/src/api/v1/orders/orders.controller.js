@@ -106,3 +106,21 @@ export const cancel = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const listAssigned = async (req, res, next) => {
+	try {
+		const data = await ordersService.listAssignedOrders(req.user.id, req.validatedQuery);
+		res.status(200).json({ success: true, data });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const listRejected = async (req, res, next) => {
+	try {
+		const data = await ordersService.listRejectedOrders(req.user.id, req.validatedQuery);
+		res.status(200).json({ success: true, data });
+	} catch (error) {
+		next(error);
+	}
+};

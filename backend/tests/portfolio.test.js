@@ -411,3 +411,51 @@ describe('DELETE /portfolio/:id: удаление', () => {
 		expect(res.status).toBe(404);
 	});
 });
+
+describe('GET /portfolio/user/:userId: чужое портфолио', () => {
+	const listOf = (token, userId) =>
+		request(app).get(`${PORTFOLIO}/user/${userId}`).set(authHeader(token));
+
+	it('любой вошедший видит портфолио исполнителя, без внутреннего ключа файла', async () => {
+		const owner = await createFreelancer('owner@example.com');
+		const customer = await createCustomer();
+		await prisma.portfolioItem.create({
+			data: {
+				userId: owner.id,
+				title: 'Мой проект',
+				projectUrl: 'https://example.com',
+				imageKey: 'a.webp',
+			},
+		});
+
+		const res = await listOf(customer.accessToken, owner.id);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.items.map((item) => item.title)).toEqual(['Мой проект']);
+		expect(res.body.data.items[0].imageUrl).toBe('/uploads/portfolio/a.webp');
+		expect(JSON.stringify(res.body)).not.toContain('imageKey');
+	});
+
+	it('у заказчика портфолио нет: 404', async () => {
+		const viewer = await createFreelancer();
+		const customer = await createCustomer();
+
+		const res = await listOf(viewer.accessToken, customer.id);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('несуществующий пользователь: 404', async () => {
+		const viewer = await createFreelancer();
+
+		const res = await listOf(viewer.accessToken, 'no-such-id');
+
+		expect(res.status).toBe(404);
+	});
+
+	it('без токена: 401', async () => {
+		const res = await request(app).get(`${PORTFOLIO}/user/any-id`);
+
+		expect(res.status).toBe(401);
+	});
+});

@@ -1569,3 +1569,183 @@ describe('/notifications: уведомления', () => {
 		expect(res.status).toBe(401);
 	});
 });
+
+const publicProfile = (token, userId) =>
+	request(app).get(`/api/v1/profile/${userId}`).set(authHeader(token));
+const listAssigned = (token, query = {}) =>
+	request(app).get(`${ORDERS}/assigned`).set(authHeader(token)).query(query);
+const listRejected = (token, query = {}) =>
+	request(app).get(`${ORDERS}/rejected`).set(authHeader(token)).query(query);
+
+describe('GET /profile/:userId: профиль другого пользователя', () => {
+	const fillContacts = async (user, phone, telegram) => {
+		await prisma.profile.update({ where: { userId: user.id }, data: { phone, telegram } });
+	};
+
+	it('показывает публичные данные и скрывает контакты, e-mail и служебные поля', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer('dev@example.com');
+		await fillContacts(freelancer, '+79990001122', 'dev_tg');
+
+		const res = await publicProfile(customer.accessToken, freelancer.id);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.canSeeContacts).toBe(false);
+		expect(res.body.data.profile.fullName).toBe('Иван Петров');
+		expect(res.body.data.profile.phone).toBeUndefined();
+		expect(res.body.data.profile.telegram).toBeUndefined();
+		expect(res.body.data.user.email).toBeUndefined();
+		expect(JSON.stringify(res.body)).not.toContain('dev@example.com');
+		expect(JSON.stringify(res.body)).not.toContain('passwordHash');
+	});
+
+	it('после выбора исполнителя контакты открываются в обе стороны', async () => {
+		const customer = await createCustomer('customer@example.com');
+		const freelancer = await createFreelancer('dev@example.com');
+		await fillContacts(freelancer, '+79990001122', 'dev_tg');
+		await fillContacts(customer, '+79993334455', 'customer_tg');
+		const order = await insertOrder(customer.id);
+		await respondTo(freelancer.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, freelancer.id);
+		await chooseResponse(customer.accessToken, order.id, responseId);
+
+		const freelancerSeenByCustomer = await publicProfile(customer.accessToken, freelancer.id);
+		const customerSeenByFreelancer = await publicProfile(freelancer.accessToken, customer.id);
+
+		expect(freelancerSeenByCustomer.body.data.profile).toMatchObject({
+			phone: '+79990001122',
+			telegram: 'dev_tg',
+		});
+		expect(freelancerSeenByCustomer.body.data.user.email).toBe('dev@example.com');
+		expect(customerSeenByFreelancer.body.data.profile.phone).toBe('+79993334455');
+	});
+
+	it('отклонённый исполнитель контакты заказчика не видит', async () => {
+		const customer = await createCustomer('customer@example.com');
+		const chosen = await createFreelancer('chosen@example.com');
+		const rejected = await createFreelancer('rejected@example.com');
+		await fillContacts(customer, '+79993334455', 'customer_tg');
+		const order = await insertOrder(customer.id);
+		await respondTo(chosen.accessToken, order.id);
+		await respondTo(rejected.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, chosen.id);
+		await chooseResponse(customer.accessToken, order.id, responseId);
+
+		const res = await publicProfile(rejected.accessToken, customer.id);
+
+		expect(res.body.data.canSeeContacts).toBe(false);
+		expect(res.body.data.profile.phone).toBeUndefined();
+	});
+
+	it('свой профиль виден полностью', async () => {
+		const freelancer = await createFreelancer();
+		await fillContacts(freelancer, '+79990001122', 'dev_tg');
+
+		const res = await publicProfile(freelancer.accessToken, freelancer.id);
+
+		expect(res.body.data.canSeeContacts).toBe(true);
+		expect(res.body.data.profile.phone).toBe('+79990001122');
+	});
+
+	it('несуществующий пользователь: 404', async () => {
+		const customer = await createCustomer();
+
+		const res = await publicProfile(customer.accessToken, 'no-such-id');
+
+		expect(res.status).toBe(404);
+	});
+
+	it('заблокированный пользователь: 404', async () => {
+		const customer = await createCustomer();
+		const freelancer = await createFreelancer();
+		await prisma.user.update({ where: { id: freelancer.id }, data: { isActive: false } });
+
+		const res = await publicProfile(customer.accessToken, freelancer.id);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('без токена: 401', async () => {
+		const res = await request(app).get('/api/v1/profile/any-id');
+
+		expect(res.status).toBe(401);
+	});
+});
+
+describe('GET /orders/assigned и /orders/rejected: сделки исполнителя', () => {
+	// Заказ с двумя откликами: выбран один исполнитель, второй отклонён
+	const setup = async () => {
+		const customer = await createCustomer();
+		const chosen = await createFreelancer('chosen@example.com');
+		const rejected = await createFreelancer('rejected@example.com');
+		const order = await insertOrder(customer.id, { title: 'Заказ со сделкой' });
+		await respondTo(chosen.accessToken, order.id);
+		await respondTo(rejected.accessToken, order.id);
+		const responseId = await responseIdOf(customer, order.id, chosen.id);
+		await chooseResponse(customer.accessToken, order.id, responseId);
+		return { customer, chosen, rejected, order };
+	};
+
+	it('assigned: выбранный исполнитель видит заказ в работе, фильтр по статусу работает', async () => {
+		const { chosen, order } = await setup();
+
+		const active = await listAssigned(chosen.accessToken, { status: 'IN_PROGRESS' });
+		const done = await listAssigned(chosen.accessToken, { status: 'COMPLETED' });
+
+		expect(active.status).toBe(200);
+		expect(active.body.data.items.map((item) => item.title)).toEqual(['Заказ со сделкой']);
+		expect(done.body.data.items).toHaveLength(0);
+
+		await prisma.order.update({ where: { id: order.id }, data: { status: 'COMPLETED' } });
+		const doneAfter = await listAssigned(chosen.accessToken, { status: 'COMPLETED' });
+		expect(doneAfter.body.data.items).toHaveLength(1);
+	});
+
+	it('assigned: отклонённый исполнитель этот заказ не видит', async () => {
+		const { rejected } = await setup();
+
+		const res = await listAssigned(rejected.accessToken);
+
+		expect(res.body.data.items).toHaveLength(0);
+	});
+
+	it('rejected: заказы с отклонённым откликом', async () => {
+		const { chosen, rejected } = await setup();
+
+		const forRejected = await listRejected(rejected.accessToken);
+		const forChosen = await listRejected(chosen.accessToken);
+
+		expect(forRejected.body.data.items.map((item) => item.title)).toEqual(['Заказ со сделкой']);
+		expect(forChosen.body.data.items).toHaveLength(0);
+	});
+
+	it('отклонённый исполнитель по-прежнему открывает страницу заказа', async () => {
+		const { rejected, order } = await setup();
+
+		const res = await getOrder(rejected.accessToken, order.id);
+
+		expect(res.status).toBe(200);
+		expect(res.body.data.order.myResponse.status).toBe('REJECTED');
+	});
+
+	it('посторонний исполнитель не открывает заказ в работе: 404', async () => {
+		const { order } = await setup();
+		const stranger = await createFreelancer('stranger@example.com');
+
+		const res = await getOrder(stranger.accessToken, order.id);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('заказчик: 403, без токена: 401', async () => {
+		const customer = await createCustomer();
+
+		const forbidden = await listAssigned(customer.accessToken);
+		const rejectedForbidden = await listRejected(customer.accessToken);
+		const anonymous = await request(app).get(`${ORDERS}/assigned`);
+
+		expect(forbidden.status).toBe(403);
+		expect(rejectedForbidden.status).toBe(403);
+		expect(anonymous.status).toBe(401);
+	});
+});

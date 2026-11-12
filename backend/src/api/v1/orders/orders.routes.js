@@ -33,6 +33,20 @@ router.get(
 	ordersController.listMine,
 );
 
+// «Сделки» исполнителя. ВАЖНО: до '/:id'
+router.get(
+	'/assigned',
+	requireRole('FREELANCER'),
+	validateQuery(listMyOrdersQuerySchema),
+	ordersController.listAssigned,
+);
+router.get(
+	'/rejected',
+	requireRole('FREELANCER'),
+	validateQuery(listFavoritesQuerySchema),
+	ordersController.listRejected,
+);
+
 router.get('/:id', ordersController.getOne);
 
 router.put('/:id/favorite', requireRole('FREELANCER'), favoritesController.add);
