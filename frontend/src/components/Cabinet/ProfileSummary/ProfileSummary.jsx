@@ -31,7 +31,13 @@ function SocialLink({ href, label, children }) {
 	);
 }
 
-export default function ProfileSummary({ user, profile, isFreelancer }) {
+export default function ProfileSummary({
+	user,
+	profile,
+	isFreelancer,
+	contactsHidden = false,
+	children,
+}) {
 	const title = (!isFreelancer && profile?.companyName) || profile?.fullName || 'Без имени';
 	const rating = profile?.ratingAvg ?? null;
 
@@ -42,6 +48,8 @@ export default function ProfileSummary({ user, profile, isFreelancer }) {
 	const siteHref = toSafeUrl(profile?.site);
 	const telegram = telegramUrl(profile?.telegram);
 	const vk = toSafeUrl(profile?.vk);
+	// Контакты чужого профиля скрыты, пока заказчик не выбрал исполнителя
+	const hiddenNote = <span className={styles.empty}>Откроется после выбора исполнителя</span>;
 
 	return (
 		<section className={styles.summary}>
@@ -76,7 +84,7 @@ export default function ProfileSummary({ user, profile, isFreelancer }) {
 					) : (
 						<div />
 					)}
-					<Field label="Email">{user.email}</Field>
+					<Field label="Email">{contactsHidden ? hiddenNote : user.email}</Field>
 					<Field label="Сайт">
 						{siteHref ? (
 							<a href={siteHref} target="_blank" rel="noopener noreferrer nofollow">
@@ -86,21 +94,30 @@ export default function ProfileSummary({ user, profile, isFreelancer }) {
 							profile?.site
 						)}
 					</Field>
-					<Field label="Телефон">{profile?.phone ? formatPhone(profile?.phone) : ''}</Field>
+					<Field label="Телефон">
+						{contactsHidden ? hiddenNote : profile?.phone ? formatPhone(profile.phone) : ''}
+					</Field>
 					<div>
 						<dt className={styles.label}>Соц. сети</dt>
 						<dd className={`${styles.value} ${styles.socials}`}>
-							<SocialLink href={telegram} label="Телеграм">
-								TG
-							</SocialLink>
-							<SocialLink href={vk} label="Вконтакте">
-								VK
-							</SocialLink>
-							{!telegram && !vk && <span className={styles.empty}>Не указано</span>}
+							{contactsHidden ? (
+								hiddenNote
+							) : (
+								<>
+									<SocialLink href={telegram} label="Телеграм">
+										TG
+									</SocialLink>
+									<SocialLink href={vk} label="Вконтакте">
+										VK
+									</SocialLink>
+									{!telegram && !vk && <span className={styles.empty}>Не указано</span>}
+								</>
+							)}
 						</dd>
 					</div>
 				</dl>
 			</div>
+			{children && <div className={styles.extra}>{children}</div>}
 		</section>
 	);
 }

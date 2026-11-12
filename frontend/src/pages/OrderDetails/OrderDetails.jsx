@@ -363,7 +363,7 @@ export default function OrderDetails() {
 												key={item.id}
 												person={item.freelancer}
 												experience={item.freelancer.experience}
-												to={`/users/${item.freelancer.id}`}
+												to={`/users/${item.freelancer.id}?order=${order.id}`}
 											>
 												{item.status === 'SELECTED' ? (
 													<>

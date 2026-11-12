@@ -16,3 +16,29 @@
 	padding: 60px 20px;
 	text-align: center;
 }
+
+.offerActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rejectBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	background: #dedede;
+	font-size: 24px;
+	line-height: 1;
+	color: #cc4422;
+	cursor: pointer;
+}
+
+.actionError {
+	font-family: var(--font-secondery);
+	color: #cc4422;
+}
