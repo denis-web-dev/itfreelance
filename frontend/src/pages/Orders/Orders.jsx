@@ -8,6 +8,7 @@ import { useOrders } from '../../hooks/useOrders';
 import CardBg from '../../components/CardBg/CardBg';
 import bgOrder from '../../assets/img-orders/BgHeader-order.png';
 import eyesOrder from '../../assets/img-orders/eyes-order.png';
+import { useNavigate } from 'react-router-dom';
 import styles from './Orders.module.css';
 
 export default function Orders() {
@@ -15,8 +16,10 @@ export default function Orders() {
 	const { orders, total, pages, page, loading, error, filters, updateFilters, setPage } =
 		useOrders();
 
-	const handleDetails = (_id) => {
-		// позже: navigate(`/orders/${id}`)
+	const navigate = useNavigate();
+
+	const handleDetails = (id) => {
+		navigate(`/orders/${id}`);
 	};
 
 	const handlePageChange = (nextPage) => {

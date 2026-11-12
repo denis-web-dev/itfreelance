@@ -13,6 +13,7 @@ import ProfileCabinet from './pages/Profile/ProfileCabinet.jsx';
 import DealsTab from './pages/Profile/tabs/DealsTab.jsx';
 import AboutTab from './pages/Profile/tabs/AboutTab.jsx';
 import ComingSoon from './pages/Profile/tabs/ComingSoon.jsx';
+import OrderDetails from './pages/OrderDetails/OrderDetails.jsx';
 
 function App() {
 	return (
@@ -40,6 +41,7 @@ function App() {
 					<Route path="/profile/edit" element={<ProfileEdit />} />
 					<Route path="/profile-edit" element={<Navigate to="/profile/edit" replace />} />
 					<Route path="/orders" element={<Orders />} />
+					<Route path="/orders/:id" element={<OrderDetails />} />
 				</Route>
 			</Routes>
 		</div>

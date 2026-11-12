@@ -40,6 +40,25 @@ export const updateOrder = (id, data) =>
 
 export const cancelOrder = (id) =>
 	authRequest(`${BASE}/${encodeURIComponent(id)}/cancel`, { method: 'POST' });
+
+export const deleteOrder = (id) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+
+export const respondToOrder = (id) =>
+	authRequest(`${BASE}/${encodeURIComponent(id)}/respond`, { method: 'POST' });
+
+export const selectResponse = (orderId, responseId) =>
+	authRequest(
+		`${BASE}/${encodeURIComponent(orderId)}/responses/${encodeURIComponent(responseId)}/select`,
+		{ method: 'POST' },
+	);
+
+export const rejectResponse = (orderId, responseId) =>
+	authRequest(
+		`${BASE}/${encodeURIComponent(orderId)}/responses/${encodeURIComponent(responseId)}/reject`,
+		{ method: 'POST' },
+	);
+
 export const addFavorite = (id) =>
 	authRequest(`${BASE}/${encodeURIComponent(id)}/favorite`, { method: 'PUT' });
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import clsx from 'clsx';
 import Button from '../../../components/Button/Button';
 import CreateOrderModal from '../../../components/CreateOrderModal/CreateOrderModal';
@@ -32,6 +32,8 @@ const PAGE_SIZE = 10;
 
 export default function DealsTab() {
 	const { user } = useOutletContext();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const isCustomer = user.role === 'CUSTOMER';
 	const subtabs = SUBTABS[user.role] ?? SUBTABS.FREELANCER;
 
@@ -41,9 +43,9 @@ export default function DealsTab() {
 	const [list, setList] = useState({ items: [], pages: 0 });
 	const [loading, setLoading] = useState(isCustomer);
 	const [error, setError] = useState('');
-	// null: окно закрыто; { orderId: null }: создание; { orderId }: редактирование
-	const [modal, setModal] = useState(null);
-	const [notice, setNotice] = useState('');
+	const [isCreateOpen, setCreateOpen] = useState(false);
+	// Сообщение может прийти со страницы заказа (после удаления или выбора исполнителя)
+	const [notice, setNotice] = useState(location.state?.notice ?? '');
 
 	useEffect(() => {
 		if (!isCustomer) return;
@@ -75,19 +77,11 @@ export default function DealsTab() {
 		setPage(1);
 	};
 
-	const reload = () => setReloadKey((key) => key + 1);
-
 	const handleCreated = () => {
-		setModal(null);
+		setCreateOpen(false);
 		setNotice('Заказ опубликован: исполнители увидят его в разделе «Заказы»');
 		selectTab('waiting');
-		reload();
-	};
-
-	const handleUpdated = () => {
-		setModal(null);
-		setNotice('Изменения сохранены');
-		reload();
+		setReloadKey((key) => key + 1);
 	};
 
 	return (
@@ -95,7 +89,7 @@ export default function DealsTab() {
 			<div className={styles.headingRow}>
 				<h2 className={styles.heading}>Сделки</h2>
 				{isCustomer && (
-					<Button variant="primary" onClick={() => setModal({ orderId: null })}>
+					<Button variant="primary" onClick={() => setCreateOpen(true)}>
 						+ Добавить заказ
 					</Button>
 				)}
@@ -143,7 +137,8 @@ export default function DealsTab() {
 									key={order.id}
 									order={order}
 									isOwn
-									onDetails={(id) => setModal({ orderId: id })}
+									onDetails={(id) => navigate(`/orders/${id}`)}
+									onOpenChat={() => setNotice('Чат появится в следующем обновлении')}
 								/>
 							))}
 						</div>
@@ -151,17 +146,12 @@ export default function DealsTab() {
 					{!loading && !error && <Pagination page={page} pages={list.pages} onChange={setPage} />}
 				</>
 			) : (
-				// Для исполнителя список сделок появится вместе с модулем откликов и сделок
+				// Для исполнителя список сделок появится вместе с модулем сделок
 				<p className={styles.empty}>Здесь пока ничего нет</p>
 			)}
 
-			{modal && (
-				<CreateOrderModal
-					orderId={modal.orderId}
-					onClose={() => setModal(null)}
-					onCreated={handleCreated}
-					onUpdated={handleUpdated}
-				/>
+			{isCreateOpen && (
+				<CreateOrderModal onClose={() => setCreateOpen(false)} onCreated={handleCreated} />
 			)}
 		</section>
 	);

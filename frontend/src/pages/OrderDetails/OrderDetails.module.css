@@ -1,0 +1,250 @@
+.page {
+	min-height: 100vh;
+	padding: 15px;
+	background: #0cb761;
+}
+
+.shell {
+	padding: 24px 28px 32px;
+	background: #fff;
+	border-radius: 30px;
+}
+
+.back {
+	margin-bottom: 20px;
+	font-family: var(--font-primary);
+	font-size: 18px;
+	color: #1a1a1a;
+	cursor: pointer;
+}
+
+.status,
+.notice,
+.error {
+	margin-bottom: 16px;
+	font-family: var(--font-secondery);
+}
+
+.notice {
+	color: #0a7a40;
+}
+
+.error {
+	color: #cc4422;
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 400px;
+	gap: 32px;
+	align-items: start;
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	padding: 24px;
+	border: 1px solid #dedede;
+	border-radius: 30px;
+}
+
+.cardHead {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.date {
+	font-family: var(--font-secondery);
+	color: #7b7b7b;
+}
+
+.statusLabel {
+	padding: 6px 14px;
+	border-radius: 100px;
+	background: #ececec;
+	font-family: var(--font-secondery);
+	font-size: 14px;
+}
+
+.actionsTop {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+}
+
+.actionsBottom {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.actionsBottom > :first-child {
+	flex: 1;
+}
+
+.iconBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	background: #dedede;
+	color: #1a1a1a;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.iconBtn:hover:not(:disabled) {
+	background: #1a1a1a;
+	color: #fff;
+}
+
+.iconBtnActive {
+	background: #1a1a1a;
+	color: #ffcb30;
+}
+
+.title {
+	font-family: var(--font-primary);
+	font-size: 40px;
+	font-weight: 400;
+	line-height: 1.15;
+}
+
+.facts {
+	display: flex;
+	justify-content: space-between;
+	gap: 32px;
+}
+
+.fact {
+	margin-bottom: 12px;
+}
+
+.factLabel {
+	font-family: var(--font-secondery);
+	font-size: 14px;
+	color: #7b7b7b;
+}
+
+.factValue {
+	font-family: var(--font-primary);
+	font-size: 22px;
+}
+
+.stages {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.stage {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+	border-radius: 20px;
+	background: #f2f2f2;
+}
+
+.stageNumber {
+	font-family: var(--font-primary);
+	font-size: 14px;
+}
+
+.stageTitle,
+.stageBudget {
+	font-family: var(--font-secondery);
+	font-size: 14px;
+	color: #7b7b7b;
+}
+
+.sectionTitle {
+	margin-bottom: 12px;
+	font-family: var(--font-primary);
+	font-size: 20px;
+	font-weight: 400;
+}
+
+/* Сохраняем переводы строк из описания; текст выводится как текст, не как разметка */
+.description {
+	font-family: var(--font-secondery);
+	color: #5a5a5a;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.side {
+	min-width: 0;
+}
+
+.panel {
+	padding: 24px;
+	border: 1px solid #dedede;
+	border-radius: 30px;
+}
+
+.panelAccent {
+	border: 2px solid #37f737;
+}
+
+.panelLabel {
+	margin-bottom: 20px;
+	font-family: var(--font-secondery);
+	font-size: 14px;
+	color: #7b7b7b;
+}
+
+.stats {
+	display: flex;
+	gap: 28px;
+}
+
+.stat {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-family: var(--font-primary);
+	font-size: 32px;
+	color: #1a1a1a;
+}
+
+.people {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-top: 24px;
+}
+
+.selected {
+	font-family: var(--font-secondery);
+	color: #0a7a40;
+}
+
+.rejectBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	background: #dedede;
+	font-size: 24px;
+	line-height: 1;
+	color: #cc4422;
+	cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+	.layout {
+		grid-template-columns: 1fr;
+	}
+}
