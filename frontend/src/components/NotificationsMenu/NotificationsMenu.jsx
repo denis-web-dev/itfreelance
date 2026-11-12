@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -19,6 +19,15 @@ const formatAgo = (iso) => {
 	if (hours < 24) return `${hours} ч назад`;
 	if (hours < 48) return 'Вчера';
 	return formatDate(iso);
+};
+
+// Загружает уведомления и готовит их к показу. Состояние не трогает
+const fetchNotifications = async () => {
+	const res = await getNotifications({ limit: 10 });
+	return {
+		items: res.data.items.map((item) => ({ ...item, ago: formatAgo(item.createdAt) })),
+		unread: res.data.unread,
+	};
 };
 
 function BellIcon({ hasUnread }) {
@@ -50,19 +59,38 @@ export default function NotificationsMenu() {
 	const [items, setItems] = useState([]);
 	const [unread, setUnread] = useState(0);
 
-	const load = useCallback(async () => {
-		try {
-			const res = await getNotifications({ limit: 10 });
-			setItems(res.data.items.map((item) => ({ ...item, ago: formatAgo(item.createdAt) })));
-			setUnread(res.data.unread);
-		} catch {
-			// Колокольчик не должен ломать страницу, если сервер недоступен
-		}
-	}, []);
-
+	// Первая загрузка: нужна, чтобы показать жёлтую точку на колокольчике
 	useEffect(() => {
-		if (user) load();
-	}, [user, load]);
+		if (!user) return;
+		let ignore = false;
+
+		async function loadInitial() {
+			try {
+				const data = await fetchNotifications();
+				if (ignore) return;
+				setItems(data.items);
+				setUnread(data.unread);
+			} catch {
+				// Колокольчик не должен ломать страницу, если сервер недоступен
+			}
+		}
+
+		loadInitial();
+		return () => {
+			ignore = true;
+		};
+	}, [user]);
+
+	// Обновление при открытии окна (вызывается из обработчика клика, не из эффекта)
+	const refresh = async () => {
+		try {
+			const data = await fetchNotifications();
+			setItems(data.items);
+			setUnread(data.unread);
+		} catch {
+			// см. выше
+		}
+	};
 
 	// Закрытие по Esc и по клику вне окна
 	useEffect(() => {
@@ -84,7 +112,7 @@ export default function NotificationsMenu() {
 	}, [open]);
 
 	const toggle = () => {
-		if (!open) load();
+		if (!open) refresh();
 		setOpen((value) => !value);
 	};
 
