@@ -11,5 +11,6 @@ router.use(protect);
 
 router.get('/me', profileController.getMe);
 router.put('/me', validate(updateProfileSchema), profileController.updateMe);
+router.get('/:userId', profileController.getPublic);
 
 export default router;

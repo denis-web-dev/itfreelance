@@ -11,8 +11,13 @@ import * as portfolioController from './portfolio.controller.js';
 
 const router = Router();
 
-// Портфолио только у исполнителей, и только для вошедших
-router.use(protect, requireRole('FREELANCER'));
+router.use(protect);
+
+// Портфолио исполнителя может смотреть любой вошедший пользователь
+router.get('/user/:userId', portfolioController.listByUser);
+
+// Дальше только для исполнителей (свои проекты)
+router.use(requireRole('FREELANCER'));
 
 router.get('/me', portfolioController.listMine);
 

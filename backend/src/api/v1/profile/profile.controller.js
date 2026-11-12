@@ -17,3 +17,12 @@ export const updateMe = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const getPublic = async (req, res, next) => {
+	try {
+		const data = await profileService.getPublicProfile(req.user.id, req.params.userId);
+		res.status(200).json({ success: true, data });
+	} catch (error) {
+		next(error);
+	}
+};

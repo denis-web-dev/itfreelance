@@ -256,22 +256,29 @@ export const getOrder = async (orderId, viewer) => {
 		where: { id: orderId },
 		select: detailSelectFor(viewer.id),
 	});
+	if (!order) throw ApiError.notFound('Заказ не найден');
 
-	// Не открытые заказы видят только автор и выбранный исполнитель, для остальных их нет
+	const isOwner = order.customer.id === viewer.id;
+	// Отклик исполнителя: по нему же решаем, можно ли показать не открытый заказ
+	const myResponse =
+		!isOwner && viewer.role === 'FREELANCER'
+			? await prisma.orderResponse.findUnique({
+					where: { orderId_freelancerId: { orderId, freelancerId: viewer.id } },
+					select: { id: true, status: true },
+				})
+			: null;
+
+	// Не открытый заказ видят автор, выбранный исполнитель и те, кто откликался
 	const canSee =
-		order &&
-		(order.status === 'OPEN' || order.customer.id === viewer.id || order.executorId === viewer.id);
+		order.status === 'OPEN' || isOwner || order.executorId === viewer.id || myResponse !== null;
 	if (!canSee) throw ApiError.notFound('Заказ не найден');
 
 	const dto = toDto(order);
 
-	if (order.customer.id === viewer.id) {
+	if (isOwner) {
 		Object.assign(dto, await loadOwnerExtras(orderId));
 	} else if (viewer.role === 'FREELANCER') {
-		dto.myResponse = await prisma.orderResponse.findUnique({
-			where: { orderId_freelancerId: { orderId, freelancerId: viewer.id } },
-			select: { id: true, status: true },
-		});
+		dto.myResponse = myResponse;
 	}
 	return dto;
 };
@@ -453,4 +460,31 @@ export const deleteOrder = async (userId, orderId) => {
 		where: { id: orderId, customerId: userId, status: { in: ['OPEN', 'CANCELLED'] } },
 	});
 	if (count === 0) throw ApiError.conflict('Заказ в работе или завершённый удалить нельзя');
+};
+
+const findOrdersPage = async (where, userId, { page, limit }) => {
+	const [total, items] = await prisma.$transaction([
+		prisma.order.count({ where }),
+		prisma.order.findMany({
+			where,
+			orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+			skip: (page - 1) * limit,
+			take: limit,
+			select: listSelectFor(userId),
+		}),
+	]);
+	return { items: items.map(toDto), total, page, limit, pages: Math.ceil(total / limit) };
+};
+
+// «Сделки» исполнителя: заказы, где выбрали меня
+export const listAssignedOrders = async (freelancerId, { status, page, limit }) => {
+	const where = { executorId: freelancerId };
+	if (status?.length) where.status = { in: status };
+	return findOrdersPage(where, freelancerId, { page, limit });
+};
+
+// «Отклонённые» исполнителя: заказы, где мой отклик отклонили
+export const listRejectedOrders = async (freelancerId, { page, limit }) => {
+	const where = { responses: { some: { freelancerId, status: 'REJECTED' } } };
+	return findOrdersPage(where, freelancerId, { page, limit });
 };

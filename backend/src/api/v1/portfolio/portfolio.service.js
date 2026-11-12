@@ -95,3 +95,15 @@ export const deleteItem = async (userId, itemId) => {
 	await prisma.portfolioItem.deleteMany({ where: { id: itemId, userId } });
 	await deleteImage(current.imageKey);
 };
+
+// Портфолио исполнителя для других пользователей
+export const listPublicItems = async (userId) => {
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		select: { role: true, isActive: true },
+	});
+	if (!user || !user.isActive || user.role !== 'FREELANCER') {
+		throw ApiError.notFound('Пользователь не найден');
+	}
+	return listMyItems(userId);
+};

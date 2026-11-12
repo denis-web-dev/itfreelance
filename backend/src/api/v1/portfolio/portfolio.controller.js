@@ -35,3 +35,12 @@ export const remove = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const listByUser = async (req, res, next) => {
+	try {
+		const items = await portfolioService.listPublicItems(req.params.userId);
+		res.status(200).json({ success: true, data: { items } });
+	} catch (error) {
+		next(error);
+	}
+};
