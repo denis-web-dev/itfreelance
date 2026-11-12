@@ -18,8 +18,17 @@ const formatDeadline = (iso) => iso.split('-').reverse().join('.');
  * Карточка заказа.
  * isOwn: карточка моего заказа в кабинете заказчика
  */
-export default function OrderCard({ order, isOwn = false, onDetails, onToggleFavorite }) {
+export default function OrderCard({
+	order,
+	isOwn = false,
+	onDetails,
+	onOpenChat,
+	onToggleFavorite,
+}) {
 	const { rating } = order.customer;
+	const hasResponses = (order.responsesCount ?? 0) > 0;
+	const canChooseExecutor = isOwn && order.status === 'OPEN' && hasResponses;
+	const canOpenChat = isOwn && order.status === 'IN_PROGRESS';
 
 	return (
 		<article className={styles.card}>
@@ -83,7 +92,20 @@ export default function OrderCard({ order, isOwn = false, onDetails, onToggleFav
 			)}
 
 			<div className={styles.actions}>
-				<Button variant={isOwn ? 'primary' : 'secondary'} onClick={() => onDetails?.(order.id)}>
+				{canChooseExecutor && (
+					<Button variant="primary" onClick={() => onDetails?.(order.id)}>
+						Выбрать исполнителя
+					</Button>
+				)}
+				{canOpenChat && (
+					<Button variant="primary" onClick={() => onOpenChat?.(order.id)}>
+						Перейти в сообщения
+					</Button>
+				)}
+				<Button
+					variant={canChooseExecutor || canOpenChat ? 'secondary' : 'primary'}
+					onClick={() => onDetails?.(order.id)}
+				>
 					Подробнее
 				</Button>
 				<span className={styles.date}>{formatDate(order.createdAt)}</span>
