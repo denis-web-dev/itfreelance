@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import ProfileHeader from '../../components/Profile/ProfileHeader/ProfileHeader';
 import Button from '../../components/Button/Button';
 import PersonCard from '../../components/PersonCard/PersonCard';
+import CardBg from '../../components/CardBg/CardBg';
+import bgImage from '../../assets/img-header/bg.png';
 import CreateOrderModal from '../../components/CreateOrderModal/CreateOrderModal';
 import IconLike from '../../assets/icons/icon-like.svg?react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -200,7 +202,22 @@ export default function OrderDetails() {
 				<ProfileHeader />
 				<main className={styles.shell}>
 					<button type="button" className={styles.back} onClick={handleBack}>
-						← Назад
+						<svg
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								d="M11.6154 17L7 12L11.6154 7M7.64103 12H17"
+								strokeWidth="3"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								stroke="#1A1A1A"
+							/>
+						</svg>
+						Назад
 					</button>
 					<p className={error ? styles.error : styles.status}>
 						{loading ? 'Загрузка...' : error || 'Заказ не найден'}
@@ -251,7 +268,7 @@ export default function OrderDetails() {
 			{isFreelancer && (
 				<>
 					{myResponse ? (
-						<Button variant="secondary" disabled>
+						<Button variant="primary" disabled>
 							{RESPONSE_LABELS[myResponse.status]}
 						</Button>
 					) : (
@@ -277,148 +294,167 @@ export default function OrderDetails() {
 
 	return (
 		<div className={styles.page}>
-			<ProfileHeader />
+			<div className="container">
+				<CardBg imageSrc={bgImage} className="fullWidthBlock">
+					<ProfileHeader />
 
-			<main className={styles.shell}>
-				<button type="button" className={styles.back} onClick={handleBack}>
-					← Назад
-				</button>
-
-				{notice && (
-					<p className={styles.notice} role="status">
-						{notice}
-					</p>
-				)}
-				{actionError && (
-					<p className={styles.error} role="alert">
-						{actionError}
-					</p>
-				)}
-
-				<div className={styles.layout}>
-					<article className={styles.card}>
-						<div className={styles.cardHead}>
-							<span className={styles.date}>{formatFullDate(order.createdAt)}</span>
-							<span className={styles.statusLabel}>{STATUS_LABELS[order.status]}</span>
-							{renderActions(styles.actionsTop)}
-						</div>
-
-						<h1 className={styles.title}>{order.title}</h1>
-
-						<div className={styles.facts}>
-							<div>
-								<Fact
-									label="Бюджет"
-									value={order.budget == null ? 'Не указан' : formatBudget(order.budget)}
+					<main className={styles.shell}>
+						<button type="button" className={styles.back} onClick={handleBack}>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									d="M11.6154 17L7 12L11.6154 7M7.64103 12H17"
+									strokeWidth="3"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									stroke="#1A1A1A"
 								/>
-								{order.deadline && (
-									<Fact label="Дедлайн заказа" value={formatDeadline(order.deadline)} />
-								)}
-							</div>
-							{order.tools.length > 0 && (
-								<div>
-									<Fact label="Инструменты" value={order.tools.join(' • ')} />
-								</div>
-							)}
-						</div>
+							</svg>
+							Назад
+						</button>
 
-						{order.stages?.length > 0 && (
-							<ul className={styles.stages}>
-								{order.stages.map((stage) => (
-									<li key={stage.position} className={styles.stage}>
-										<span className={styles.stageNumber}>Этап {stage.position}</span>
-										<span className={styles.stageTitle}>{stage.title}</span>
-										<span className={styles.stageBudget}>{formatBudget(stage.budget)}</span>
-									</li>
-								))}
-							</ul>
+						{notice && (
+							<p className={styles.notice} role="status">
+								{notice}
+							</p>
+						)}
+						{actionError && (
+							<p className={styles.error} role="alert">
+								{actionError}
+							</p>
 						)}
 
-						{order.description && (
-							<section>
-								<h2 className={styles.sectionTitle}>Задачи проекта</h2>
-								<p className={styles.description}>{order.description}</p>
-							</section>
-						)}
-
-						{renderActions(styles.actionsBottom)}
-					</article>
-
-					<aside className={styles.side}>
-						{isOwner ? (
-							<section className={clsx(styles.panel, styles.panelAccent)}>
-								<p className={styles.panelLabel}>
-									{responses.length > 0 ? 'Выбрать исполнителя' : 'Статистика'}
-								</p>
-								<div className={styles.stats}>
-									<Stat icon={ICONS.check} value={order.stats.responses} label="Откликнулось" />
-									<Stat icon={ICONS.eye} value={order.stats.views} label="Просмотров" />
-									<Stat icon={ICONS.heart} value={order.stats.favorites} label="В избранном" />
+						<div className={styles.layout}>
+							<article className={styles.card}>
+								<div className={styles.cardHead}>
+									<span className={styles.date}>{formatFullDate(order.createdAt)}</span>
+									<span className={styles.statusLabel}>{STATUS_LABELS[order.status]}</span>
+									{renderActions(styles.actionsTop)}
 								</div>
 
-								{responses.length > 0 && (
-									<div className={styles.people}>
-										{responses.map((item) => (
-											<PersonCard
-												key={item.id}
-												person={item.freelancer}
-												experience={item.freelancer.experience}
-												to={`/users/${item.freelancer.id}?order=${order.id}`}
-											>
-												{item.status === 'SELECTED' ? (
-													<>
-														<span className={styles.selected}>Выбран исполнителем</span>
-														<Button variant="primary" onClick={showChatStub}>
-															Перейти в сообщения
-														</Button>
-													</>
-												) : (
-													isOpen && (
-														<>
-															<Button
-																variant="primary"
-																onClick={() => handleSelect(item.id)}
-																disabled={busy}
-															>
-																Выбрать исполнителем
-															</Button>
-															<button
-																type="button"
-																className={styles.rejectBtn}
-																onClick={() => handleReject(item.id)}
-																disabled={busy}
-																aria-label="Отклонить отклик"
-															>
-																×
-															</button>
-														</>
-													)
-												)}
-											</PersonCard>
-										))}
+								<h1 className={styles.title}>{order.title}</h1>
+
+								<div className={styles.facts}>
+									<div>
+										<Fact
+											label="Бюджет"
+											value={order.budget == null ? 'Не указан' : formatBudget(order.budget)}
+										/>
+										{order.deadline && (
+											<Fact label="Дедлайн заказа" value={formatDeadline(order.deadline)} />
+										)}
 									</div>
+									{order.tools.length > 0 && (
+										<div>
+											<Fact label="Инструменты" value={order.tools.join(' • ')} />
+										</div>
+									)}
+								</div>
+
+								{order.stages?.length > 0 && (
+									<ul className={styles.stages}>
+										{order.stages.map((stage) => (
+											<li key={stage.position} className={styles.stage}>
+												<span className={styles.stageNumber}>Этап {stage.position}</span>
+												<span className={styles.stageTitle}>{stage.title}</span>
+												<span className={styles.stageBudget}>{formatBudget(stage.budget)}</span>
+											</li>
+										))}
+									</ul>
 								)}
-							</section>
-						) : (
-							<section className={styles.panel}>
-								<p className={styles.panelLabel}>Заказчик</p>
-								<PersonCard
-									person={order.customer}
-									experience={customerExperience}
-									to={`/users/${order.customer.id}`}
-								>
-									<Button
-										variant="secondary"
-										onClick={() => navigate(`/users/${order.customer.id}`)}
-									>
-										Посмотреть профиль
-									</Button>
-								</PersonCard>
-							</section>
-						)}
-					</aside>
-				</div>
-			</main>
+
+								{order.description && (
+									<section>
+										<h2 className={styles.sectionTitle}>Задачи проекта</h2>
+										<p className={styles.description}>{order.description}</p>
+									</section>
+								)}
+
+								{renderActions(styles.actionsBottom)}
+							</article>
+
+							<aside className={styles.side}>
+								{isOwner ? (
+									<section className={clsx(styles.panel, styles.panelAccent)}>
+										<p className={styles.panelLabel}>
+											{responses.length > 0 ? 'Выбрать исполнителя' : 'Статистика'}
+										</p>
+										<div className={styles.stats}>
+											<Stat icon={ICONS.check} value={order.stats.responses} label="Откликнулось" />
+											<Stat icon={ICONS.eye} value={order.stats.views} label="Просмотров" />
+											<Stat icon={ICONS.heart} value={order.stats.favorites} label="В избранном" />
+										</div>
+
+										{responses.length > 0 && (
+											<div className={styles.people}>
+												{responses.map((item) => (
+													<PersonCard
+														key={item.id}
+														person={item.freelancer}
+														experience={item.freelancer.experience}
+														to={`/users/${item.freelancer.id}?order=${order.id}`}
+													>
+														{item.status === 'SELECTED' ? (
+															<>
+																<span className={styles.selected}>Выбран исполнителем</span>
+																<Button variant="primary" onClick={showChatStub}>
+																	Перейти в сообщения
+																</Button>
+															</>
+														) : (
+															isOpen && (
+																<>
+																	<Button
+																		variant="primary"
+																		onClick={() => handleSelect(item.id)}
+																		disabled={busy}
+																	>
+																		Выбрать исполнителем
+																	</Button>
+																	<button
+																		type="button"
+																		className={styles.rejectBtn}
+																		onClick={() => handleReject(item.id)}
+																		disabled={busy}
+																		aria-label="Отклонить отклик"
+																	>
+																		×
+																	</button>
+																</>
+															)
+														)}
+													</PersonCard>
+												))}
+											</div>
+										)}
+									</section>
+								) : (
+									<section className={styles.panel}>
+										<p className={styles.panelLabel}>Заказчик</p>
+										<PersonCard
+											person={order.customer}
+											experience={customerExperience}
+											to={`/users/${order.customer.id}`}
+										>
+											<Button
+												variant="secondary"
+												onClick={() => navigate(`/users/${order.customer.id}`)}
+											>
+												Посмотреть профиль
+											</Button>
+										</PersonCard>
+									</section>
+								)}
+							</aside>
+						</div>
+					</main>
+				</CardBg>
+			</div>
 
 			{isEditOpen && (
 				<CreateOrderModal

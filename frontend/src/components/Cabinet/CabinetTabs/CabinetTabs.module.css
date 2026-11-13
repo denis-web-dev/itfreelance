@@ -22,7 +22,7 @@
 	gap: 10px;
 	height: 48px;
 	padding: 0 24px;
-	border: 1px solid #3bff3b;
+	border: 2px solid var(--colorBtn-outline-active);
 	border-radius: 24px;
 	color: #fff;
 	font: inherit;
@@ -33,17 +33,26 @@
 }
 
 .tab:hover {
-	background: rgba(59, 255, 59, 0.15);
+	background: none;
+	border: 2px dashed var(--colorBtn-outline-active);
 }
 
 .tabActive,
 .tabActive:hover {
-	background: #3bff3b;
-	color: #1a1a1a;
+	background: var(--colorBtn-outline-active);
+	border: 2px dashed var(--colorBtn-outline-active);
+	color: var(--colorText-active);
 }
 
 .gear {
 	justify-content: center;
 	width: 48px;
 	padding: 0;
+}
+
+.group {
+	font-size: 20px;
+	line-height: 22px;
+	letter-spacing: -0.02em;
+	color: var(--colorText-white);
 }

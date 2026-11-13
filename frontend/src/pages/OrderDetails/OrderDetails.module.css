@@ -5,17 +5,24 @@
 }
 
 .shell {
+	margin-top: 19px;
 	padding: 24px 28px 32px;
 	background: #fff;
 	border-radius: 30px;
 }
 
 .back {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+
 	margin-bottom: 20px;
 	font-family: var(--font-primary);
 	font-size: 18px;
 	color: #1a1a1a;
 	cursor: pointer;
+	background: none;
+	border: none;
 }
 
 .status,
@@ -34,15 +41,14 @@
 }
 
 .layout {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) 400px;
-	gap: 32px;
-	align-items: start;
+	display: flex;
+	gap: 121px;
+	align-items: flex-start;
 }
 
 .card {
-	display: flex;
-	flex-direction: column;
+	flex: 1;
+	min-width: 0;
 	gap: 24px;
 	padding: 24px;
 	border: 1px solid #dedede;
@@ -53,10 +59,12 @@
 	display: flex;
 	align-items: center;
 	gap: 16px;
+	margin-bottom: 40px;
 }
 
 .date {
 	font-family: var(--font-secondery);
+	font-size: 18px;
 	color: #7b7b7b;
 }
 
@@ -92,33 +100,38 @@
 	width: 52px;
 	height: 52px;
 	border-radius: 50%;
-	background: #dedede;
-	color: #1a1a1a;
+	border: 2px dashed var(--color-grey);
+	background: var(--color-grey);
+	color: var(--colorBg-black);
 	cursor: pointer;
 	transition: all 0.2s;
 }
 
 .iconBtn:hover:not(:disabled) {
-	background: #1a1a1a;
-	color: #fff;
+	border: 2px dashed var(--colorBtn-secondary-hover);
+	background: none;
+	color: var(--colorBg-black);
 }
 
 .iconBtnActive {
-	background: #1a1a1a;
-	color: #ffcb30;
+	background: var(--colorBg-black);
+	color: var(--color-pink);
+	border: none;
 }
 
 .title {
-	font-family: var(--font-primary);
-	font-size: 40px;
-	font-weight: 400;
-	line-height: 1.15;
+	font-size: 35px;
+	line-height: 43px;
+	margin-bottom: 24px;
+
+	color: var(--colorText-black);
 }
 
 .facts {
 	display: flex;
 	justify-content: space-between;
 	gap: 32px;
+	margin-bottom: 40px;
 }
 
 .fact {
@@ -128,6 +141,7 @@
 .factLabel {
 	font-family: var(--font-secondery);
 	font-size: 14px;
+	margin-bottom: 8px;
 	color: #7b7b7b;
 }
 
@@ -173,20 +187,31 @@
 	font-weight: 400;
 }
 
-/* Сохраняем переводы строк из описания; текст выводится как текст, не как разметка */
 .description {
 	font-family: var(--font-secondery);
-	color: #5a5a5a;
+	font-size: 20px;
+	line-height: 1.15;
+	text-align: left;
+
+	margin-bottom: 40px;
+
+	color: #7b7b7b;
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 }
 
 .side {
-	min-width: 0;
+	width: 496px;
+	flex-shrink: 0;
+}
+
+.performerСard {
+	position: absolute;
 }
 
 .panel {
-	padding: 24px;
+	position: relative;
+	padding: 25px;
 	border: 1px solid #dedede;
 	border-radius: 30px;
 }
