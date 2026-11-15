@@ -1780,7 +1780,8 @@ describe('GET /orders/assigned и /orders/rejected: сделки исполни�
 	});
 });
 
-const conversationsOf = (token) => request(app).get('/api/v1/conversations').set(authHeader(token));
+const conversationsOf = (token, query = {}) =>
+	request(app).get('/api/v1/conversations').set(authHeader(token)).query(query);
 const sendTo = (token, id, text) =>
 	request(app).post(`/api/v1/conversations/${id}/messages`).set(authHeader(token)).send({ text });
 const messagesOf = (token, id, query = {}) =>
@@ -1918,5 +1919,175 @@ describe('/conversations: чат по заказу', () => {
 		const res = await request(app).get('/api/v1/conversations');
 
 		expect(res.status).toBe(401);
+	});
+});
+
+const chatDetail = (token, id) =>
+	request(app).get(`/api/v1/conversations/${id}`).set(authHeader(token));
+const chatByOrder = (token, orderId) =>
+	request(app).get(`/api/v1/conversations/by-order/${orderId}`).set(authHeader(token));
+const hideChat = (token, id) =>
+	request(app).delete(`/api/v1/conversations/${id}`).set(authHeader(token));
+
+describe('Заказы: исполнитель, чей отклик отклонили', () => {
+	it('не видит заказ в списке и в избранном, остальные видят, во вкладке «Отклонённые» он есть', async () => {
+		const customer = await createCustomer();
+		const chosen = await createFreelancer('chosen@example.com');
+		const rejected = await createFreelancer('rejected@example.com');
+		const order = await insertOrder(customer.id, { title: 'Заказ с отказом' });
+		await putFavorite(rejected.accessToken, order.id);
+		await respondTo(rejected.accessToken, order.id);
+		await respondTo(chosen.accessToken, order.id);
+		const rejectedId = await responseIdOf(customer, order.id, rejected.id);
+		await dismissResponse(customer.accessToken, order.id, rejectedId);
+
+		const forRejected = await listOrders(rejected.accessToken);
+		const searched = await listOrders(rejected.accessToken, { search: 'отказом' });
+		const favorites = await listFavorites(rejected.accessToken);
+		const forChosen = await listOrders(chosen.accessToken);
+		const tab = await listRejected(rejected.accessToken);
+
+		expect(forRejected.body.data.items).toHaveLength(0);
+		expect(forRejected.body.data.total).toBe(0);
+		expect(searched.body.data.items).toHaveLength(0);
+		expect(favorites.body.data.items).toHaveLength(0);
+		expect(forChosen.body.data.items).toHaveLength(1);
+		expect(tab.body.data.items).toHaveLength(1);
+	});
+});
+
+describe('/conversations: карточка чата, переход по заказу', () => {
+	it('карточка чата: роль, собеседник и данные заказа у каждой стороны', async () => {
+		const { customer, freelancer, order, conversationId } = await startDeal();
+
+		const forCustomer = await chatDetail(customer.accessToken, conversationId);
+		const forFreelancer = await chatDetail(freelancer.accessToken, conversationId);
+
+		expect(forCustomer.status).toBe(200);
+		expect(forCustomer.body.data.conversation).toMatchObject({
+			id: conversationId,
+			role: 'CUSTOMER',
+			partner: { id: freelancer.id, name: 'Иван Петров' },
+			order: { id: order.id, title: 'Заказ с чатом', status: 'IN_PROGRESS', stages: [] },
+		});
+		expect(forFreelancer.body.data.conversation.role).toBe('FREELANCER');
+		expect(forFreelancer.body.data.conversation.partner.id).toBe(customer.id);
+	});
+
+	it('карточка чужого чата: 404', async () => {
+		const { conversationId } = await startDeal();
+		const stranger = await createFreelancer('stranger@example.com');
+
+		const res = await chatDetail(stranger.accessToken, conversationId);
+
+		expect(res.status).toBe(404);
+	});
+
+	it('по заказу находится свой чат, чужому и несуществующему: 404', async () => {
+		const { customer, order, conversationId } = await startDeal();
+		const stranger = await createFreelancer('stranger@example.com');
+
+		const own = await chatByOrder(customer.accessToken, order.id);
+		const foreign = await chatByOrder(stranger.accessToken, order.id);
+		const missing = await chatByOrder(customer.accessToken, 'no-such-id');
+
+		expect(own.body.data.id).toBe(conversationId);
+		expect(foreign.status).toBe(404);
+		expect(missing.status).toBe(404);
+	});
+});
+
+describe('/conversations: удаление чата у себя', () => {
+	it('чат пропадает только у меня, история остаётся', async () => {
+		const { customer, freelancer, conversationId } = await startDeal();
+		await sendTo(customer.accessToken, conversationId, 'Первое сообщение');
+
+		const res = await hideChat(customer.accessToken, conversationId);
+
+		expect(res.status).toBe(200);
+		const mine = await conversationsOf(customer.accessToken);
+		const theirs = await conversationsOf(freelancer.accessToken);
+		expect(mine.body.data.items).toHaveLength(0);
+		expect(theirs.body.data.items).toHaveLength(1);
+		expect(await prisma.message.count()).toBe(1);
+	});
+
+	it('сообщение собеседника возвращает чат в список', async () => {
+		const { customer, freelancer, conversationId } = await startDeal();
+		await hideChat(customer.accessToken, conversationId);
+
+		await sendTo(freelancer.accessToken, conversationId, 'Вы здесь?');
+
+		const mine = await conversationsOf(customer.accessToken);
+		expect(mine.body.data.items).toHaveLength(1);
+		expect(mine.body.data.items[0].unread).toBe(1);
+	});
+
+	it('открытие по заказу возвращает скрытый чат в список', async () => {
+		const { customer, order, conversationId } = await startDeal();
+		await hideChat(customer.accessToken, conversationId);
+
+		await chatByOrder(customer.accessToken, order.id);
+
+		const mine = await conversationsOf(customer.accessToken);
+		expect(mine.body.data.items).toHaveLength(1);
+	});
+
+	it('скрытие снимает непрочитанные у меня, значок в шапке не «висит»', async () => {
+		const { customer, freelancer, conversationId } = await startDeal();
+		await sendTo(freelancer.accessToken, conversationId, 'Привет');
+		const before = await unreadOf(customer.accessToken);
+
+		await hideChat(customer.accessToken, conversationId);
+
+		const after = await unreadOf(customer.accessToken);
+		expect(before.body.data.count).toBe(1);
+		expect(after.body.data.count).toBe(0);
+	});
+
+	it('посторонний скрыть чужой чат не может: 404, чат остаётся', async () => {
+		const { customer, conversationId } = await startDeal();
+		const stranger = await createFreelancer('stranger@example.com');
+
+		const res = await hideChat(stranger.accessToken, conversationId);
+
+		expect(res.status).toBe(404);
+		const mine = await conversationsOf(customer.accessToken);
+		expect(mine.body.data.items).toHaveLength(1);
+	});
+});
+
+describe('/conversations: поиск', () => {
+	it('находит по названию заказа, имени собеседника и тексту сообщения', async () => {
+		const { customer, freelancer, conversationId } = await startDeal();
+		await sendTo(customer.accessToken, conversationId, 'Нужна консультация по оплате');
+
+		const byOrder = await conversationsOf(customer.accessToken, { search: 'заказ с чатом' });
+		const byName = await conversationsOf(customer.accessToken, { search: 'иван' });
+		const byText = await conversationsOf(freelancer.accessToken, { search: 'консультация' });
+		const none = await conversationsOf(customer.accessToken, { search: 'ничего подобного' });
+
+		expect(byOrder.body.data.items).toHaveLength(1);
+		expect(byName.body.data.items).toHaveLength(1);
+		expect(byText.body.data.items).toHaveLength(1);
+		expect(none.body.data.items).toHaveLength(0);
+	});
+
+	it('имя ищется только у собеседника, а не у самого себя', async () => {
+		const { freelancer } = await startDeal();
+
+		// Исполнитель зовётся «Иван Петров»: по своему имени его чаты не находятся
+		const res = await conversationsOf(freelancer.accessToken, { search: 'иван' });
+
+		expect(res.body.data.items).toHaveLength(0);
+	});
+
+	it('чужие чаты в поиске не появляются', async () => {
+		await startDeal();
+		const stranger = await createFreelancer('stranger@example.com');
+
+		const res = await conversationsOf(stranger.accessToken, { search: 'заказ' });
+
+		expect(res.body.data.items).toHaveLength(0);
 	});
 });

@@ -228,6 +228,8 @@ model Conversation {
   freelancer    User      @relation("ConversationFreelancer", fields: [freelancerId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   lastMessageAt DateTime  @default(now())
+  customerHiddenAt   DateTime? // заказчик убрал чат из списка у себя
+  freelancerHiddenAt DateTime? // исполнитель убрал чат из списка у себя
   messages      Message[]
 
   @@index([customerId, lastMessageAt])

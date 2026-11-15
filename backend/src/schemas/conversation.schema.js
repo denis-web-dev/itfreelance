@@ -15,3 +15,7 @@ export const sendMessageSchema = z.object({
 		.min(1, 'Сообщение не может быть пустым')
 		.max(2000, 'Сообщение не длиннее 2000 символов'),
 });
+
+export const listConversationsQuerySchema = z.object({
+	search: z.string().trim().max(100).optional(),
+});

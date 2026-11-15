@@ -123,6 +123,8 @@ export const listOrders = async (
 	if (budgetMin !== undefined || budgetMax !== undefined) {
 		where.budget = { gte: budgetMin, lte: budgetMax };
 	}
+	// Исполнителю не показываем заказы, где его отклик отклонили: они только во вкладке «Отклонённые»
+	where.NOT = { responses: { some: { freelancerId: userId, status: 'REJECTED' } } };
 	if (tools?.length) {
 		where.tools = { hasSome: tools };
 	}
@@ -156,7 +158,13 @@ export const listOrders = async (
 // Вкладка «Избранное»: мои сердечки, самые свежие сверху.
 // Показываем только открытые заказы: чужой отменённый заказ видеть нельзя
 export const listFavoriteOrders = async (userId, { page, limit }) => {
-	const where = { userId, order: { status: 'OPEN' } };
+	const where = {
+		userId,
+		order: {
+			status: 'OPEN',
+			NOT: { responses: { some: { freelancerId: userId, status: 'REJECTED' } } },
+		},
+	};
 
 	const [total, rows] = await prisma.$transaction([
 		prisma.favoriteOrder.count({ where }),
