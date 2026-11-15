@@ -46,7 +46,10 @@ const InputForm = forwardRef(
 					type === 'password' && styles['form-group__password'],
 					className,
 				)}
-				style={width ? { width } : undefined}
+				style={{
+					...(width ? { width } : {}),
+					'--placeholder-shift': placeholderShift,
+				}}
 			>
 				{isTextarea ? (
 					<textarea

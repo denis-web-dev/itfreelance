@@ -238,9 +238,8 @@ export default function CreateOrderModal({ orderId = null, onClose, onCreated, o
 		}
 	};
 
-	// Тексты режима (если нужно оставить «Опубликовать» как на макете, поменяй здесь)
 	const titleText = isEdit ? 'Редактирование заказа' : 'Добавление нового заказа';
-	const smallButtonText = isEdit ? '✓ Сохранить' : '✓ Опубликовать';
+	const smallButtonText = isEdit ? 'Сохранить' : 'Опубликовать';
 	const bigButtonText = isEdit ? 'Сохранить' : 'Опубликовать';
 
 	return (
@@ -269,6 +268,21 @@ export default function CreateOrderModal({ orderId = null, onClose, onCreated, o
 									disabled={isSaving || isLocked}
 								>
 									{smallButtonText}
+									<svg
+										className={styles.iconPublish}
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											fillRule="evenodd"
+											clipRule="evenodd"
+											d="M6.70711 10.7071C6.31658 10.3166 5.68342 10.3166 5.29289 10.7071L4.70711 11.2929C4.31658 11.6834 4.31658 12.3166 4.70711 12.7071L9.29289 17.2929C9.68342 17.6834 10.3166 17.6834 10.7071 17.2929L19.2929 8.70711C19.6834 8.31658 19.6834 7.68342 19.2929 7.29289L18.7071 6.70711C18.3166 6.31658 17.6834 6.31658 17.2929 6.70711L10.7071 13.2929C10.3166 13.6834 9.68342 13.6834 9.29289 13.2929L6.70711 10.7071Z"
+											fill="currentColor"
+										/>
+									</svg>
 								</button>
 								<button
 									type="button"
@@ -279,7 +293,7 @@ export default function CreateOrderModal({ orderId = null, onClose, onCreated, o
 									<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
 										<path
 											d="M2 2l10 10M12 2L2 12"
-											stroke="#fff"
+											stroke="#000"
 											strokeWidth="2.4"
 											strokeLinecap="round"
 										/>
@@ -307,7 +321,6 @@ export default function CreateOrderModal({ orderId = null, onClose, onCreated, o
 									control={control}
 									render={({ field }) => (
 										<TagInput
-											label="Инструменты"
 											placeholder="Инструменты *"
 											value={field.value}
 											onChange={field.onChange}
@@ -404,7 +417,6 @@ export default function CreateOrderModal({ orderId = null, onClose, onCreated, o
 														)}
 													</div>
 													<TextField
-														label="Название"
 														error={errors.stages?.[index]?.title?.message}
 														inputProps={register(`stages.${index}.title`)}
 													/>

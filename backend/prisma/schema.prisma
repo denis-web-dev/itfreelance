@@ -38,6 +38,9 @@ model User {
   orderResponses   OrderResponse[]
   orderViews       OrderView[]
   notifications    Notification[]
+  conversationsAsCustomer   Conversation[] @relation("ConversationCustomer")
+  conversationsAsFreelancer Conversation[] @relation("ConversationFreelancer")
+  messages                  Message[]
 
   @@map("users")
 }
@@ -107,6 +110,7 @@ model Order {
   responses     OrderResponse[]
   views         OrderView[]
   notifications Notification[]
+  conversation  Conversation?
 
   toolsSearch String @default("") // инструменты в нижнем регистре, для поиска
   createdAt DateTime @default(now())
@@ -211,4 +215,36 @@ model Notification {
 
   @@index([userId, createdAt])
   @@map("notifications")
+}
+
+// Чат между заказчиком и выбранным исполнителем (один на заказ)
+model Conversation {
+  id            String    @id @default(cuid())
+  orderId       String    @unique
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      User      @relation("ConversationCustomer", fields: [customerId], references: [id], onDelete: Cascade)
+  freelancerId  String
+  freelancer    User      @relation("ConversationFreelancer", fields: [freelancerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  lastMessageAt DateTime  @default(now())
+  messages      Message[]
+
+  @@index([customerId, lastMessageAt])
+  @@index([freelancerId, lastMessageAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  text           String       @db.VarChar(2000)
+  createdAt      DateTime     @default(now())
+  readAt         DateTime? // когда прочитал получатель
+
+  @@index([conversationId, createdAt])
+  @@map("messages")
 }

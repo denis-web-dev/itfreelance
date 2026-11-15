@@ -64,6 +64,65 @@ export const updateMyProfile = async (userId, input) => {
 
 // Что видно о пользователе другим. Явный белый список: новая колонка в таблице
 // не попадёт наружу случайно
+// const PUBLIC_PROFILE_FIELDS = [
+// 	'fullName',
+// 	'companyName',
+// 	'region',
+// 	'sphere',
+// 	'about',
+// 	'site',
+// 	'skills',
+// 	'tools',
+// 	'avatarUrl',
+// 	'experience',
+// 	'rate',
+// 	'marketYears',
+// 	'ratingAvg',
+// 	'ratingCount',
+// ];
+
+// // Контакты открываются только после выбора исполнителя (или самому владельцу профиля)
+// const CONTACT_PROFILE_FIELDS = ['phone', 'telegram', 'vk'];
+
+// export const getPublicProfile = async (viewerId, targetId) => {
+// 	const target = await prisma.user.findUnique({
+// 		where: { id: targetId },
+// 		select: { id: true, email: true, role: true, isActive: true },
+// 	});
+// 	// Заблокированных и служебные аккаунты для остальных «не существует»
+// 	if (!target || !target.isActive || target.role === 'ADMIN') {
+// 		throw ApiError.notFound('Пользователь не найден');
+// 	}
+
+// 	// Контакты видны владельцу и тем, кто связан выбором исполнителя в любом из заказов
+// 	const isSelf = viewerId === targetId;
+// 	const linkedByOrder = isSelf
+// 		? null
+// 		: await prisma.order.findFirst({
+// 				where: {
+// 					OR: [
+// 						{ customerId: viewerId, executorId: targetId },
+// 						{ customerId: targetId, executorId: viewerId },
+// 					],
+// 				},
+// 				select: { id: true },
+// 			});
+// 	const canSeeContacts = isSelf || linkedByOrder !== null;
+
+// 	const profile = await prisma.profile.findUnique({ where: { userId: targetId } });
+// 	const visibleKeys = canSeeContacts
+// 		? [...PUBLIC_PROFILE_FIELDS, ...CONTACT_PROFILE_FIELDS]
+// 		: PUBLIC_PROFILE_FIELDS;
+
+// 	return {
+// 		user: { id: target.id, role: target.role, ...(canSeeContacts ? { email: target.email } : {}) },
+// 		profile: profile ? pick(profile, visibleKeys) : null,
+// 		canSeeContacts,
+// 	};
+// };
+
+// Что видно о пользователе другим вошедшим. Явный белый список: новая колонка в таблице
+// не попадёт наружу случайно
 const PUBLIC_PROFILE_FIELDS = [
 	'fullName',
 	'companyName',
@@ -71,6 +130,9 @@ const PUBLIC_PROFILE_FIELDS = [
 	'sphere',
 	'about',
 	'site',
+	'telegram',
+	'vk',
+	'phone',
 	'skills',
 	'tools',
 	'avatarUrl',
@@ -81,10 +143,7 @@ const PUBLIC_PROFILE_FIELDS = [
 	'ratingCount',
 ];
 
-// Контакты открываются только после выбора исполнителя (или самому владельцу профиля)
-const CONTACT_PROFILE_FIELDS = ['phone', 'telegram', 'vk'];
-
-export const getPublicProfile = async (viewerId, targetId) => {
+export const getPublicProfile = async (targetId) => {
 	const target = await prisma.user.findUnique({
 		where: { id: targetId },
 		select: { id: true, email: true, role: true, isActive: true },
@@ -94,29 +153,10 @@ export const getPublicProfile = async (viewerId, targetId) => {
 		throw ApiError.notFound('Пользователь не найден');
 	}
 
-	// Контакты видны владельцу и тем, кто связан выбором исполнителя в любом из заказов
-	const isSelf = viewerId === targetId;
-	const linkedByOrder = isSelf
-		? null
-		: await prisma.order.findFirst({
-				where: {
-					OR: [
-						{ customerId: viewerId, executorId: targetId },
-						{ customerId: targetId, executorId: viewerId },
-					],
-				},
-				select: { id: true },
-			});
-	const canSeeContacts = isSelf || linkedByOrder !== null;
-
 	const profile = await prisma.profile.findUnique({ where: { userId: targetId } });
-	const visibleKeys = canSeeContacts
-		? [...PUBLIC_PROFILE_FIELDS, ...CONTACT_PROFILE_FIELDS]
-		: PUBLIC_PROFILE_FIELDS;
 
 	return {
-		user: { id: target.id, role: target.role, ...(canSeeContacts ? { email: target.email } : {}) },
-		profile: profile ? pick(profile, visibleKeys) : null,
-		canSeeContacts,
+		user: { id: target.id, role: target.role, email: target.email },
+		profile: profile ? pick(profile, PUBLIC_PROFILE_FIELDS) : null,
 	};
 };

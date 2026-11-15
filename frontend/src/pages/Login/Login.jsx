@@ -64,7 +64,7 @@ function Login() {
 				localStorage.removeItem('rememberedEmail');
 			}
 
-			navigate(location.state?.from?.pathname || '/profile-edit', { replace: true });
+			navigate(location.state?.from?.pathname || '/profile', { replace: true });
 		} catch (error) {
 			setServerError(error.message);
 		} finally {

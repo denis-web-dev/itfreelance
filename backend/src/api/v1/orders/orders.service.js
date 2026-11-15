@@ -426,6 +426,10 @@ export const selectResponse = async (customerId, orderId, responseId) => {
 				orderId,
 			},
 		});
+		// Чат появляется вместе с выбором исполнителя: один чат на заказ
+		await tx.conversation.create({
+			data: { orderId, customerId, freelancerId: response.freelancerId },
+		});
 	});
 
 	return getOrder(orderId, { id: customerId });

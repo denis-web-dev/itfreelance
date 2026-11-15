@@ -51,25 +51,30 @@
 .header {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	margin-bottom: 8px;
+	gap: 16px;
+	margin-bottom: 40px;
 }
 
 .title {
 	margin: 0 auto 0 0;
-	font-size: 24px;
-	font-weight: 500;
+	font-size: 25px;
 }
 
 .publishSmall {
-	height: 40px;
-	padding: 0 24px;
+	position: relative;
+	padding: 14px 45px 14px 77px;
 	border: none;
-	border-radius: 20px;
-	background: #3bff3b;
+	border-radius: 100px;
+	background: var(--colorBtn-primary-default);
+	border: 2px dashed var(--colorBtn-primary-default);
 	color: #1a1a1a;
 	font: inherit;
 	cursor: pointer;
+	transition: all 0.2s;
+}
+.publishSmall:hover {
+	background: none;
+	border: 2px dashed var(--colorBtn-primary-hover);
 }
 
 .publishSmall:disabled {
@@ -77,15 +82,24 @@
 	cursor: default;
 }
 
+.iconPublish {
+	position: absolute;
+	left: 50px;
+	top: 11px;
+}
+
 .close {
 	display: grid;
 	place-items: center;
-	width: 40px;
-	height: 40px;
+	width: 48px;
+	height: 48px;
 	border: none;
 	border-radius: 50%;
-	background: #1a1a1a;
+	background: var(--colorBtn-secondary-default);
 	cursor: pointer;
+}
+.close svg {
+	fill: #1a1a1a;
 }
 
 .field {
@@ -96,17 +110,18 @@
 .textarea {
 	width: 100%;
 	border: 1px solid #d6d6d6;
-	border-radius: 24px;
+	border-radius: 100px;
 	background: #fff;
-	color: #1a1a1a;
+	color: var(--colorText-secondary);
 	font: inherit;
-	font-size: 15px;
+	font-family: var(--font-secondery);
+	font-size: 18px;
 	outline: none;
 	transition: border-color 0.2s;
 }
 
 .input {
-	height: 48px;
+	max-width: 100%;
 	padding: 0 130px 0 20px;
 }
 

@@ -2,6 +2,8 @@ import RatingStars from '../../RatingStars/RatingStars';
 import { formatNumber, formatYears } from '../../../utils/format';
 import { telegramUrl, toSafeUrl } from '../../../utils/links';
 import defaultAvatar from '../../../assets/img-header/avatarBG.png';
+import IconTelegram from '../../../assets/icons/icon-tg.svg?react';
+import IconVk from '../../../assets/icons/icon-vk.svg?react';
 import { formatPhone } from '../../../utils/format';
 import styles from './ProfileSummary.module.css';
 
@@ -105,10 +107,10 @@ export default function ProfileSummary({
 							) : (
 								<>
 									<SocialLink href={telegram} label="Телеграм">
-										TG
+										<IconTelegram />
 									</SocialLink>
 									<SocialLink href={vk} label="Вконтакте">
-										VK
+										<IconVk />
 									</SocialLink>
 									{!telegram && !vk && <span className={styles.empty}>Не указано</span>}
 								</>

@@ -81,6 +81,17 @@
 	color: var(--colorText-primary);
 }
 
+.info {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.row {
+	display: flex;
+	gap: 110px;
+}
+
 .toolsList {
 	display: flex;
 	flex-wrap: wrap;
