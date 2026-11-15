@@ -3,13 +3,15 @@
 	font-family: var(--font-primary);
 	margin: 0 auto;
 	padding: 15px;
+	min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .content {
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
-	margin-top: 188px;
+	margin-top: 150px;
 }
 
 .status {

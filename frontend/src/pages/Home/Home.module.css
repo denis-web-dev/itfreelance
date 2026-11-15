@@ -30,9 +30,9 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
-	padding: 12px 16px 12px 10px;
-	background: #dedede;
-	border: 2px dashed #dedede;
+	padding: 10px 16px 10px 10px;
+	background: var(--colorBtn-secondary-default);
+	border: 2px dashed var(--colorBtn-secondary-default);
 	border-radius: 100px;
 	font-size: 20px;
 	line-height: 22px;

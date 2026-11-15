@@ -50,7 +50,7 @@ export default function ProfileInfo({
 									field={register('companyName')}
 									error={errors.companyName}
 									inputSize="profile"
-									placeholderShift="300px"
+									placeholderShift="400px"
 								/>
 							)}
 							<InputForm
@@ -60,6 +60,7 @@ export default function ProfileInfo({
 								field={register('region')}
 								error={errors.region}
 								inputSize="profile"
+								placeholderShift="500px"
 							/>
 
 							{isFreelancer ? (

@@ -1,0 +1,128 @@
+.chat {
+	display: flex;
+	flex-direction: column;
+	min-height: 520px;
+	max-height: 75vh;
+	border: 1px solid #dedede;
+	border-radius: 30px;
+	background: #fff;
+}
+
+.head {
+	padding: 20px 24px;
+	border-bottom: 1px solid #ececec;
+}
+
+.partner {
+	font-family: var(--font-primary);
+	font-size: 24px;
+	font-weight: 400;
+}
+
+.order {
+	font-family: var(--font-secondery);
+	font-size: 14px;
+	color: #7b7b7b;
+}
+
+.list {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 10px;
+	margin: 0;
+	padding: 20px 24px;
+	overflow-y: auto;
+	list-style: none;
+}
+
+.message {
+	max-width: 70%;
+	padding: 10px 14px;
+	border-radius: 18px;
+}
+
+.mine {
+	align-self: flex-end;
+	background: #37f737;
+}
+
+.theirs {
+	align-self: flex-start;
+	background: #ececec;
+}
+
+/* Текст выводится как текст (не разметка), переносы строк сохраняются */
+.text {
+	font-family: var(--font-secondery);
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.time {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	color: rgba(0, 0, 0, 0.5);
+	text-align: right;
+}
+
+.status,
+.closed {
+	font-family: var(--font-secondery);
+	color: #7b7b7b;
+	text-align: center;
+}
+
+.closed {
+	padding: 16px;
+	border-top: 1px solid #ececec;
+}
+
+.error {
+	font-family: var(--font-secondery);
+	color: #cc4422;
+}
+
+.form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding: 16px 24px;
+	border-top: 1px solid #ececec;
+}
+
+.input {
+	flex: 1;
+	min-width: 0;
+	padding: 12px 16px;
+	border: 1.5px solid #b7b7b7;
+	border-radius: 20px;
+	font-family: var(--font-secondery);
+	font-size: 16px;
+	resize: none;
+}
+
+.input:focus {
+	outline: none;
+	border-color: #37f737;
+}
+
+.send {
+	padding: 0 28px;
+	border-radius: 100px;
+	background: #37f737;
+	font-family: var(--font-primary);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.send:hover:not(:disabled) {
+	background: #1a1a1a;
+	color: #fff;
+}
+
+.send:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}

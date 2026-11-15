@@ -162,9 +162,7 @@ export default function OrderDetails() {
 	const handleSelect = (responseId) =>
 		runAction(async () => {
 			await selectResponse(id, responseId);
-			navigate('/profile/deals', {
-				state: { notice: 'Исполнитель выбран. Чат с ним появится в следующем обновлении' },
-			});
+			navigate(`/messages?order=${id}`);
 		});
 
 	const handleReject = (responseId) => {
@@ -194,7 +192,7 @@ export default function OrderDetails() {
 		}
 	};
 
-	const showChatStub = () => setNotice('Чат появится в следующем обновлении');
+	const openChat = () => navigate(`/messages?order=${order.id}`);
 
 	if (loading || error || !order) {
 		return (
@@ -277,6 +275,11 @@ export default function OrderDetails() {
 								Откликнуться
 							</Button>
 						)
+					)}
+					{myResponse?.status === 'SELECTED' && (
+						<Button variant="primary" onClick={openChat}>
+							Перейти в сообщения
+						</Button>
 					)}
 					<button
 						type="button"
@@ -402,7 +405,7 @@ export default function OrderDetails() {
 														{item.status === 'SELECTED' ? (
 															<>
 																<span className={styles.selected}>Выбран исполнителем</span>
-																<Button variant="primary" onClick={showChatStub}>
+																<Button variant="primary" onClick={openChat}>
 																	Перейти в сообщения
 																</Button>
 															</>

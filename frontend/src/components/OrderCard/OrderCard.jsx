@@ -67,13 +67,36 @@ export default function OrderCard({
 					)}
 				</div>
 			)}
+			<div className={styles.info}>
+				<div className={styles.row}>
+					{isAssigned && (
+						<div className={styles.budget}>
+							<span className={styles.budgetLabel}>Заказчик</span>
+							<span className={styles.budgetValue}>{order.customer.name}</span>
+						</div>
+					)}
 
-			{isAssigned && (
-				<div className={styles.budget}>
-					<span className={styles.budgetLabel}>Заказчик</span>
-					<span className={styles.budgetValue}>{order.customer.name}</span>
+					{/* Дедлайн показываем только у заказа в работе (в «Сделки → Активные») */}
+					{isMine && order.status === 'IN_PROGRESS' && order.deadline && !statusLabel && (
+						<div className={styles.budget}>
+							<span className={styles.budgetLabel}>Дедлайн</span>
+							<span className={styles.budgetValue}>{formatDeadline(order.deadline)}</span>
+						</div>
+					)}
+					{order.tools.length > 0 && (
+						<div className={styles.tools}>
+							<span className={styles.toolsLabel}>Инструменты</span>
+							<div className={styles.toolsList}>
+								{order.tools.map((tool) => (
+									<span key={tool} className={styles.tool}>
+										{tool}
+									</span>
+								))}
+							</div>
+						</div>
+					)}
 				</div>
-			)}
+			</div>
 
 			<div className={styles.budget}>
 				<span className={styles.budgetLabel}>Бюджет проекта</span>
@@ -81,27 +104,6 @@ export default function OrderCard({
 					{order.budget == null ? 'Не указан' : formatBudget(order.budget)}
 				</span>
 			</div>
-
-			{/* Дедлайн показываем только у заказа в работе (в «Сделки → Активные») */}
-			{isMine && order.status === 'IN_PROGRESS' && order.deadline && !statusLabel && (
-				<div className={styles.budget}>
-					<span className={styles.budgetLabel}>Дедлайн</span>
-					<span className={styles.budgetValue}>{formatDeadline(order.deadline)}</span>
-				</div>
-			)}
-
-			{order.tools.length > 0 && (
-				<div className={styles.tools}>
-					<span className={styles.toolsLabel}>Инструменты</span>
-					<div className={styles.toolsList}>
-						{order.tools.map((tool) => (
-							<span key={tool} className={styles.tool}>
-								{tool}
-							</span>
-						))}
-					</div>
-				</div>
-			)}
 
 			<div className={styles.actions}>
 				{canChooseExecutor && (

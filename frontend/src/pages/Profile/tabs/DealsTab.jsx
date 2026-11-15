@@ -148,7 +148,7 @@ export default function DealsTab() {
 							isAssigned={!isCustomer}
 							statusLabel={!isCustomer && activeId === 'rejected' ? 'Отклонён' : undefined}
 							onDetails={(id) => navigate(`/orders/${id}`)}
-							onOpenChat={() => setNotice('Чат появится в следующем обновлении')}
+							onOpenChat={(id) => navigate(`/messages?order=${id}`)}
 						/>
 					))}
 				</div>

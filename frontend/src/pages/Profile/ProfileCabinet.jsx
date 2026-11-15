@@ -86,9 +86,7 @@ export default function ProfileCabinet() {
 	const handleSelect = () =>
 		runOfferAction(async () => {
 			await selectResponse(offer.orderId, offer.responseId);
-			navigate('/profile/deals', {
-				state: { notice: 'Исполнитель выбран. Чат с ним появится в следующем обновлении' },
-			});
+			navigate(`/messages?order=${offer.orderId}`);
 		});
 
 	const handleReject = () => {
@@ -102,7 +100,8 @@ export default function ProfileCabinet() {
 	if (state.loading) return <p className={styles.status}>Загрузка...</p>;
 	if (state.error) return <p className={styles.status}>{state.error}</p>;
 
-	const { user, profile, canSeeContacts } = state.data;
+	// const { user, profile, canSeeContacts } = state.data;
+	const { user, profile } = state.data;
 	const isFreelancer = user.role === 'FREELANCER';
 
 	return (
@@ -114,7 +113,7 @@ export default function ProfileCabinet() {
 						user={user}
 						profile={profile}
 						isFreelancer={isFreelancer}
-						contactsHidden={isPublic && !canSeeContacts}
+						// contactsHidden={isPublic && !canSeeContacts}
 					>
 						{offer && (
 							<div className={styles.offerActions}>

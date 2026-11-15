@@ -1,17 +1,40 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getUnreadCount } from '../../../services/conversationsApi';
 import { useAuth } from '../../../contexts/AuthContext';
 import styles from './ProfileHeader.module.css';
-import logoWhite from '../../../assets/img-header/Logo-white.png';
+import logoBlack from '../../../assets/img-header/Logo.png';
 import NotificationsMenu from '../../NotificationsMenu/NotificationsMenu';
 
 export default function ProfileHeader({ className = '' }) {
 	const { user } = useAuth();
 
+	const [unread, setUnread] = useState(0);
+
+	useEffect(() => {
+		if (!user) return;
+		let ignore = false;
+
+		async function loadUnread() {
+			try {
+				const res = await getUnreadCount();
+				if (!ignore) setUnread(res.data.count);
+			} catch {
+				// Значок не должен ломать страницу, если сервер недоступен
+			}
+		}
+
+		loadUnread();
+		return () => {
+			ignore = true;
+		};
+	}, [user]);
+
 	return (
 		<header className={`${styles.headerProfile} ${className}`}>
 			<div className={styles.headerInner}>
 				<Link to="/" className={styles.logo}>
-					<img src={logoWhite} alt="Logotip" />
+					<img src={logoBlack} alt="Logotip" />
 				</Link>
 				<nav className={styles.nav}>
 					<Link to="/orders" className={styles.navLink}>
@@ -25,7 +48,12 @@ export default function ProfileHeader({ className = '' }) {
 				<div className={styles.actions}>
 					<NotificationsMenu />
 					<div className={styles.profileHeaderEmail}>
-						<a className={styles.profileHeaderEmailLink} href="mailto:user@example.com">
+						<Link
+							className={styles.profileHeaderEmailLink}
+							to="/messages"
+							aria-label={unread > 0 ? `Сообщения, непрочитанных: ${unread}` : 'Сообщения'}
+						>
+							{unread > 0 && <span className={styles.profileHeaderEmailDot} aria-hidden="true" />}
 							<svg
 								className={styles.profileHeaderEmailIcon}
 								width="24"
@@ -42,7 +70,7 @@ export default function ProfileHeader({ className = '' }) {
 									fill="#1A1A1A"
 								/>
 							</svg>
-						</a>
+						</Link>
 					</div>
 					{user && (
 						<Link to="/profile" className={styles.userInfo} aria-label="Личный кабинет">

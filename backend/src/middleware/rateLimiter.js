@@ -13,3 +13,11 @@ export const uploadRateLimiter = rateLimit({
 	skip: () => process.env.NODE_ENV === 'test',
 	message: { success: false, message: 'Слишком много загрузок. Попробуйте позже.' },
 });
+
+// Отправка сообщений: защита от спама
+export const messageRateLimiter = rateLimit({
+	windowMs: 60 * 1000,
+	max: 30,
+	skip: () => process.env.NODE_ENV === 'test',
+	message: { success: false, message: 'Слишком много сообщений. Подождите минуту.' },
+});

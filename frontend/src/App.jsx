@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import ProfileEdit from './pages/Profile/ProfileEdit.jsx';
 import Privacy from './pages/Privacy/Privacy.jsx';
 import Orders from './pages/Orders/Orders.jsx';
+import Messages from './pages/Messages/Messages.jsx';
 import ProfileCabinet from './pages/Profile/ProfileCabinet.jsx';
 import DealsTab from './pages/Profile/tabs/DealsTab.jsx';
 import AboutTab from './pages/Profile/tabs/AboutTab.jsx';
@@ -45,6 +46,7 @@ function App() {
 					<Route path="/profile-edit" element={<Navigate to="/profile/edit" replace />} />
 					<Route path="/orders" element={<Orders />} />
 					<Route path="/orders/:id" element={<OrderDetails />} />
+					<Route path="/messages" element={<Messages />} />
 				</Route>
 			</Routes>
 		</div>

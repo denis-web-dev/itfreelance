@@ -1,5 +1,5 @@
 .summary {
-	padding: 28px 30px 40px;
+	padding: 32px 30px 40px;
 	border-radius: 32px;
 }
 
@@ -13,7 +13,7 @@
 
 .title {
 	margin: 0;
-	font-size: clamp(24px, 2.4vw, 36px);
+	font-size: clamp(24px, 2.4vw, 35px);
 	font-weight: 500;
 }
 
@@ -43,8 +43,8 @@
 .body {
 	display: grid;
 	grid-template-columns: 320px 1fr;
-	gap: 40px;
-	margin-top: 32px;
+	gap: 110px;
+	margin-top: 71px;
 }
 
 .avatar {
@@ -57,15 +57,16 @@
 .fields {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 24px 40px;
+	gap: 25px 40px;
 	align-content: start;
 	margin: 0;
 }
 
 .label {
-	margin-bottom: 4px;
-	font-size: 12px;
-	color: #7b7b7b;
+	font-family: var(--font-secondery);
+	margin-bottom: 8px;
+	font-size: 16px;
+	color: var(--colorText-secondary);
 }
 
 .value {
@@ -86,13 +87,28 @@
 .social {
 	display: grid;
 	place-items: center;
-	width: 40px;
-	height: 40px;
+	width: 56px;
+	height: 56px;
 	border-radius: 50%;
-	background: #1a1a1a;
+	border: 2px dashed var(--colorBg-black);
+	background: var(--colorBg-black);
 	color: #fff;
 	font-size: 12px;
 	text-decoration: none;
+	transition: opacity 0.2s;
+}
+
+.social:hover {
+	background: none;
+	border: 2px dashed var(--colorBg-black);
+	opacity: 0.8;
+}
+.social svg {
+fill: var(--colorBg-white);
+transition: fill 0.2s;
+}
+.social:hover svg {
+  fill: var(--colorBg-black);
 }
 
 .extra {
