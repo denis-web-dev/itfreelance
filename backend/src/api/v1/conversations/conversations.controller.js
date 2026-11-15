@@ -2,8 +2,35 @@ import * as conversationsService from './conversations.service.js';
 
 export const list = async (req, res, next) => {
 	try {
-		const items = await conversationsService.listConversations(req.user.id);
+		const items = await conversationsService.listConversations(req.user.id, req.validatedQuery);
 		res.status(200).json({ success: true, data: { items } });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const detail = async (req, res, next) => {
+	try {
+		const conversation = await conversationsService.getConversation(req.user.id, req.params.id);
+		res.status(200).json({ success: true, data: { conversation } });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const byOrder = async (req, res, next) => {
+	try {
+		const data = await conversationsService.openByOrder(req.user.id, req.params.orderId);
+		res.status(200).json({ success: true, data });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const hide = async (req, res, next) => {
+	try {
+		await conversationsService.hideConversation(req.user.id, req.params.id);
+		res.status(200).json({ success: true, message: 'Чат удалён из вашего списка' });
 	} catch (error) {
 		next(error);
 	}

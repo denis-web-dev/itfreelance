@@ -3,6 +3,7 @@ import { protect } from '../../../middleware/auth.js';
 import { validate, validateQuery } from '../../../middleware/validate.js';
 import { messageRateLimiter } from '../../../middleware/rateLimiter.js';
 import {
+	listConversationsQuerySchema,
 	listMessagesQuerySchema,
 	sendMessageSchema,
 } from '../../../schemas/conversation.schema.js';
@@ -13,8 +14,11 @@ const router = Router();
 // Чаты есть у любого вошедшего; участие в конкретном чате проверяет сервис
 router.use(protect);
 
-router.get('/', conversationsController.list);
-router.get('/unread-count', conversationsController.unreadCount); // до '/:id/...'
+router.get('/', validateQuery(listConversationsQuerySchema), conversationsController.list);
+router.get('/unread-count', conversationsController.unreadCount); // до '/:id'
+router.get('/by-order/:orderId', conversationsController.byOrder); // до '/:id'
+router.get('/:id', conversationsController.detail);
+router.delete('/:id', conversationsController.hide);
 router.get(
 	'/:id/messages',
 	validateQuery(listMessagesQuerySchema),
