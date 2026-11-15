@@ -1,60 +1,121 @@
 .chat {
 	display: flex;
 	flex-direction: column;
-	min-height: 520px;
-	max-height: 75vh;
+	min-height: 480px;
+	height: min(72vh, 760px);
+	overflow: hidden;
 	border: 1px solid #dedede;
 	border-radius: 30px;
 	background: #fff;
 }
 
 .head {
-	padding: 20px 24px;
-	border-bottom: 1px solid #ececec;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding: 20px 28px;
+	background: #0cb761;
+	color: #fff;
 }
 
 .partner {
 	font-family: var(--font-primary);
-	font-size: 24px;
+	font-size: 28px;
 	font-weight: 400;
+	line-height: 1.15;
 }
 
-.order {
+.role {
 	font-family: var(--font-secondery);
 	font-size: 14px;
-	color: #7b7b7b;
+	opacity: 0.85;
+}
+
+.pinned {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	min-width: 0;
+	max-width: 45%;
+	padding-left: 20px;
+	border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.pinnedBody {
+	min-width: 0;
+}
+
+.pinnedLabel {
+	font-family: var(--font-primary);
+	font-size: 15px;
+}
+
+.pinnedText {
+	overflow: hidden;
+	font-family: var(--font-secondery);
+	font-size: 15px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	opacity: 0.9;
+}
+
+.pinnedClose {
+	flex: none;
+	font-size: 22px;
+	line-height: 1;
+	color: #fff;
+	cursor: pointer;
 }
 
 .list {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	gap: 10px;
+	gap: 14px;
 	margin: 0;
-	padding: 20px 24px;
+	padding: 20px 28px;
 	overflow-y: auto;
 	list-style: none;
 }
 
-.message {
-	max-width: 70%;
-	padding: 10px 14px;
-	border-radius: 18px;
+.day {
+	align-self: center;
+	font-family: var(--font-secondery);
+	font-size: 14px;
+	color: #7b7b7b;
+}
+
+.row {
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
 }
 
 .mine {
-	align-self: flex-end;
-	background: #37f737;
+	flex-direction: row-reverse;
 }
 
-.theirs {
-	align-self: flex-start;
-	background: #ececec;
+.avatar {
+	flex: none;
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.bubble {
+	max-width: min(70%, 520px);
+	padding: 12px 16px;
+	border: 1px solid #dedede;
+	border-radius: 20px;
+	background: #fff;
 }
 
 /* Текст выводится как текст (не разметка), переносы строк сохраняются */
 .text {
 	font-family: var(--font-secondery);
+	font-size: 17px;
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 }
@@ -62,9 +123,53 @@
 .time {
 	display: block;
 	margin-top: 4px;
-	font-size: 12px;
-	color: rgba(0, 0, 0, 0.5);
+	font-size: 13px;
+	color: #7b7b7b;
 	text-align: right;
+}
+
+.system {
+	align-self: center;
+	width: min(100%, 460px);
+	padding: 20px 24px;
+	border-radius: 24px;
+	background: #ececec;
+}
+
+.systemTitle {
+	font-family: var(--font-primary);
+	font-size: 22px;
+	line-height: 1.25;
+}
+
+.facts {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 16px 0;
+}
+
+.fact {
+	display: flex;
+	gap: 20px;
+	font-family: var(--font-secondery);
+}
+
+.fact dt {
+	flex: none;
+	width: 90px;
+	color: #7b7b7b;
+}
+
+.fact dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.systemNote {
+	font-family: var(--font-secondery);
+	font-size: 15px;
+	color: #5a5a5a;
 }
 
 .status,
@@ -75,11 +180,12 @@
 }
 
 .closed {
-	padding: 16px;
-	border-top: 1px solid #ececec;
+	padding: 18px;
+	background: #dedede;
 }
 
-.error {
+.error,
+.sendError {
 	font-family: var(--font-secondery);
 	color: #cc4422;
 }
@@ -87,42 +193,88 @@
 .form {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 	gap: 12px;
 	padding: 16px 24px;
-	border-top: 1px solid #ececec;
+	background: #dedede;
 }
 
 .input {
 	flex: 1;
 	min-width: 0;
-	padding: 12px 16px;
-	border: 1.5px solid #b7b7b7;
-	border-radius: 20px;
+	min-height: 52px;
+	max-height: 140px;
+	padding: 14px 22px;
+	border: 0;
+	border-radius: 26px;
 	font-family: var(--font-secondery);
-	font-size: 16px;
+	font-size: 17px;
 	resize: none;
 }
 
 .input:focus {
-	outline: none;
-	border-color: #37f737;
+	outline: 2px solid #37f737;
 }
 
 .send {
-	padding: 0 28px;
-	border-radius: 100px;
-	background: #37f737;
-	font-family: var(--font-primary);
-	cursor: pointer;
-	transition: all 0.2s;
-}
-
-.send:hover:not(:disabled) {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
 	background: #1a1a1a;
 	color: #fff;
+	cursor: pointer;
+	transition: opacity 0.2s;
 }
 
 .send:disabled {
-	opacity: 0.5;
+	opacity: 0.4;
 	cursor: not-allowed;
+}
+
+.sendError {
+	flex-basis: 100%;
+}
+
+@media (max-width: 700px) {
+	.chat {
+		height: 75vh;
+		border-radius: 22px;
+	}
+
+	.head {
+		flex-wrap: wrap;
+		gap: 12px;
+		padding: 16px 18px;
+	}
+
+	.partner {
+		font-size: 22px;
+	}
+
+	.pinned {
+		max-width: 100%;
+		padding-left: 0;
+		border-left: 0;
+	}
+
+	.list {
+		padding: 16px 14px;
+	}
+
+	.avatar {
+		width: 36px;
+		height: 36px;
+	}
+
+	.bubble {
+		max-width: 82%;
+	}
+
+	.form {
+		padding: 12px 14px;
+	}
 }

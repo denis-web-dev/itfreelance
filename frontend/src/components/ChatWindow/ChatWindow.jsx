@@ -1,31 +1,49 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { getMessages, sendMessage, markConversationRead } from '../../services/conversationsApi';
+import { formatNumber } from '../../utils/format';
+import defaultAvatar from '../../assets/img-header/avatarBG.png';
 import styles from './ChatWindow.module.css';
 
 const POLL_MS = 4000;
 const MAX_LENGTH = 2000;
 
-// "14:05" для сегодняшних, иначе "12.11 14:05"
-const formatTime = (iso) => {
+// "Сегодня", "Вчера" или дата ДД.ММ.ГГ
+const formatDay = (iso) => {
 	const date = new Date(iso);
-	const time = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-	if (date.toDateString() === new Date().toDateString()) return time;
-	return `${date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' })} ${time}`;
+	const today = new Date();
+	const yesterday = new Date();
+	yesterday.setDate(today.getDate() - 1);
+	if (date.toDateString() === today.toDateString()) return 'Сегодня';
+	if (date.toDateString() === yesterday.toDateString()) return 'Вчера';
+	return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' });
 };
 
-const withTime = (message) => ({ ...message, time: formatTime(message.createdAt) });
+const withLabels = (message) => ({
+	...message,
+	day: formatDay(message.createdAt),
+	time: new Date(message.createdAt).toLocaleTimeString('ru-RU', {
+		hour: '2-digit',
+		minute: '2-digit',
+	}),
+});
 
-export default function ChatWindow({ conversation, onSent, onRead }) {
-	const { id, partner, orderTitle, orderStatus } = conversation;
+// "2026-10-15" -> "15.10.2026"
+const formatDeadline = (iso) => iso.split('-').reverse().join('.');
+
+export default function ChatWindow({ conversation }) {
+	const { id, role, partner, order } = conversation;
+	const isCustomer = role === 'CUSTOMER';
+	const isClosed = order.status !== 'IN_PROGRESS';
+
 	const [messages, setMessages] = useState([]);
 	const [loaded, setLoaded] = useState(false);
 	const [loadError, setLoadError] = useState('');
 	const [text, setText] = useState('');
 	const [sending, setSending] = useState(false);
 	const [sendError, setSendError] = useState('');
+	const [pinnedVisible, setPinnedVisible] = useState(true);
 	const listRef = useRef(null);
-	const isClosed = orderStatus !== 'IN_PROGRESS';
 
 	// Загрузка и обновление раз в несколько секунд, пока открыт чат
 	useEffect(() => {
@@ -37,16 +55,13 @@ export default function ChatWindow({ conversation, onSent, onRead }) {
 			try {
 				const res = await getMessages(id, { signal: controller.signal });
 				if (ignore) return;
-				const items = res.data.items.map(withTime);
+				const items = res.data.items.map(withLabels);
 				setMessages(items);
 				setLoaded(true);
 				setLoadError('');
+				// Сообщения собеседника, которые мы увидели, отмечаем прочитанными
 				if (items.some((m) => m.senderId === partner.id && !m.readAt)) {
-					markConversationRead(id)
-						.then(() => {
-							if (!ignore) onRead?.(id);
-						})
-						.catch(() => {});
+					markConversationRead(id).catch(() => {});
 				}
 			} catch (e) {
 				if (e.name === 'AbortError' || ignore) return;
@@ -61,7 +76,7 @@ export default function ChatWindow({ conversation, onSent, onRead }) {
 			controller.abort();
 			clearInterval(timer);
 		};
-	}, [id, partner.id, onRead]);
+	}, [id, partner.id]);
 
 	// Прокрутка к последнему сообщению
 	useEffect(() => {
@@ -78,10 +93,9 @@ export default function ChatWindow({ conversation, onSent, onRead }) {
 		setSendError('');
 		try {
 			const res = await sendMessage(id, value);
-			const sent = withTime(res.data.message);
+			const sent = withLabels(res.data.message);
 			setMessages((prev) => (prev.some((m) => m.id === sent.id) ? prev : [...prev, sent]));
 			setText('');
-			onSent?.();
 		} catch (err) {
 			setSendError(err.message || 'Не удалось отправить сообщение');
 		} finally {
@@ -100,30 +114,82 @@ export default function ChatWindow({ conversation, onSent, onRead }) {
 	return (
 		<section className={styles.chat}>
 			<header className={styles.head}>
-				<h2 className={styles.partner}>{partner.name}</h2>
-				<p className={styles.order}>{orderTitle}</p>
+				<div>
+					<h2 className={styles.partner}>{partner.name}</h2>
+					<p className={styles.role}>{isCustomer ? 'Исполнитель' : 'Заказчик'}</p>
+				</div>
+
+				{pinnedVisible && (
+					<div className={styles.pinned}>
+						<div className={styles.pinnedBody}>
+							<p className={styles.pinnedLabel}>Закреплённое сообщение</p>
+							<p className={styles.pinnedText}>{order.title}</p>
+						</div>
+						<button
+							type="button"
+							className={styles.pinnedClose}
+							onClick={() => setPinnedVisible(false)}
+							aria-label="Скрыть закреплённое сообщение"
+						>
+							×
+						</button>
+					</div>
+				)}
 			</header>
 
 			<ul className={styles.list} ref={listRef} aria-live="polite">
+				<li className={styles.system}>
+					<p className={styles.systemTitle}>
+						{isCustomer ? 'Вы выбрали исполнителя' : 'Заказчик выбрал вас исполнителем!'}
+					</p>
+					<dl className={styles.facts}>
+						<div className={styles.fact}>
+							<dt>Проект</dt>
+							<dd>{order.title}</dd>
+						</div>
+						<div className={styles.fact}>
+							<dt>Бюджет, ₽</dt>
+							<dd>{order.budget == null ? 'Не указан' : formatNumber(order.budget)}</dd>
+						</div>
+						{order.deadline && (
+							<div className={styles.fact}>
+								<dt>Дедлайн</dt>
+								<dd>{formatDeadline(order.deadline)}</dd>
+							</div>
+						)}
+					</dl>
+					<p className={styles.systemNote}>
+						Здесь можно обсудить детали проекта. Безопасная сделка и оплата этапов будут доступны
+						позже.
+					</p>
+				</li>
+
 				{!loaded && !loadError && <li className={styles.status}>Загрузка...</li>}
 				{loadError && <li className={styles.error}>{loadError}</li>}
-				{loaded && messages.length === 0 && (
-					<li className={styles.status}>Сообщений пока нет. Напишите первым</li>
-				)}
-				{messages.map((message) => (
-					<li
-						key={message.id}
-						className={clsx(
-							styles.message,
-							message.senderId === partner.id ? styles.theirs : styles.mine,
-						)}
-					>
-						<p className={styles.text}>{message.text}</p>
-						<time className={styles.time} dateTime={message.createdAt}>
-							{message.time}
-						</time>
-					</li>
-				))}
+
+				{messages.map((message, index) => {
+					const mine = message.senderId !== partner.id;
+					const newDay = index === 0 || messages[index - 1].day !== message.day;
+
+					return (
+						<Fragment key={message.id}>
+							{newDay && <li className={styles.day}>{message.day}</li>}
+							<li className={clsx(styles.row, mine ? styles.mine : styles.theirs)}>
+								<img
+									className={styles.avatar}
+									src={mine ? defaultAvatar : partner.avatarUrl || defaultAvatar}
+									alt=""
+								/>
+								<div className={styles.bubble}>
+									<p className={styles.text}>{message.text}</p>
+									<time className={styles.time} dateTime={message.createdAt}>
+										{message.time}
+									</time>
+								</div>
+							</li>
+						</Fragment>
+					);
+				})}
 			</ul>
 
 			{isClosed ? (
@@ -136,15 +202,22 @@ export default function ChatWindow({ conversation, onSent, onRead }) {
 						onChange={(e) => setText(e.target.value)}
 						onKeyDown={handleKeyDown}
 						maxLength={MAX_LENGTH}
-						rows={2}
-						placeholder="Напишите сообщение"
+						rows={1}
+						placeholder="Сообщение"
 						aria-label="Сообщение"
 					/>
-					<button type="submit" className={styles.send} disabled={sending || !text.trim()}>
-						Отправить
+					<button
+						type="submit"
+						className={styles.send}
+						disabled={sending || !text.trim()}
+						aria-label="Отправить"
+					>
+						<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+							<path fill="currentColor" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z" />
+						</svg>
 					</button>
 					{sendError && (
-						<p className={styles.error} role="alert">
+						<p className={styles.sendError} role="alert">
 							{sendError}
 						</p>
 					)}
